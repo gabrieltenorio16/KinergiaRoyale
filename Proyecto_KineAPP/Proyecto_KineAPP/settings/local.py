@@ -12,7 +12,7 @@ ALLOWED_HOSTS = []
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'db.kinesiologia',
+        'NAME': 'db_kinesiologia',
         'USER': 'user_kinesiologia',
         'PASSWORD': 'messironaldo',
         'HOST': 'localhost',
