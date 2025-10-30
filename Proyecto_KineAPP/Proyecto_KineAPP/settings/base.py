@@ -23,6 +23,7 @@ INSTALLED_APPS = [
 
     # aplicaciones propias 
     'applications.usuario',
+    'applications.Contenido.apps.ContenidoConfig',
 ]
 
 MIDDLEWARE = [
