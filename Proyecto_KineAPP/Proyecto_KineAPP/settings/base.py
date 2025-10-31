@@ -22,7 +22,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # aplicaciones propias 
-    'applications.modulos',
+    'applications.usuario',
+    'applications.Contenido.apps.ContenidoConfig',
+    'applications.curso_y_modulo.apps.CursoYModuloConfig',
 ]
 
 MIDDLEWARE = [

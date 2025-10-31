@@ -1,6 +1,7 @@
 from django.apps import AppConfig
 
 
-class ModulosConfig(AppConfig):
+class CursoYModuloConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'applications.modulos'
+    name = 'applications.curso_y_modulo'
+
