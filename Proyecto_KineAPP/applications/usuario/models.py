@@ -5,7 +5,7 @@ from django.db import models
 class usuario(models.Model):
     Roles = [
         ('ADM', 'Administrador'),
-        ('Doc', 'Docente'),
+        ('DOC', 'Docente'),
         ('EST', 'Estudiante'),
     ]
 
@@ -14,7 +14,7 @@ class usuario(models.Model):
     #rut=RUTField(unique=True)
     correo=models.EmailField('Correo',max_length=254,null=False)
     password = models.CharField('contraseña',max_length=128)
-    rol = models.CharField('Rol', max_length=10, choices=Roles)
+    rol = models.CharField('Rol', max_length=10, choices=Roles, default='EST')
 
 
     #def __str__(self):

@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     # aplicaciones propias 
     'applications.usuario',
     'applications.Contenido.apps.ContenidoConfig',
+    'applications.curso_y_modulo.apps.CursoYModuloConfig',
 ]
 
 MIDDLEWARE = [
