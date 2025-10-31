@@ -2,10 +2,10 @@ from django.contrib import admin
 from .models import Contenido, Tema, Video, Pregunta, Respuesta, Estudiante, FichaClinica, Historial
 
 
-@admin.register(Contenido)
-class ContenidoAdmin(admin.ModelAdmin):
-    list_display = ("id", "titulo")
-    search_fields = ("titulo",)
+##@admin.register(Contenido)
+##class ContenidoAdmin(admin.ModelAdmin):
+ ##   list_display = ("id", "titulo")
+   ## search_fields = ("titulo",)
 
 
 @admin.register(Tema)

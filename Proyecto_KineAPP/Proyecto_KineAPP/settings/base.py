@@ -14,6 +14,7 @@ SECRET_KEY = 'django-insecure-tq5zx8xsq2v_1#2*zu#4i30)@%5e78+298=hsa7u%vm5rami=3
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -90,3 +91,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+JAZZMIN_SETTINGS = {
+    "site_title": "KienergiaRoyale",
+    "site_header": "Kinergia UCN",
+    "welcome_sign": "Bienvenida al Sistema UCN",
+    "site_brand": "UCN Kinergia",
+    ##"site_logo": "img/logo_ucn.png",
+    ##"custom_css": "css/admin_custom.css",
+    "custom_js": None,
+}
+
