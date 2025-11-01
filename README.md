@@ -1,18 +1,18 @@
 # Nombre de proyecto y breve descripcion.
 KinergiaRoyale es un proyecto destinado para el uso docente y educacional para los alumnos de Kinesiologia de la Universidad Catolica Del Norte. 
 La funcion que tiene esta plataforma es la de brindar un experiencia educativa, en la cual los estudiantes podran realizar consultas clinicas simulando casos de la vida real.
-# ntegrantes y roles.
+# Integrantes y roles.
 Los integrantes del equipo con sus respectivos roles son los siguientes:
-⦁	Gabriel Tenorio (Rol: Product Owner)
-⦁	Jorge Aguilar
-⦁	Manuel Rey (Rol: Scrum Master)
-⦁	Danitza Ogas
-⦁	Valentina Carvajal
-⦁	Benjamin Moyano
-⦁	Cristopher Meza
+- Gabriel Tenorio (Rol: Product Owner)
+- Jorge Aguilar
+- Manuel Rey (Rol: Scrum Master)
+- Danitza Ogas
+- Valentina Carvajal
+- Benjamin Moyano
+- Cristopher Meza
 
 # Instrucciones de instalacion y ejecucion.
-Para poder usar esta plataforma, usted debe de tener instalados en su computador Django, Python, PostgreSQL, Pandas, Jazminn. Estos componentes son fundamentales para el correcto funcionamiento de la plataforma.
+Para poder usar esta plataforma, usted debe de tener instalados en su computador Django, Python, PostgreSQL y unas librerias de django (Pillow, jazzmin, psycopg2)  Estos componentes son fundamentales para el correcto funcionamiento de la plataforma.
 Ya con la carpeta descargada, usted debera crear primero su entorno dentro de la CMD de Windows:
 1.	Seleccionar la ruta donde se encuentra ubicada la carpeta instalada, luego dentro del CMD colocar (ejemplo de ruta):
 cd C:\Users\danit\Documents\Kinergia Royale (Carpeta de todo el proyecto)\KinergiaRoyale
@@ -36,9 +36,15 @@ cd Proyecto_KineAPP
 python manage.py makemigrations
 11.	Luego de que se realice esto, se deben ejecutar los archivos de migracion con:
 python manage.py migrate
-12.	Ya con el entorno creado correctamente y los componentes requeridos instalados, debe escribir lo siguiente:
+12. Luego de migrar, debe crear un superusuario que es el usuario que le permitira entrar mediante la ventana de acceso a la plataforma para gestionar a los estudiantes, cursos y demas.
+- Debe ingresar el siguiente comando: python manage.py createsuperuser
+- Luego le pedira ingresar un nombre de usuario, (sugerencia para la primera versión, colocar: admin)
+- Luego, presiona enter y le pedira un correo, esto lo omite oprimiendo enter para pasar al ultimo paso
+- Debe ingresar una contraseña (sugerida para la prueba unicamente: admin112233).
+- Una vez ingresada la confirma digitandola nuevamante y ya estaria list@ con este paso
+13.	Ya con el entorno creado correctamente y los componentes requeridos instalados, debe escribir lo siguiente:
 python manage.py runserver
-13.	Al correrlo correctamente, se le generara un texto, en este se encuentra una direccion http://127.0.0.1:8000/, en la cual debe ingresar y verificar que django este funcionando correctamente
-14.	Al verificar que Django se instalo y funciono exitosamente, debe modificar el http dentro de la misma pagina en google y agregarle /admin, por lo que quedaria asi:
+14.	Al correrlo correctamente, se le generara un texto, en este se encuentra una direccion http://127.0.0.1:8000/, en la cual debe ingresar y verificar que django este funcionando correctamente
+15.	Al verificar que Django se instalo y funciono exitosamente, debe modificar el http dentro de la misma pagina en google y agregarle /admin, por lo que quedaria asi:
 127.0.0.1:8000/admin o ingresar a http://127.0.0.1:8000/admin
-15.	Encontrandose ya dentro de la plataforma se debera poner su usuario y contrasena, los cuales provisionalmente son Usuario: admin y Contrasena: admin112233
+16.	Encontrandose ya dentro de la plataforma se debera poner su usuario y contrasena, los cuales provisionalmente son Usuario: admin y Contrasena: admin112233
