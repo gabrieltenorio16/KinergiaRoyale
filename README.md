@@ -1,7 +1,7 @@
 # Nombre de proyecto y breve descripcion.
-KinergiaRoyale es un proyecto destinado para el uso docente y educacional para los alumnos de Kinesiologia de la Universidad Catolica Del Norte. La funcion que tiene
-esta plataforma es la de brindar un experiencia educativa, en la cual los estudiantes podran realizar consultas clinicas simulando casos de la vida real.
-Integrantes y roles.
+KinergiaRoyale es un proyecto destinado para el uso docente y educacional para los alumnos de Kinesiologia de la Universidad Catolica Del Norte. 
+La funcion que tiene esta plataforma es la de brindar un experiencia educativa, en la cual los estudiantes podran realizar consultas clinicas simulando casos de la vida real.
+# ntegrantes y roles.
 Los integrantes del equipo con sus respectivos roles son los siguientes:
 ⦁	Gabriel Tenorio (Rol: Product Owner)
 ⦁	Jorge Aguilar
@@ -10,7 +10,8 @@ Los integrantes del equipo con sus respectivos roles son los siguientes:
 ⦁	Valentina Carvajal
 ⦁	Benjamin Moyano
 ⦁	Cristopher Meza
-Instrucciones de instalacion y ejecucion.
+
+# Instrucciones de instalacion y ejecucion.
 Para poder usar esta plataforma, usted debe de tener instalados en su computador Django, Python, PostgreSQL, Pandas, Jazminn. Estos componentes son fundamentales para el correcto funcionamiento de la plataforma.
 Ya con la carpeta descargada, usted debera crear primero su entorno dentro de la CMD de Windows:
 1.	Seleccionar la ruta donde se encuentra ubicada la carpeta instalada, luego dentro del CMD colocar (ejemplo de ruta):
