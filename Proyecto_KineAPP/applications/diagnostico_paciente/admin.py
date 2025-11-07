@@ -3,4 +3,6 @@ from .models import *
 
 # Register your models here.
 admin.site.register(Diagnostico)
+admin.site.register(Paciente)
+admin.site.register(PartesDelCuerpo)
 # Register your models here.

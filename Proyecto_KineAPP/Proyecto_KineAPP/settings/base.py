@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'applications.usuario',
     'applications.Contenido.apps.ContenidoConfig',
     'applications.curso_y_modulo.apps.CursoYModuloConfig',
+    'applications.diagnostico_paciente.apps.DiagnosticoPacienteConfig',
 ]
 
 MIDDLEWARE = [
