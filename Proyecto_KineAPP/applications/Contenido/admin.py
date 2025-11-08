@@ -1,13 +1,21 @@
 from django.contrib import admin
-from .models import Contenido, Tema, Video, Pregunta, Respuesta, Estudiante, FichaClinica, Historial
+from django import forms
+from django.apps import apps
+
+from .models import Contenido, Tema, Video, Pregunta, Respuesta, FichaClinica, Historial
+
+# Obtén el modelo de usuario por label (la app está en applications/usuario)
+Usuario = apps.get_model('usuario', 'usuario')
 
 
-##@admin.register(Contenido)
-##class ContenidoAdmin(admin.ModelAdmin):
- ##   list_display = ("id", "titulo")
-   ## search_fields = ("titulo",)
+# ----- Contenido (opcional) -----
+@admin.register(Contenido)
+class ContenidoAdmin(admin.ModelAdmin):
+    list_display = ("id", "titulo")
+    search_fields = ("titulo",)
 
 
+# ----- Tema -----
 @admin.register(Tema)
 class TemaAdmin(admin.ModelAdmin):
     list_display = ("id", "titulo", "estado_completado")
@@ -16,6 +24,7 @@ class TemaAdmin(admin.ModelAdmin):
     ordering = ("titulo",)
 
 
+# ----- Video -----
 @admin.register(Video)
 class VideoAdmin(admin.ModelAdmin):
     list_display = ("id", "titulo", "tema", "orden", "duracion")
@@ -24,9 +33,10 @@ class VideoAdmin(admin.ModelAdmin):
     ordering = ("tema", "orden")
 
 
+# ----- Pregunta + Respuestas inline -----
 class RespuestaInline(admin.TabularInline):
     model = Respuesta
-    extra = 2  # cantidad de filas vacías que te muestra para cargar alternativas
+    extra = 2
     fields = ("contenido", "es_correcta", "retroalimentacion")
 
 
@@ -47,15 +57,7 @@ class RespuestaAdmin(admin.ModelAdmin):
     ordering = ("pregunta", "id")
 
 
-# ⬇⬇⬇ NUEVOS MODELOS: Estudiante, FichaClinica y Historial ⬇⬇⬇
-
-@admin.register(Estudiante)
-class EstudianteAdmin(admin.ModelAdmin):
-    list_display = ("id", "nombre")
-    search_fields = ("nombre",)
-    ordering = ("nombre",)
-
-
+# ----- Ficha clínica -----
 @admin.register(FichaClinica)
 class FichaClinicaAdmin(admin.ModelAdmin):
     list_display = ("id", "descripcion")
@@ -63,9 +65,33 @@ class FichaClinicaAdmin(admin.ModelAdmin):
     ordering = ("id",)
 
 
+class EstudianteChoiceField(forms.ModelChoiceField):
+    def label_from_instance(self, obj):
+        # ID + Nombre y Apellido (puedes añadir el correo si quieres)
+        return f"{obj.id} - {obj.nombre} {obj.apellido}"
+
+
+class HistorialAdminForm(forms.ModelForm):
+    estudiante = EstudianteChoiceField(
+        queryset=Usuario.objects.filter(rol='EST'),
+        label='Estudiante asociado'
+    )
+
+    class Meta:
+        model = Historial
+        fields = "__all__"
+
+
 @admin.register(Historial)
 class HistorialAdmin(admin.ModelAdmin):
-    list_display = ("id", "estudiante", "tema", "ficha", "fecha_registro")
-    list_filter = ("tema", "estudiante")
-    search_fields = ("estudiante__nombre", "tema__titulo", "ficha__descripcion")
+    form = HistorialAdminForm
+    list_display = ("id", "tema", "estudiante_id", "ficha", "fecha_registro")
+    list_filter = ("tema",)
+    search_fields = (
+        "estudiante__id", "estudiante__nombre", "estudiante__apellido",
+        "tema__titulo", "ficha__descripcion"
+    )
     ordering = ("-fecha_registro",)
+
+    # Si manejas MUCHOS usuarios y prefieres escribir el ID directamente, descomenta:
+    # raw_id_fields = ("estudiante",)

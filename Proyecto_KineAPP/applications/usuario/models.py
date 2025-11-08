@@ -1,6 +1,5 @@
 from django.db import models
 
-# Create your models here.
 
 class usuario(models.Model):
     Roles = [
@@ -8,16 +7,16 @@ class usuario(models.Model):
         ('EST', 'Estudiante'),
     ]
 
-    nombre=models.CharField('Nombre',max_length=150,null=False)
-    apellido=models.CharField('Apellido',max_length=150,null=False)
-    #rut=RUTField(unique=True)
-    correo=models.EmailField('Correo',max_length=254,null=False)
-    password = models.CharField('contraseña',max_length=128)
+    nombre = models.CharField('Nombre', max_length=150, null=False)
+    apellido = models.CharField('Apellido', max_length=150, null=False)
+    correo = models.EmailField('Correo', max_length=254, null=False)
+    password = models.CharField('Contraseña', max_length=128)
     rol = models.CharField('Rol', max_length=10, choices=Roles, default='EST')
 
+    class Meta:
+        verbose_name = 'Usuario'
+        verbose_name_plural = 'Usuarios'
+        ordering = ('nombre', 'apellido')
 
-    #def __str__(self):
-     #   return str(self.id)+'-'+ self.nombre # Este bloque es el anterior, la nueva es más visual.
-    
     def __str__(self):
-        return f"{self.id} - {self.nombre} ({self.get_rol_display()})"
+        return f"{self.id} - {self.nombre} {self.apellido} ({self.get_rol_display()})"
