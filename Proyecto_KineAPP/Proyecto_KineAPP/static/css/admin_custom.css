@@ -1,0 +1,180 @@
+/* ==============================
+   ESTILO PERSONALIZADO - KINERGIA UCN
+   ============================== */
+
+/* ---- COLORES BASE ---- */
+:root {
+    --ucn-blue: #004b87;        /* Azul institucional UCN */
+    --ucn-light-blue: #006eb6;  /* Azul claro de acento */
+    --ucn-gray: #f5f6fa;        /* Fondo claro */
+    --ucn-dark: #2b2b2b;        /* Texto principal */
+    --ucn-accent: #0096c7;      /* Acento de botones y enlaces */
+}
+
+/* ---- ESTILO GLOBAL ---- */
+body, html {
+    background-color: var(--ucn-gray) !important;
+    font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif !important;
+}
+
+/* ---- CABECERA SUPERIOR ---- */
+.navbar {
+    background-color: var(--ucn-blue) !important;
+    color: white !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.navbar a,
+.navbar-brand,
+.navbar .dropdown-toggle,
+.navbar .nav-link {
+    color: #fff !important;
+    font-weight: 500;
+}
+
+.navbar a:hover,
+.navbar .dropdown-item:hover {
+    background-color: var(--ucn-light-blue) !important;
+}
+
+/* ---- SIDEBAR (MENÚ LATERAL) ---- */
+.main-sidebar {
+    background-color: var(--ucn-blue) !important;
+    color: #fff !important;
+}
+
+.main-sidebar .nav-link,
+.main-sidebar .brand-link {
+    color: #e1e1e1 !important;
+    font-weight: 500;
+}
+
+.main-sidebar .nav-link.active,
+.main-sidebar .nav-link:hover {
+    background-color: var(--ucn-light-blue) !important;
+    color: #fff !important;
+}
+
+/* ---- LOGO DE LA BARRA LATERAL ---- */
+.brand-link {
+    background-color: var(--ucn-blue) !important;
+    border-bottom: 1px solid #005b9f;
+    text-align: center;
+    font-weight: bold;
+}
+
+/* ---- BOTONES ---- */
+.btn-primary {
+    background-color: var(--ucn-blue) !important;
+    border-color: var(--ucn-blue) !important;
+    color: #fff !important;
+}
+
+.btn-primary:hover {
+    background-color: var(--ucn-light-blue) !important;
+    border-color: var(--ucn-light-blue) !important;
+}
+
+.btn-success {
+    background-color: var(--ucn-accent) !important;
+    border-color: var(--ucn-accent) !important;
+}
+
+/* ---- TABLAS Y FORMULARIOS ---- */
+.table th {
+    background-color: var(--ucn-light-blue) !important;
+    color: #fff !important;
+    font-weight: 600;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #f8f9fb;
+}
+
+.card {
+    border-radius: 8px !important;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+
+/* ---- LOGIN ---- */
+.login-page {
+    background-color: var(--ucn-blue) !important;
+}
+
+.login-logo a {
+    color: white !important;
+    font-weight: bold;
+}
+
+.login-card-body {
+    border-radius: 8px;
+    background-color: white !important;
+}
+
+/* ---- FOOTER ---- */
+.main-footer {
+    background-color: var(--ucn-gray) !important;
+    border-top: 1px solid #ccc;
+    color: #555 !important;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+/* ---- DETALLES EXTRA ---- */
+a {
+    color: var(--ucn-accent);
+}
+
+a:hover {
+    color: var(--ucn-light-blue);
+}
+
+/* ==============================
+   BLOQUE: Dashboard KinergiaRoyale
+   ============================== */
+
+/* Contenedor del banner */
+.alert-info {
+    background-color: #e7f1fa !important;      /* azul muy claro */
+    border-left: 6px solid #004b87 !important; /* azul UCN */
+    color: #003b6f !important;                 /* texto azul oscuro */
+    font-weight: 500;
+    border-radius: 6px;
+    padding: 15px 20px;
+    margin-bottom: 25px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+/* Título del banner */
+.alert-info strong {
+    display: block;
+    color: #004b87;
+    font-size: 1.05rem;
+    margin-bottom: 3px;
+}
+
+/* Subtítulo */
+.alert-info span {
+    color: #333;
+    font-size: 0.9rem;
+}
+
+/* Footer institucional */
+footer {
+    text-align: center;
+    margin-top: 60px;
+    padding: 20px 0;
+    color: #555;
+    font-size: 0.9rem;
+}
+
+footer hr {
+    border: none;
+    border-top: 1px solid #ccc;
+    width: 70%;
+    margin: 0 auto 10px auto;
+}
+
+footer p {
+    margin: 4px 0;
+}

@@ -44,7 +44,7 @@ ROOT_URLCONF = 'Proyecto_KineAPP.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / "templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -76,6 +76,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Usar el modelo de usuario personalizado
+AUTH_USER_MODEL = 'usuario.Usuario'
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
@@ -93,13 +96,33 @@ USE_TZ = True
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# === CONFIGURACIÓN DE ARCHIVOS ESTÁTICOS ===
+
+# URL base para los archivos estáticos
+STATIC_URL = '/static/'
+
+# Carpeta donde colocarás tus archivos estáticos personalizados (CSS, JS, imágenes, etc.)
+# Se ubica directamente en la raíz del proyecto (donde está manage.py)
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+
+# Carpeta destino donde Django recopilará todos los archivos estáticos al ejecutar 'collectstatic'
+# (No debes crearla manualmente, Django la genera automáticamente)
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+# === CONFIGURACIÓN DE ARCHIVOS DE MEDIA (opcional si usarás carga de imágenes en el admin) ===
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / "media"
+
+
 JAZZMIN_SETTINGS = {
     "site_title": "KienergiaRoyale",
     "site_header": "Kinergia UCN",
     "welcome_sign": "Bienvenida al Sistema UCN",
     "site_brand": "UCN Kinergia",
-    ##"site_logo": "img/logo_ucn.png",
-    ##"custom_css": "css/admin_custom.css",
+    "site_logo": "img/logo_ucn.png",
+    "custom_css": "css/admin_custom.css",
     "custom_js": None,
 }
 

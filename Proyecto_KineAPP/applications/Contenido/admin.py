@@ -5,7 +5,8 @@ from django.apps import apps
 from .models import Contenido, Tema, Video, Pregunta, Respuesta, FichaClinica, Historial
 
 # Obtén el modelo de usuario por label (la app está en applications/usuario)
-Usuario = apps.get_model('usuario', 'usuario')
+# Antes: Usuario = apps.get_model('usuario', 'usuario')
+Usuario = apps.get_model('usuario', 'Usuario')
 
 
 # ----- Contenido (opcional) -----
@@ -67,9 +68,21 @@ class FichaClinicaAdmin(admin.ModelAdmin):
 
 class EstudianteChoiceField(forms.ModelChoiceField):
     def label_from_instance(self, obj):
-        # ID + Nombre y Apellido (puedes añadir el correo si quieres)
-        return f"{obj.id} - {obj.nombre} {obj.apellido}"
+        # Evita acceder a atributos que no existen (nombre/apellido).
+        # Prioriza: __str__ definido en tu modelo -> first_name/last_name -> username -> id.
+        try:
+            texto = str(obj).strip()
+            if texto:
+                return texto
+        except Exception:
+            pass
 
+        first = getattr(obj, 'first_name', '') or ''
+        last = getattr(obj, 'last_name', '') or ''
+        if first or last:
+            return f"{obj.id} - {first} {last}".strip()
+
+        return getattr(obj, 'username', f'Usuario {getattr(obj, "id", "?")}')
 
 class HistorialAdminForm(forms.ModelForm):
     estudiante = EstudianteChoiceField(
@@ -88,7 +101,7 @@ class HistorialAdmin(admin.ModelAdmin):
     list_display = ("id", "tema", "estudiante_id", "ficha", "fecha_registro")
     list_filter = ("tema",)
     search_fields = (
-        "estudiante__id", "estudiante__nombre", "estudiante__apellido",
+        "estudiante__id", "estudiante__username", "estudiante__first_name", "estudiante__last_name",
         "tema__titulo", "ficha__descripcion"
     )
     ordering = ("-fecha_registro",)
@@ -97,3 +110,21 @@ class HistorialAdmin(admin.ModelAdmin):
     # raw_id_fields = ("estudiante",)
 
     #fpknojdnsodnvsn
+
+class UsuarioModelChoiceField(forms.ModelChoiceField):
+    def label_from_instance(self, obj):
+        # Preferir __str__ (tu Usuario.__str__ está definido),
+        # luego get_full_name(), luego username, luego id.
+        try:
+            texto = str(obj).strip()
+            if texto:
+                return texto
+        except Exception:
+            pass
+
+        if hasattr(obj, 'get_full_name'):
+            full = obj.get_full_name()
+            if full:
+                return full
+
+        return getattr(obj, 'username', f'Usuario {getattr(obj, "id", "?")}')

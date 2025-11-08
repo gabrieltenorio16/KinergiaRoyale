@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 
 class Contenido(models.Model):
@@ -106,9 +107,8 @@ class Historial(models.Model):
         related_name='historiales',
         verbose_name='Tema asociado'
     )
-    # 🔴 AHORA apunta a tu modelo usuario.usuario (no al antiguo Estudiante)
     estudiante = models.ForeignKey(
-        'usuario.usuario',
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='historiales',
         verbose_name='Estudiante asociado'
