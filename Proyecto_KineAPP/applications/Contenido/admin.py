@@ -95,3 +95,5 @@ class HistorialAdmin(admin.ModelAdmin):
 
     # Si manejas MUCHOS usuarios y prefieres escribir el ID directamente, descomenta:
     # raw_id_fields = ("estudiante",)
+
+    #fpknojdnsodnvsn
