@@ -2,7 +2,7 @@ from django.contrib import admin
 from django import forms
 from django.apps import apps
 
-from .models import Contenido, Tema, Video, Pregunta, Respuesta, FichaClinica, Historial
+from .models import Tema, Video, Pregunta, Buscador_de_respuesta, FichaClinica, Historial
 
 # Obtén el modelo de usuario por label (la app está en applications/usuario)
 # Antes: Usuario = apps.get_model('usuario', 'usuario')
@@ -19,43 +19,52 @@ class ContenidoAdmin(admin.ModelAdmin):
 # ----- Tema -----
 @admin.register(Tema)
 class TemaAdmin(admin.ModelAdmin):
-    list_display = ("id", "titulo", "estado_completado")
-    list_filter = ("estado_completado",)
-    search_fields = ("titulo", "descripcion")
-    ordering = ("titulo",)
+    list_display = ('id', 'titulo', 'estado_completado')
+    list_editable = ('estado_completado',)
+    list_filter = ('estado_completado',)
+    search_fields = ('titulo', 'descripcion')
+    ordering = ('titulo',)
 
 
 # ----- Video -----
 @admin.register(Video)
 class VideoAdmin(admin.ModelAdmin):
-    list_display = ("id", "titulo", "tema", "orden", "duracion")
-    list_filter = ("tema",)
-    search_fields = ("titulo",)
-    ordering = ("tema", "orden")
+    list_display = ('titulo', 'tema', 'url', 'id')
+    ordering = ('tema', 'id')
 
 
 # ----- Pregunta + Respuestas inline -----
 class RespuestaInline(admin.TabularInline):
-    model = Respuesta
+    model = Buscador_de_respuesta
     extra = 2
     fields = ("contenido", "es_correcta", "retroalimentacion")
 
 
 @admin.register(Pregunta)
 class PreguntaAdmin(admin.ModelAdmin):
-    list_display = ("id", "contenido", "video", "orden")
+    list_display = ("id", "contenido", "video", "numero_de_pregunta")
     list_filter = ("video",)
     search_fields = ("contenido",)
-    ordering = ("video", "orden")
+    ordering = ("video", "numero_de_pregunta")
     inlines = [RespuestaInline]
 
 
-@admin.register(Respuesta)
-class RespuestaAdmin(admin.ModelAdmin):
-    list_display = ("id", "contenido", "pregunta", "es_correcta")
-    list_filter = ("es_correcta", "pregunta__video")
-    search_fields = ("contenido", "retroalimentacion")
-    ordering = ("pregunta", "id")
+@admin.register(Buscador_de_respuesta)  # o reemplaza por `Respuesta` si ese es el nombre en tu proyecto
+class BuscadorDeRespuestaAdmin(admin.ModelAdmin):
+    list_display = ('id', 'pregunta_como_contenido', 'es_correcta_como_pregunta', 'contenido_como_bool')
+
+    def pregunta_como_contenido(self, obj):
+        return str(obj.pregunta) if obj.pregunta else ''
+    pregunta_como_contenido.short_description = 'Contenido de la respuesta'
+
+    def es_correcta_como_pregunta(self, obj):
+        return obj.es_correcta
+    es_correcta_como_pregunta.short_description = 'Pregunta asociada'
+    es_correcta_como_pregunta.boolean = True
+
+    def contenido_como_bool(self, obj):
+        return obj.contenido
+    contenido_como_bool.short_description = '¿Es la respuesta correcta?'
 
 
 # ----- Ficha clínica -----

@@ -21,12 +21,6 @@ class Tema(models.Model):
 class Video(models.Model):
     titulo = models.CharField(max_length=150, null=False, verbose_name='Título')
     url = models.URLField(max_length=300, null=False, verbose_name='URL del video')
-    duracion = models.PositiveIntegerField(
-        null=False, help_text='Duración del video en segundos', verbose_name='Duración (segundos)'
-    )
-    orden = models.PositiveIntegerField(
-        null=False, help_text='Posición del video dentro del tema', verbose_name='Orden'
-    )
 
     tema = models.ForeignKey(
         'Tema',
@@ -36,18 +30,16 @@ class Video(models.Model):
     )
 
     class Meta:
-        ordering = ['tema', 'orden']
-        constraints = [
-            models.UniqueConstraint(fields=['tema', 'orden'], name='unique_orden_por_tema')
-        ]
+        ordering = ['tema', 'id']
+        # Nota: se eliminó la UniqueConstraint sobre ('tema', 'orden') porque 'orden' ya no existe.
 
     def __str__(self):
-        return f"{self.orden}. {self.titulo}"
+        return f"{self.titulo}"
 
 
 class Pregunta(models.Model):
     contenido = models.TextField(null=False, verbose_name='Contenido de la pregunta')
-    orden = models.PositiveIntegerField(null=False, verbose_name='Orden', help_text='Posición dentro del video')
+    numero_de_pregunta = models.PositiveIntegerField(default=1, null=True, blank=True, verbose_name='Número de pregunta', help_text='Posición dentro del video')
 
     video = models.ForeignKey(
         'Video',
@@ -57,18 +49,18 @@ class Pregunta(models.Model):
     )
 
     class Meta:
-        ordering = ['video', 'orden']
+        ordering = ['video', 'numero_de_pregunta']
         constraints = [
-            models.UniqueConstraint(fields=['video', 'orden'], name='unique_orden_por_video_en_pregunta')
+            models.UniqueConstraint(fields=['video', 'numero_de_pregunta'], name='unique_numero_por_video_en_pregunta')
         ]
         verbose_name = 'Pregunta'
         verbose_name_plural = 'Preguntas'
 
     def __str__(self):
-        return f"Pregunta {self.orden} de '{self.video.titulo}'"
+        return f"Pregunta {self.numero_de_pregunta} de '{self.video.titulo}'"
 
 
-class Respuesta(models.Model):
+class Buscador_de_respuesta(models.Model):
     contenido = models.TextField(null=False, verbose_name='Contenido de la respuesta')
     retroalimentacion = models.TextField(
         blank=True, null=True, verbose_name='Retroalimentación',
@@ -84,13 +76,13 @@ class Respuesta(models.Model):
     )
 
     class Meta:
-        verbose_name = 'Respuesta'
-        verbose_name_plural = 'Respuestas'
+        verbose_name = 'Buscador de respuesta'
+        verbose_name_plural = 'Buscadores de respuesta'
 
     def __str__(self):
         preview = (self.contenido[:40] + '...') if len(self.contenido) > 40 else self.contenido
         estado = "✅" if self.es_correcta else "—"
-        return f"{estado} {preview} (Pregunta {self.pregunta.orden} / Video {self.pregunta.video.titulo})"
+        return f"{estado} {preview} (Video {self.pregunta.video.titulo} / Pregunta {self.pregunta.numero_de_pregunta})"
 
 
 class FichaClinica(models.Model):
@@ -132,3 +124,5 @@ class Historial(models.Model):
 
     def __str__(self):
         return f"Historial: {self.estudiante_id} / {self.tema} / Ficha {self.ficha_id}"
+
+

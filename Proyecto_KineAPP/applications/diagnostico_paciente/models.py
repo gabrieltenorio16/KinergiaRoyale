@@ -19,11 +19,12 @@ class Paciente(models.Model):
 
 
 class PartesDelCuerpo(models.Model):
+    id_parte = models.AutoField('ID Parte', primary_key=True)
     nombre = models.CharField('Parte del cuerpo', max_length=200)
     descripcion = models.CharField('Descripción', max_length=1000)
 
     def __str__(self):
-        return self.nombre
+        return f"{self.id_parte} - {self.nombre}"
 
 
 class Diagnostico(models.Model):
@@ -40,4 +41,5 @@ class Diagnostico(models.Model):
     )
 
     def __str__(self):
-        return f"Diagnóstico {self.id} - Paciente: {self.id_paciente.nombre}"
+        return f"Diagnóstico {self.id} - Paciente: {self.id_paciente.nombre} - Parte: {self.id_partes_cuerpo.id_parte} - {self.id_partes_cuerpo.nombre}"
+

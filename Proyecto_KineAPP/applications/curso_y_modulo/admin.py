@@ -8,12 +8,12 @@ Usuario = get_user_model()
 class ContenidoAdicionalInline(admin.TabularInline):
     model = ContenidoAdicional
     extra = 1
-    fields = ('nombre', 'tipo_archivo', 'url', 'directorio')
+    fields = ('nombre', 'directorio')
 
 # ---- CURSO ----
 @admin.register(Curso)
 class CursoAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'get_nivel_display', 'cant_docentes', 'cant_estudiantes', 'id')
+    list_display = ('nombre', 'curso_id', 'modulos_existentes', 'cant_estudiantes')
     list_filter = ('nivel',)
     search_fields = (
         'nombre',
@@ -32,7 +32,6 @@ class CursoAdmin(admin.ModelAdmin):
             kwargs['queryset'] = Usuario.objects.filter(rol='EST')
         return super().formfield_for_manytomany(db_field, request, **kwargs)
 
-
 # ---- MÓDULO ----
 @admin.register(Modulo)
 class ModuloAdmin(admin.ModelAdmin):
@@ -46,9 +45,9 @@ class ModuloAdmin(admin.ModelAdmin):
 # ---- CONTENIDO ADICIONAL ----
 @admin.register(ContenidoAdicional)
 class ContenidoAdicionalAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'tipo_archivo', 'modulo', 'id')
-    list_filter = ('tipo_archivo', 'modulo')
-    search_fields = ('nombre', 'modulo__nombre')
-    readonly_fields = ('id',)
-    ordering = ('modulo', 'nombre')
+    # eliminar referencias a campos eliminados (tipo_archivo, url)
+    list_display = ("id", "nombre", "directorio", "modulo")
+    list_filter = ("modulo",)   # usar un campo real; antes era 'tipo_archivo'
+    search_fields = ("nombre",)
+    ordering = ("modulo", "nombre")
 
