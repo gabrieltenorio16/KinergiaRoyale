@@ -2,26 +2,18 @@ from django.contrib import admin
 from django.contrib.auth import get_user_model
 from .models import Curso, Modulo, ContenidoAdicional
 
-User = get_user_model()
-
+Usuario = get_user_model()
 
 # ---- Inlines ----
 class ContenidoAdicionalInline(admin.TabularInline):
     model = ContenidoAdicional
     extra = 1
-    fields = ('nombre', 'tipo_archivo', 'url', 'directorio')
+    fields = ('nombre', 'directorio')
 
-
-class ModuloInline(admin.TabularInline):
-    model = Modulo
-    extra = 1
-    fields = ('nombre',)
-
-
-# ---- Curso ----
+# ---- CURSO ----
 @admin.register(Curso)
 class CursoAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'get_nivel_display', 'cant_docentes', 'cant_estudiantes', 'id')
+    list_display = ('nombre', 'curso_id', 'modulos_existentes', 'cant_estudiantes')
     list_filter = ('nivel',)
     search_fields = (
         'nombre',
@@ -29,48 +21,44 @@ class CursoAdmin(admin.ModelAdmin):
         'estudiantes__username', 'estudiantes__first_name', 'estudiantes__last_name',
     )
     ordering = ('nombre',)
-    inlines = [ModuloInline]
     readonly_fields = ('id',)
+    # Mostrar selector horizontal para docentes y estudiantes (y también módulos si lo deseas)
+    filter_horizontal = ('docentes', 'estudiantes', 'modulos')
 
-    # Selector múltiple cómodo
-    filter_horizontal = ('docentes', 'estudiantes')
-
-    # Filtra por rol (ajusta si usas grupos)
     def formfield_for_manytomany(self, db_field, request, **kwargs):
         if db_field.name == 'docentes':
-            kwargs['queryset'] = User.objects.filter(rol='DOCENTE')
-            # kwargs['queryset'] = User.objects.filter(groups__name='Docentes')  # <-- si usas grupos
+            kwargs['queryset'] = Usuario.objects.filter(rol='DOC')
         elif db_field.name == 'estudiantes':
-            kwargs['queryset'] = User.objects.filter(rol='ESTUDIANTE')
-            # kwargs['queryset'] = User.objects.filter(groups__name='Estudiantes')  # <-- si usas grupos
+            kwargs['queryset'] = Usuario.objects.filter(rol='EST')
         return super().formfield_for_manytomany(db_field, request, **kwargs)
 
-    def cant_docentes(self, obj):
-        return obj.docentes.count()
-    cant_docentes.short_description = 'Docentes'
+    def curso_id(self, obj):
+        return obj.id
+    curso_id.short_description = 'ID'
+    curso_id.admin_order_field = 'id'
 
-    def cant_estudiantes(self, obj):
-        return obj.estudiantes.count()
-    cant_estudiantes.short_description = 'Estudiantes'
+    def modulos_existentes(self, obj):
+        # placeholder vacío por ahora; cambiar a `obj.modulos.count()` si quieres mostrar el número
+        return ''
+    modulos_existentes.short_description = 'Módulos existentes'
 
 
-# ---- Módulo ----
+# ---- MÓDULO ----
 @admin.register(Modulo)
 class ModuloAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'curso', 'id')
-    list_filter = ('curso',)
-    search_fields = ('nombre', 'curso__nombre')
-    ordering = ('curso', 'nombre')
+    list_display = ('nombre', 'id')
+    search_fields = ('nombre',)
+    ordering = ('nombre',)
     inlines = [ContenidoAdicionalInline]
     readonly_fields = ('id',)
 
 
-# ---- Contenido Adicional ----
+# ---- CONTENIDO ADICIONAL ----
 @admin.register(ContenidoAdicional)
 class ContenidoAdicionalAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'tipo_archivo', 'modulo', 'id')
-    list_filter = ('tipo_archivo', 'modulo')
-    search_fields = ('nombre', 'modulo__nombre')
-    readonly_fields = ('id',)
-    ordering = ('modulo', 'nombre')
+    # eliminar referencias a campos eliminados (tipo_archivo, url)
+    list_display = ("id", "nombre", "directorio", "modulo")
+    list_filter = ("modulo",)   # usar un campo real; antes era 'tipo_archivo'
+    search_fields = ("nombre",)
+    ordering = ("modulo", "nombre")
 
