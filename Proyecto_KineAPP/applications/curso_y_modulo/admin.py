@@ -32,6 +32,19 @@ class CursoAdmin(admin.ModelAdmin):
             kwargs['queryset'] = Usuario.objects.filter(rol='EST')
         return super().formfield_for_manytomany(db_field, request, **kwargs)
 
+    def curso_id(self, obj):
+        return obj.id
+    curso_id.short_description = 'ID'
+    curso_id.admin_order_field = 'id'
+
+    def modulos_existentes(self, obj):
+        return obj.modulos.count()
+    modulos_existentes.short_description = 'Cantidad de Módulos'
+
+    def cant_estudiantes(self, obj):
+        return obj.estudiantes.count()
+    cant_estudiantes.short_description = 'Cantidad de Estudiantes'
+
 # ---- MÓDULO ----
 @admin.register(Modulo)
 class ModuloAdmin(admin.ModelAdmin):

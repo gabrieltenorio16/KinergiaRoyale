@@ -39,7 +39,6 @@ class Video(models.Model):
 
 class Pregunta(models.Model):
     contenido = models.TextField(null=False, verbose_name='Contenido de la pregunta')
-    numero_de_pregunta = models.PositiveIntegerField(default=1, null=True, blank=True, verbose_name='Número de pregunta', help_text='Posición dentro del video')
 
     video = models.ForeignKey(
         'Video',
@@ -49,15 +48,12 @@ class Pregunta(models.Model):
     )
 
     class Meta:
-        ordering = ['video', 'numero_de_pregunta']
-        constraints = [
-            models.UniqueConstraint(fields=['video', 'numero_de_pregunta'], name='unique_numero_por_video_en_pregunta')
-        ]
+        ordering = ['video']
         verbose_name = 'Pregunta'
         verbose_name_plural = 'Preguntas'
 
     def __str__(self):
-        return f"Pregunta {self.numero_de_pregunta} de '{self.video.titulo}'"
+        return f"{self.video} - {self.contenido[:50]}"
 
 
 class Buscador_de_respuesta(models.Model):

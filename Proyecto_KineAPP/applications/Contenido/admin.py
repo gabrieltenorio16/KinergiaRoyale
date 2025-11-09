@@ -1,19 +1,19 @@
 from django.contrib import admin
 from django import forms
-from django.apps import apps
+from django.contrib.auth import get_user_model
 
 from .models import Tema, Video, Pregunta, Buscador_de_respuesta, FichaClinica, Historial
 
 # Obtén el modelo de usuario por label (la app está en applications/usuario)
 # Antes: Usuario = apps.get_model('usuario', 'usuario')
-Usuario = apps.get_model('usuario', 'Usuario')
+Usuario = get_user_model()
 
 
 # ----- Contenido (opcional) -----
-@admin.register(Contenido)
-class ContenidoAdmin(admin.ModelAdmin):
-    list_display = ("id", "titulo")
-    search_fields = ("titulo",)
+#@admin.register(Contenido)
+#class ContenidoAdmin(admin.ModelAdmin):
+    #list_display = ('titulo',)
+    #search_fields = ("titulo",)
 
 
 # ----- Tema -----
@@ -42,29 +42,27 @@ class RespuestaInline(admin.TabularInline):
 
 @admin.register(Pregunta)
 class PreguntaAdmin(admin.ModelAdmin):
-    list_display = ("id", "contenido", "video", "numero_de_pregunta")
+    list_display = ("id", "contenido", "video")
     list_filter = ("video",)
     search_fields = ("contenido",)
-    ordering = ("video", "numero_de_pregunta")
+    ordering = ("video",)
     inlines = [RespuestaInline]
 
 
 @admin.register(Buscador_de_respuesta)  # o reemplaza por `Respuesta` si ese es el nombre en tu proyecto
 class BuscadorDeRespuestaAdmin(admin.ModelAdmin):
-    list_display = ('id', 'pregunta_como_contenido', 'es_correcta_como_pregunta', 'contenido_como_bool')
+    # Mostrar campos directos y con etiquetas claras
+    list_display = ('id', 'pregunta_display', 'contenido', 'es_correcta')
+    search_fields = ('contenido', 'pregunta__contenido')
 
-    def pregunta_como_contenido(self, obj):
+    def pregunta_display(self, obj):
         return str(obj.pregunta) if obj.pregunta else ''
-    pregunta_como_contenido.short_description = 'Contenido de la respuesta'
+    pregunta_display.short_description = 'Pregunta'
 
-    def es_correcta_como_pregunta(self, obj):
-        return obj.es_correcta
-    es_correcta_como_pregunta.short_description = 'Pregunta asociada'
-    es_correcta_como_pregunta.boolean = True
-
-    def contenido_como_bool(self, obj):
-        return obj.contenido
-    contenido_como_bool.short_description = '¿Es la respuesta correcta?'
+    def es_correcta(self, obj):
+        return getattr(obj, 'es_correcta', False)
+    es_correcta.short_description = 'Es correcta'
+    es_correcta.boolean = True
 
 
 # ----- Ficha clínica -----
@@ -93,7 +91,9 @@ class EstudianteChoiceField(forms.ModelChoiceField):
 
         return getattr(obj, 'username', f'Usuario {getattr(obj, "id", "?")}')
 
+
 class HistorialAdminForm(forms.ModelForm):
+    # Nota: se asume que Usuario existe en apps.get_model; si no, revisar app_label/model_name
     estudiante = EstudianteChoiceField(
         queryset=Usuario.objects.filter(rol='EST'),
         label='Estudiante asociado'
@@ -107,7 +107,8 @@ class HistorialAdminForm(forms.ModelForm):
 @admin.register(Historial)
 class HistorialAdmin(admin.ModelAdmin):
     form = HistorialAdminForm
-    list_display = ("id", "tema", "estudiante_id", "ficha", "fecha_registro")
+    # Mostrar el objeto estudiante (usa __str__ del modelo Usuario)
+    list_display = ("id", "tema", "estudiante", "ficha", "fecha_registro")
     list_filter = ("tema",)
     search_fields = (
         "estudiante__id", "estudiante__username", "estudiante__first_name", "estudiante__last_name",
@@ -119,6 +120,7 @@ class HistorialAdmin(admin.ModelAdmin):
     # raw_id_fields = ("estudiante",)
 
     #fpknojdnsodnvsn
+
 
 class UsuarioModelChoiceField(forms.ModelChoiceField):
     def label_from_instance(self, obj):

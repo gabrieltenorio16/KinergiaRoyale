@@ -79,9 +79,8 @@ class Modulo(models.Model):
 # -----------------------------
 class ContenidoAdicional(models.Model):
     nombre = models.CharField('Nombre', max_length=100)
-    tipo_archivo = models.CharField('Tipo de archivo', max_length=100)
     url = models.URLField('URL', max_length=500)
-    directorio = models.CharField('Directorio', max_length=500)
+    directorio = models.FileField('Archivo', upload_to='contenidos_adicionales/', null=True, blank=True)
 
     modulo = models.ForeignKey(
         Modulo,

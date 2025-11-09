@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
-
-class ModulosConfig(AppConfig):
+class UsuarioConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'applications.usuario'
+    name = 'applications.usuario'  
+    verbose_name = 'Gestión de Usuarios'

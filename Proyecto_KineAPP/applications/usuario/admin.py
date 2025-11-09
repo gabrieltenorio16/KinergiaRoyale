@@ -25,3 +25,6 @@ class UsuarioAdmin(DjangoUserAdmin):
     list_display = ('username', 'first_name', 'last_name', 'email', 'rut', 'rol', 'is_staff')
     search_fields = ('username', 'first_name', 'last_name', 'email', 'rut')
     ordering = ('username',)
+
+    class Media:
+        js = ("js/mask_rut.js",)
