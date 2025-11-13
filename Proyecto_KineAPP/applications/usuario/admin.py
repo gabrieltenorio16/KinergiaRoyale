@@ -3,6 +3,8 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from django.utils.translation import gettext_lazy as _
 
+from .models import Docente, Estudiante  # <-- NUEVO
+
 Usuario = get_user_model()
 
 
@@ -28,3 +30,31 @@ class UsuarioAdmin(DjangoUserAdmin):
 
     class Media:
         js = ("js/mask_rut.js",)
+
+
+# ---------- DOCENTE ----------
+@admin.register(Docente)
+class DocenteAdmin(admin.ModelAdmin):
+    list_display = ('id', 'usuario', 'titulo', 'especialidad')
+    search_fields = (
+        'usuario__username',
+        'usuario__first_name',
+        'usuario__last_name',
+        'usuario__rut',
+    )
+    autocomplete_fields = ('usuario',)
+
+
+# ---------- ESTUDIANTE ----------
+@admin.register(Estudiante)
+class EstudianteAdmin(admin.ModelAdmin):
+    list_display = ('id', 'usuario', 'carrera', 'semestre')
+    search_fields = (
+        'usuario__username',
+        'usuario__first_name',
+        'usuario__last_name',
+        'usuario__rut',
+        'carrera',
+    )
+    list_filter = ('carrera', 'semestre')
+    autocomplete_fields = ('usuario',)

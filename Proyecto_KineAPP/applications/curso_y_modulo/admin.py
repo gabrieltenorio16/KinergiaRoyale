@@ -1,19 +1,13 @@
 from django.contrib import admin
 from django.contrib.auth import get_user_model
-from .models import Curso, Modulo, ContenidoAdicional
+from .models import Curso
 
 Usuario = get_user_model()
 
-# ---- Inlines ----
-class ContenidoAdicionalInline(admin.TabularInline):
-    model = ContenidoAdicional
-    extra = 1
-    fields = ('nombre', 'directorio')
 
-# ---- CURSO ----
 @admin.register(Curso)
 class CursoAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'curso_id', 'modulos_existentes', 'cant_estudiantes')
+    list_display = ('nombre', 'curso_id', 'cant_docentes', 'cant_estudiantes')
     list_filter = ('nivel',)
     search_fields = (
         'nombre',
@@ -22,8 +16,7 @@ class CursoAdmin(admin.ModelAdmin):
     )
     ordering = ('nombre',)
     readonly_fields = ('id',)
-    # Mostrar selector horizontal para docentes y estudiantes (y también módulos si lo deseas)
-    filter_horizontal = ('docentes', 'estudiantes', 'modulos')
+    filter_horizontal = ('docentes', 'estudiantes')
 
     def formfield_for_manytomany(self, db_field, request, **kwargs):
         if db_field.name == 'docentes':
@@ -36,31 +29,3 @@ class CursoAdmin(admin.ModelAdmin):
         return obj.id
     curso_id.short_description = 'ID'
     curso_id.admin_order_field = 'id'
-
-    def modulos_existentes(self, obj):
-        return obj.modulos.count()
-    modulos_existentes.short_description = 'Cantidad de Módulos'
-
-    def cant_estudiantes(self, obj):
-        return obj.estudiantes.count()
-    cant_estudiantes.short_description = 'Cantidad de Estudiantes'
-
-# ---- MÓDULO ----
-@admin.register(Modulo)
-class ModuloAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'id')
-    search_fields = ('nombre',)
-    ordering = ('nombre',)
-    inlines = [ContenidoAdicionalInline]
-    readonly_fields = ('id',)
-
-
-# ---- CONTENIDO ADICIONAL ----
-@admin.register(ContenidoAdicional)
-class ContenidoAdicionalAdmin(admin.ModelAdmin):
-    # eliminar referencias a campos eliminados (tipo_archivo, url)
-    list_display = ("id", "nombre", "directorio", "modulo")
-    list_filter = ("modulo",)   # usar un campo real; antes era 'tipo_archivo'
-    search_fields = ("nombre",)
-    ordering = ("modulo", "nombre")
-

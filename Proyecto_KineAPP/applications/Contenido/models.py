@@ -14,7 +14,24 @@ class Tema(models.Model):
     descripcion = models.TextField(blank=True, verbose_name='Descripción')
     estado_completado = models.BooleanField(default=False, verbose_name='Estado completado')
 
+    # AHORA: ligar el tema directamente a un CURSO (ya no usamos Modulo)
+    curso = models.ForeignKey(
+        'curso_y_modulo.Curso',
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name='temas',
+        verbose_name='Curso asociado'
+    )
+
+    class Meta:
+        verbose_name = 'Tema'
+        verbose_name_plural = 'Temas'
+        ordering = ['titulo']
+
     def __str__(self):
+        if self.curso:
+            return f"{self.titulo} ({self.curso})"
         return self.titulo
 
 
@@ -31,7 +48,6 @@ class Video(models.Model):
 
     class Meta:
         ordering = ['tema', 'id']
-        # Nota: se eliminó la UniqueConstraint sobre ('tema', 'orden') porque 'orden' ya no existe.
 
     def __str__(self):
         return f"{self.titulo}"
@@ -47,13 +63,21 @@ class Pregunta(models.Model):
         verbose_name='Video asociado'
     )
 
+    # OPCIONAL: orden de la pregunta dentro del video
+    orden = models.PositiveIntegerField(
+        'Orden',
+        default=1,
+        help_text='Orden de la pregunta dentro del video'
+    )
+
     class Meta:
-        ordering = ['video']
+        ordering = ['video', 'orden']
         verbose_name = 'Pregunta'
         verbose_name_plural = 'Preguntas'
+        unique_together = ('video', 'orden')
 
     def __str__(self):
-        return f"{self.video} - {self.contenido[:50]}"
+        return f"{self.video.titulo} - P{self.orden}: {self.contenido[:40]}"
 
 
 class Buscador_de_respuesta(models.Model):
@@ -72,19 +96,36 @@ class Buscador_de_respuesta(models.Model):
     )
 
     class Meta:
-        verbose_name = 'Buscador de respuesta'
-        verbose_name_plural = 'Buscadores de respuesta'
+        verbose_name = 'Respuesta'
+        verbose_name_plural = 'Respuestas'
+        ordering = ['pregunta', 'id']
 
     def __str__(self):
         preview = (self.contenido[:40] + '...') if len(self.contenido) > 40 else self.contenido
         estado = "✅" if self.es_correcta else "—"
-        return f"{estado} {preview} (Video {self.pregunta.video.titulo} / Pregunta {self.pregunta.numero_de_pregunta})"
+        return f"{estado} {preview} (Video {self.pregunta.video.titulo})"
 
 
 class FichaClinica(models.Model):
     descripcion = models.TextField(blank=True, null=True, verbose_name='Descripción de la ficha clínica')
 
+    # OPCIONAL: enganchar con un caso clínico del otro modelo
+    caso_clinico = models.ForeignKey(
+        'diagnostico_paciente.CasoClinico',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='fichas_contenido',
+        verbose_name='Caso clínico asociado'
+    )
+
+    class Meta:
+        verbose_name = 'Ficha clínica'
+        verbose_name_plural = 'Fichas clínicas'
+
     def __str__(self):
+        if self.caso_clinico:
+            return f"Ficha {self.id} - {self.caso_clinico.titulo}"
         return f"Ficha {self.id}"
 
 
@@ -99,7 +140,8 @@ class Historial(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='historiales',
-        verbose_name='Estudiante asociado'
+        verbose_name='Estudiante asociado',
+        limit_choices_to={'rol': 'EST'},  # solo estudiantes
     )
     ficha = models.ForeignKey(
         'FichaClinica',
@@ -115,10 +157,11 @@ class Historial(models.Model):
         verbose_name_plural = 'Historiales'
         ordering = ['-fecha_registro']
         constraints = [
-            models.UniqueConstraint(fields=['tema', 'estudiante', 'ficha'], name='unique_tema_estudiante_ficha')
+            models.UniqueConstraint(
+                fields=['tema', 'estudiante', 'ficha'],
+                name='unique_tema_estudiante_ficha'
+            )
         ]
 
     def __str__(self):
-        return f"Historial: {self.estudiante_id} / {self.tema} / Ficha {self.ficha_id}"
-
-
+        return f"Historial: {self.estudiante} / {self.tema} / Ficha {self.ficha_id}"
