@@ -1,7 +1,6 @@
 from django.db import models
 from django.conf import settings
 
-
 class Contenido(models.Model):
     titulo = models.CharField(max_length=200)
 
@@ -35,6 +34,8 @@ class Tema(models.Model):
         return self.titulo
 
 
+from urllib.parse import urlparse, parse_qs
+
 class Video(models.Model):
     titulo = models.CharField(max_length=150, null=False, verbose_name='Título')
     url = models.URLField(max_length=300, null=False, verbose_name='URL del video')
@@ -49,9 +50,40 @@ class Video(models.Model):
     class Meta:
         ordering = ['tema', 'id']
 
-    def __str__(self):
-        return f"{self.titulo}"
+    def _str_(self):
+        return self.titulo
 
+    @property
+    def embed_url(self):
+
+        url = self.url
+        parsed = urlparse(url)
+
+        # Caso 1: URL corta youtu.be
+        if "youtu.be" in parsed.netloc:
+            video_id = parsed.path.lstrip("/")   # quita la primera '/'
+            params = parsed.query               
+            if params:
+                return f"https://www.youtube.com/embed/{video_id}?{params}"
+            return f"https://www.youtube.com/embed/{video_id}"
+
+        # Caso 2: URL normal watch?v=ID
+        if "watch" in parsed.path:
+            qs = parse_qs(parsed.query)
+            video_id = qs.get("v", [""])[0]
+            params = "&".join(
+                f"{k}={v[0]}" for k, v in qs.items() if k != "v"
+            )
+            if params:
+                return f"https://www.youtube.com/embed/{video_id}?{params}"
+            return f"https://www.youtube.com/embed/{video_id}"
+
+        # Caso 3: ya viene como /embed/
+        if "embed" in parsed.path:
+            return url
+
+        # Fallback
+        return url
 
 class Pregunta(models.Model):
     contenido = models.TextField(null=False, verbose_name='Contenido de la pregunta')

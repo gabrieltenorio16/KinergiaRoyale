@@ -8,22 +8,18 @@ from .models import Tema, Video, Pregunta, Buscador_de_respuesta, FichaClinica, 
 
 
 # ----- Tema -----
-#@admin.register(Tema)
-#class TemaAdmin(admin.ModelAdmin):
- #   list_display = ('id', 'titulo', 'modulo', 'estado_completado')
-  #  list_editable = ('estado_completado',)
-   # list_filter = ('estado_completado', 'modulo')
-   # search_fields = ('titulo', 'descripcion', 'modulo__nombre')
-   # ordering = ('titulo',)
+@admin.register(Tema)
+class TemaAdmin(admin.ModelAdmin):
+    list_display = ("id", "titulo")
 
 
-# ----- Video -----
-#@admin.register(Video)
-#class VideoAdmin(admin.ModelAdmin):
-#    list_display = ('titulo', 'tema', 'url', 'id')
- #   list_filter = ('tema',)
-  #  ordering = ('tema', 'id')
-   # search_fields = ('titulo', 'tema__titulo')
+#----- Video -----
+@admin.register(Video)
+class VideoAdmin(admin.ModelAdmin):
+    list_display = ('titulo', 'tema', 'url', 'id')
+    list_filter = ('tema',)
+    ordering = ('tema', 'id')
+    search_fields = ('titulo', 'tema__titulo')
 
 
 # ----- Pregunta + Respuestas inline -----
@@ -67,17 +63,17 @@ from .models import Tema, Video, Pregunta, Buscador_de_respuesta, FichaClinica, 
 
 
 # ----- Ficha clínica -----
-#@admin.register(FichaClinica)
-#class FichaClinicaAdmin(admin.ModelAdmin):
- #   list_display = ("id", "caso_clinico", "descripcion_corta")
-  #  search_fields = ("descripcion", "caso_clinico__titulo")
-   # ordering = ("id",)
+@admin.register(FichaClinica)
+class FichaClinicaAdmin(admin.ModelAdmin):
+    list_display = ("id", "caso_clinico", "descripcion_corta")
+    search_fields = ("descripcion", "caso_clinico__titulo")
+    ordering = ("id",)
 
-    #def descripcion_corta(self, obj):
- #       if not obj.descripcion:
-  #          return ""
-   #     return (obj.descripcion[:60] + '...') if len(obj.descripcion) > 60 else obj.descripcion
-    #descripcion_corta.short_description = "Descripción"
+    def descripcion_corta(self, obj):
+        if not obj.descripcion:
+            return ""
+        return (obj.descripcion[:60] + '...') if len(obj.descripcion) > 60 else obj.descripcion
+    descripcion_corta.short_description = "Descripción"
 
 
 # ----- Historial -----

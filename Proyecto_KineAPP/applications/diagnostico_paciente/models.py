@@ -191,3 +191,39 @@ class HistorialCurso(models.Model):
 
     def __str__(self):
         return f"{self.estudiante} en {self.curso}"
+
+# Asegúrate de que el modelo 'PartesCuerpo' sea accesible
+# from .models import Paciente, PartesCuerpo 
+#MODELODIAGNOSTICONUEVO
+class Diagnostico(models.Model):
+    descripcion = models.TextField(
+        'Descripción del Diagnóstico',
+        blank=True,
+        null=True,
+        help_text='Diagnóstico preliminar y sugerencias de tratamiento.'
+    ) 
+    
+    # --- CAMPO FALTANTE: PARTE DEL CUERPO (Relación 1:N) ---
+    parte_cuerpo = models.ForeignKey(
+        'ParteCuerpo', # Referencia a la clase ParteCuerpo
+        on_delete=models.SET_NULL, # Si se borra la ParteCuerpo, se pone NULL
+        related_name='diagnosticos_en_parte',
+        verbose_name='Parte del Cuerpo Afectada',
+        blank=True,
+        null=True
+    )
+    
+    paciente = models.ForeignKey(
+        'Paciente',
+        on_delete=models.CASCADE,
+        related_name='diagnosticos',
+        verbose_name='Paciente'
+    )
+    
+    class Meta:
+        verbose_name = 'Diagnóstico'
+        verbose_name_plural = 'Diagnósticos'
+        ordering = ('paciente',)
+
+    def __str__(self):
+        return f"Diagnóstico #{self.id} de {self.paciente.apellidos}, {self.paciente.nombres}"
