@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from urllib.parse import urlparse, parse_qs
 
 class Contenido(models.Model):
     titulo = models.CharField(max_length=200)
@@ -12,6 +13,8 @@ class Tema(models.Model):
     titulo = models.CharField(max_length=150, null=False, verbose_name='Título')
     descripcion = models.TextField(blank=True, verbose_name='Descripción')
     estado_completado = models.BooleanField(default=False, verbose_name='Estado completado')
+    fecha_inicio = models.DateTimeField(null=True, blank=True, verbose_name='Fecha de inicio')
+    fecha_fin = models.DateTimeField(null=True, blank=True, verbose_name='Fecha de finalización')
 
     # AHORA: ligar el tema directamente a un CURSO (ya no usamos Modulo)
     curso = models.ForeignKey(
@@ -34,40 +37,29 @@ class Tema(models.Model):
         return self.titulo
 
 
-from urllib.parse import urlparse, parse_qs
-
 class Video(models.Model):
-    titulo = models.CharField(max_length=150, null=False, verbose_name='Título')
-    url = models.URLField(max_length=300, null=False, verbose_name='URL del video')
+    titulo = models.CharField(max_length=150, null=False)
+    url = models.URLField(max_length=300, null=False)
 
-    tema = models.ForeignKey(
-        'Tema',
-        on_delete=models.CASCADE,
-        related_name='videos',
-        verbose_name='Tema asociado'
-    )
+    tema = models.ForeignKey('Tema', on_delete=models.CASCADE)
 
-    class Meta:
-        ordering = ['tema', 'id']
-
-    def _str_(self):
+    def __str__(self):
         return self.titulo
 
     @property
     def embed_url(self):
-
         url = self.url
         parsed = urlparse(url)
 
         # Caso 1: URL corta youtu.be
         if "youtu.be" in parsed.netloc:
-            video_id = parsed.path.lstrip("/")   # quita la primera '/'
-            params = parsed.query               
+            video_id = parsed.path.lstrip("/")
+            params = parsed.query
             if params:
                 return f"https://www.youtube.com/embed/{video_id}?{params}"
             return f"https://www.youtube.com/embed/{video_id}"
 
-        # Caso 2: URL normal watch?v=ID
+        # Caso 2: watch?v=ID
         if "watch" in parsed.path:
             qs = parse_qs(parsed.query)
             video_id = qs.get("v", [""])[0]
@@ -78,11 +70,10 @@ class Video(models.Model):
                 return f"https://www.youtube.com/embed/{video_id}?{params}"
             return f"https://www.youtube.com/embed/{video_id}"
 
-        # Caso 3: ya viene como /embed/
+        # Caso 3: /embed/
         if "embed" in parsed.path:
             return url
 
-        # Fallback
         return url
 
 class Pregunta(models.Model):

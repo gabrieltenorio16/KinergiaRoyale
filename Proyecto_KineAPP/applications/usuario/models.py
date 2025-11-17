@@ -13,7 +13,7 @@ class Usuario(AbstractUser):
         ('ADM', 'Administrador'),
     ]
 
-    rut = models.CharField('RUT', max_length=20, unique=True)
+    rut = models.CharField('RUT', max_length=12, unique=True)
     rol = models.CharField('Rol', max_length=10, choices=ROLES, default='EST')
 
     class Meta:
@@ -27,8 +27,25 @@ class Usuario(AbstractUser):
                 raise ValidationError({"rut": "El RUT ingresado no es válido."})
             self.rut = formatear_rut(self.rut)
 
-    def __str__(self):
-        return f"{self.rut} - {self.first_name} {self.last_name} ({self.get_rol_display()})"
+def __str__(self):
+    # Prioridad: nombre completo
+    if self.first_name or self.last_name:
+        nombre = f"{self.first_name} {self.last_name}".strip()
+    else:
+        # Si no hay nombre, usar email o rut
+        nombre = self.username or self.email or "Usuario"
+
+    # Mostrar rol en formato legible
+    if self.rol == "ADM":
+        return f"{nombre} (Administrador)"
+    if self.rol == "DOC":
+        return f"{nombre} (Docente)"
+    if self.rol == "EST":
+        return f"{nombre} (Estudiante)"
+
+    # Rol desconocido (seguridad)
+    return nombre
+
 
 
 # ---------- PERFIL DOCENTE ----------

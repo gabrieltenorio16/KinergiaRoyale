@@ -1,0 +1,79 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ video.titulo }} – Simulación</title>
+
+    <!-- CSS externo -->
+    <link rel="stylesheet" href="{% static 'css/video_simulacion.css' %}">
+</head>
+
+<body>
+
+    <!-- CONTENEDOR PRINCIPAL -->
+    <div class="layout">
+
+        <!-- CABECERA DEL CASO -->
+        <div class="header-case">
+            <h1>{{ video.titulo }}</h1>
+            <p class="detalle-corte">Corte 1/5</p>
+        </div>
+
+        <!-- VIDEO -->
+        <div class="video-box">
+            <iframe
+                src="{{ video.embed_url }}"
+                width="100%"
+                height="100%"
+                frameborder="0"
+                allowfullscreen
+                title="{{ video.titulo }}">
+            </iframe>
+        </div>
+
+        <!-- BOTONES DE SECCIONES -->
+        <div class="button-bar">
+            <div class="btn active" data-section="resumen">Resumen</div>
+            <div class="btn" data-section="preguntas">Preguntas</div>
+            <div class="btn" data-section="topicos">Tópicos</div>
+            <div class="btn" data-section="diagnostico">Diagnóstico</div>
+            <div class="btn" data-section="ficha">Ficha Médica</div>
+        </div>
+
+        <!-- CONTENIDO DINÁMICO -->
+        <div id="contentWindow" class="content-window"></div>
+
+    </div>
+
+    <!-- MODAL FICHA PACIENTE -->
+    <div id="fichaModal" class="modal-backdrop">
+
+        <div class="modal-content">
+
+            <h2>Registrar Paciente</h2>
+
+            <form method="post" action="{% url 'crear_ficha_paciente' video.pk %}">
+                {% csrf_token %}
+
+                <div class="form-container">
+                    {{ form.as_p }}
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" id="closeFichaModal" class="btn-cancelar">Cancelar</button>
+                    <button type="submit" class="btn-guardar">Guardar</button>
+                </div>
+            </form>
+
+        </div>
+
+    </div>
+
+    <!-- JS -->
+    <script src="{% static 'js/video_simulacion.js' %}"></script>
+
+</body>
+</html>

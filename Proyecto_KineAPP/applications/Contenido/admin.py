@@ -22,6 +22,7 @@ class VideoAdmin(admin.ModelAdmin):
     search_fields = ('titulo', 'tema__titulo')
 
 
+
 # ----- Pregunta + Respuestas inline -----
 #class RespuestaInline(admin.TabularInline):
 #    model = Buscador_de_respuesta

@@ -1,0 +1,36 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}Panel de Administración | Kinergia UCN{% endblock %}
+
+{% block extrastyle %}
+    <link rel="stylesheet" href="{% static 'css/admin_custom.css' %}">
+{% endblock %}
+
+{% block branding %}
+<div id="site-name" class="flex items-center space-x-2" style="display:flex; align-items:center;">
+    <img src="{% static 'img/logo_ucn.png' %}" alt="Logo UCN" style="height:40px; margin-right:10px;">
+    <span style="font-size: 1.4em; font-weight:600; color:#004b87;">Kinergia UCN</span>
+</div>
+{% endblock %}
+
+{% block content %}
+<!-- 🔹 Mensaje de bienvenida visible en el dashboard -->
+<div class="alert alert-info" style="margin-bottom:20px; background-color:#e8f1fa; border-left:5px solid #004b87;">
+    <strong>Bienvenido(a) al sistema académico KinergiaRoyale</strong><br>
+    <span>Universidad Católica del Norte – Facultad de Medicina, Escuela de Kinesiología</span>
+</div>
+
+<!-- 🔹 Contenido original del panel (mantiene las apps y módulos de Django) -->
+{{ block.super }}
+
+{% endblock %}
+
+{% block footer %}
+<footer class="footer-ucn">
+    <hr>
+    <p>© Universidad Católica del Norte – Proyecto KinergiaRoyale</p>
+    <p>Desarrollado por el equipo IICG – UCN Coquimbo</p>
+</footer>
+{% endblock %}
+

@@ -1,0 +1,48 @@
+{% load static jazzmin %}
+
+<aside class="main-sidebar sidebar-dark-info elevation-4">
+    
+    <!-- Brand Logo -->
+    <a href="{% url 'admin:index' %}" class="brand-link navbar-success active">
+        <img src="{% static site_logo %}" alt="Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+        <span class="brand-text font-weight-light">{{ site_brand }}</span>
+    </a>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+
+        <!-- USER PANEL (MODIFICADO) -->
+        <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+            <div class="image">
+                <i class="fas fa-inverse user-profile fa-user-circle"></i>
+            </div>
+
+            <div class="info">
+                <a class="d-block" style="color:white; font-weight:600;" 
+                    href="/admin/usuario/usuario/{{ request.user.id }}/change/">
+
+                    {% if request.user.rol == "ADM" %}
+                        Administrador
+
+                    {% elif request.user.rol == "DOC" %}
+                        {{ request.user.first_name }} {{ request.user.last_name }}
+
+                    {% elif request.user.rol == "EST" %}
+                        {{ request.user.first_name }} {{ request.user.last_name }}
+
+                    {% else %}
+                        {{ request.user.username }}
+                    {% endif %}
+
+                </a>
+            </div>
+        </div>
+
+        <!-- NAVIGATION MENU ORIGINAL DE JAZZMIN -->
+        <nav class="mt-2">
+            {% jazzmin_sidebar_nav request %}
+        </nav>
+
+    </div>
+
+</aside>
