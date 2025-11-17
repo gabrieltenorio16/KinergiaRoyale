@@ -8,6 +8,7 @@ from .models import (
     TipoRespuesta,
     Respuesta,
     HistorialCurso,
+    Diagnostico #NUEVODANI
 )
 
 
@@ -99,3 +100,5 @@ class HistorialCursoAdmin(admin.ModelAdmin):
     )
     list_filter = ('curso',)
     ordering = ('-fecha_inicio',)
+
+#############################################NUEVONUEVONUEVO(DANI)
