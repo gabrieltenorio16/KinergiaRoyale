@@ -13,6 +13,6 @@ urlpatterns = [
     # Cursos y videos (tu app nueva)
     path("videos/", include("applications.curso_y_modulo.urls")),
 
-    # Diagnóstico (app antigua o de tu compañera)
+    # Diagnóstico
     path("simulacion/", include("applications.diagnostico_paciente.urls")),
 ]
