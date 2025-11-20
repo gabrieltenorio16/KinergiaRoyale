@@ -1,5 +1,4 @@
 {% load static %}
-{% load tz %}
 
 <!DOCTYPE html>
 <html lang="es">
@@ -8,10 +7,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Acceso Estudiantes – KinergiaRoyale</title>
 
-  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-  <!-- CSS Login -->
   <link rel="stylesheet" href="{% static 'css/login.css' %}">
 </head>
 
@@ -21,18 +18,17 @@
 
   <div class="login-container">
 
-    <!-- Título -->
     <h1 class="login-title">Inicio de Sesión</h1>
     <p class="login-sub">Ingresa tus credenciales para continuar</p>
 
-    <!-- Mensajes de Django -->
     {% if messages %}
       {% for m in messages %}
-        <div class="alert-message">{{ m }}</div>
+        <div class="alert-message" style="background-color: #ffebee; color: #c62828; padding: 10px; border-radius: 5px; margin-bottom: 15px; font-size: 0.9rem; text-align: center;">
+            {{ m }}
+        </div>
       {% endfor %}
     {% endif %}
 
-    <!-- Formulario Django -->
     <form method="POST">
       {% csrf_token %}
 
@@ -46,19 +42,16 @@
         <input type="password" name="password" class="form-input" required />
       </div>
 
-      <a href="{% url 'forgot_password' %}" class="forgot-link">¿Olvidaste tu contraseña?</a>
+      <a href="{% url 'usuario:forgot_password' %}" class="forgot-link">¿Olvidaste tu contraseña?</a>
 
       <button type="submit" class="login-btn">Ingresar</button>
 
-
       <div class="register-text">
-       ¿No tienes cuenta? <a href="{% url 'register' %}">Regístrate</a>
-
+         ¿No tienes cuenta? <a href="{% url 'usuario:register_view' %}">Regístrate</a>
       </div>
     </form>
 
   </div>
-
 
 </section>
 
