@@ -48,20 +48,6 @@ class Docente(models.Model):
         return str(self.usuario)
 
 
-# ======================================================
-# 1. AQUÍ ESTÁ LA CLAVE: EL MODELO MODULO QUE FALTABA
-# ======================================================
-class Modulo(models.Model):
-    nombre = models.CharField('Nombre del Módulo', max_length=100)
-    descripcion = models.TextField('Descripción', blank=True, null=True)
-
-    class Meta:
-        verbose_name = 'Módulo'
-        verbose_name_plural = 'Módulos'
-
-    def __str__(self):
-        return self.nombre
-
 
 # ---------- PERFIL ESTUDIANTE ----------
 class Estudiante(models.Model):
@@ -73,14 +59,6 @@ class Estudiante(models.Model):
     )
     carrera = models.CharField('Carrera', max_length=150, blank=True)
     semestre = models.PositiveIntegerField('Semestre', blank=True, null=True)
-
-    # CONEXIÓN CON MÓDULOS
-    modulos = models.ManyToManyField(
-        Modulo, 
-        blank=True, 
-        related_name='estudiantes',
-        verbose_name='Módulos Inscritos'
-    )
 
     class Meta:
         verbose_name = 'Estudiante'

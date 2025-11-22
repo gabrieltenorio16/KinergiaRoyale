@@ -64,17 +64,17 @@ class VideoAdmin(admin.ModelAdmin):
 
 
 # ----- Ficha clínica -----
-@admin.register(FichaClinica)
-class FichaClinicaAdmin(admin.ModelAdmin):
-    list_display = ("id", "caso_clinico", "descripcion_corta")
-    search_fields = ("descripcion", "caso_clinico__titulo")
-    ordering = ("id",)
+#@admin.register(FichaClinica)
+#class FichaClinicaAdmin(admin.ModelAdmin):
+#    list_display = ("id", "caso_clinico", "descripcion_corta")
+#    search_fields = ("descripcion", "caso_clinico__titulo")
+#    ordering = ("id",)
 
-    def descripcion_corta(self, obj):
-        if not obj.descripcion:
-            return ""
-        return (obj.descripcion[:60] + '...') if len(obj.descripcion) > 60 else obj.descripcion
-    descripcion_corta.short_description = "Descripción"
+#    def descripcion_corta(self, obj):
+#        if not obj.descripcion:
+#            return ""
+#        return (obj.descripcion[:60] + '...') if len(obj.descripcion) > 60 else obj.descripcion
+#    descripcion_corta.short_description = "Descripción"
 
 
 # ----- Historial -----

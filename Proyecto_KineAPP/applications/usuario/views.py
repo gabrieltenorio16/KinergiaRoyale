@@ -4,35 +4,56 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 
+from applications.diagnostico_paciente.models import Etapa
+from applications.Contenido.models import Historial
+
+
 # Importamos los modelos
-from .models import Estudiante, Modulo
+from .models import Estudiante
 
 User = get_user_model()
 
 # ==========================================
-# 1. VISTA DEL PANEL (DASHBOARD)
+# 1. VISTA DE ESTUDIANTE (DASHBOARD)
 # ==========================================
-@login_required
 def panel_estudiante(request):
     user = request.user
-    
-    # Busca o crea el perfil del estudiante
-    estudiante, created = Estudiante.objects.get_or_create(usuario=user)
 
-    # Obtiene sus módulos
-    modulos_activos = estudiante.modulos.all()
+    # 1) Obtener los cursos en los que el usuario está inscrito como estudiante
+    cursos_activos = user.cursos_como_estudiante.all()
 
-    # Lógica visual simple
-    for modulo in modulos_activos:
-        modulo.total_casos_visibles = 5 
-        modulo.progreso_calculado = 85
+    # 2) Enriquecer cada curso con indicadores calculados
+    for curso in cursos_activos:
+        # --- Indicador 1: Casos clínicos asignados al curso ---
+        # Usa la relación Curso -> CasoClinico (related_name='casos_clinicos')
+        total_casos = curso.casos_clinicos.count()
+        curso.total_casos_visibles = total_casos
+
+        # --- Indicador 2: Progreso del curso ---
+        # Total de etapas clínicas que tiene el curso (todas las etapas de todos los casos del curso)
+        total_etapas = Etapa.objects.filter(caso__curso=curso).count()
+
+        # Etapas (o registros clínicos) completadas por el estudiante
+        # Usamos Historial como proxy de "avance", ligado a Tema y Curso
+        etapas_completadas = Historial.objects.filter(
+            tema__curso=curso,
+            estudiante=user,
+        ).count()
+
+        if total_etapas > 0:
+            progreso = int((etapas_completadas / total_etapas) * 100)
+        else:
+            progreso = 0
+
+        curso.progreso_calculado = progreso
 
     context = {
-        'perfil': estudiante,
-        'modulos_activos': modulos_activos
+        "perfil": user,
+        "cursos_activos": cursos_activos,
     }
-    
+
     return render(request, "inicio/home.html", context)
+
 
 
 # ==========================================
@@ -43,20 +64,32 @@ def login_estudiantes(request):
         username = request.POST.get("username")
         password = request.POST.get("password")
 
-        # ESTA ERA LA LÍNEA DEL ERROR (Ahora está alineada)
         user = authenticate(request, username=username, password=password)
 
-        if user is not None:
-            # Permitimos entrar si es Estudiante (EST) o Staff (Admin)
-            if user.rol == "EST" or user.is_staff:
-                login(request, user)
-                return redirect("usuario:panel_estudiante")
-            else:
-                messages.error(request, "Este usuario no tiene rol de estudiante.")
-        else:
-            messages.error(request, "Credenciales inválidas.")
+        # --- Caso 1: Usuario no existe ---
+        from django.contrib.auth import get_user_model
+        User = get_user_model()
+
+        if not User.objects.filter(username=username).exists():
+            messages.error(request, "No existe el usuario, por favor regístrese.")
+            return redirect("usuario:login_estudiantes")
+
+        # --- Caso 2: Usuario existe pero contraseña incorrecta ---
+        if user is None:
+            messages.error(request, "La contraseña es incorrecta.")
+            return redirect("usuario:login_estudiantes")
+
+        # --- Caso 3: Usuario existe, pero no tiene el rol adecuado ---
+        if not (user.rol == "EST" or user.is_staff):
+            messages.error(request, "Este usuario no tiene acceso como estudiante.")
+            return redirect("usuario:login_estudiantes")
+
+        # --- Caso 4: Usuario válido ---
+        login(request, user)
+        return redirect("usuario:panel_estudiante")
 
     return render(request, "login/login.html")
+
 
 
 # ==========================================

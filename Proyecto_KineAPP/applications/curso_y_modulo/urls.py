@@ -3,6 +3,8 @@
 from django.urls import path
 from . import views
 
+app_name = "curso_y_modulo"
+
 urlpatterns = [
     # Simulación de video
     path("simulacion/<int:pk>/", views.VideoDetailView.as_view(), name="simulacion"),

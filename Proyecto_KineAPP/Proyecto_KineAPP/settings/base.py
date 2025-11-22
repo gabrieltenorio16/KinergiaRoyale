@@ -140,7 +140,7 @@ JAZZMIN_UI_TWEAKS = {
     "no_navbar_border": False,
     "navbar_fixed": False,
     "layout_boxed": False,
-    "footer_fixed": False,
+    "footer_fixed": True,
     "sidebar_fixed": False,
     "sidebar": "sidebar-dark-info",
     "sidebar_nav_small_text": False,

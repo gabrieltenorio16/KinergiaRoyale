@@ -15,7 +15,6 @@ class Curso(models.Model):
     nombre = models.CharField('Nombre del curso', max_length=100)
     nivel = models.CharField('Nivel', max_length=10, choices=NIVEL_CHOICES, default='BASICO')
 
-    # NUEVO: Fechas solicitadas en los requerimientos
     fecha_inicio = models.DateField(
         'Fecha de inicio del curso',
         null=True,

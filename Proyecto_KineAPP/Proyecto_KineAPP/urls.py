@@ -2,6 +2,9 @@ from django.contrib import admin
 from django.urls import path, include
 from applications.usuario.views import redirect_to_login
 
+print(">>> REGISTRANDO INCLUDE usuario <<<")
+
+
 urlpatterns = [
     path("", redirect_to_login, name="root_redirect"),
 
@@ -15,4 +18,7 @@ urlpatterns = [
 
     # Diagnóstico
     path("simulacion/", include("applications.diagnostico_paciente.urls")),
+
+    path("contenido/", include("applications.Contenido.urls")),
+
 ]
