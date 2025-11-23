@@ -1,17 +1,22 @@
+# ==========================================
+# IMPORTS
+# ==========================================
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 
+# Importaciones de modelos
 from applications.diagnostico_paciente.models import Etapa
-from applications.Contenido.models import Historial
-
+from applications.Contenido.models import Historial, Tema, Video, Pregunta, FichaClinica
+from applications.curso_y_modulo.models import Curso
 
 # Importamos los modelos
-from .models import Estudiante
+from .models import Estudiante, Usuario  # Tu comentario original intacto
 
 User = get_user_model()
+
 
 # ==========================================
 # 1. VISTA DE ESTUDIANTE (DASHBOARD)
@@ -129,7 +134,28 @@ def register_view(request):
     return render(request, "login/register.html")
 
 
+
+from django.contrib.auth import logout  # 👈 asegúrate de tener este import arriba
+
+
 def redirect_to_login(request):
+    # Vemos si el usuario actual era admin antes de cerrar sesión
+    es_admin = False
+    if request.user.is_authenticated:
+        es_admin = (
+            getattr(request.user, "rol", None) == "ADM"
+            or request.user.is_staff
+            or request.user.is_superuser
+        )
+
+    # Cerramos la sesión
+    logout(request)
+
+    # Si era admin, lo mandamos al login de admin de Django
+    if es_admin:
+        return redirect("/admin/login/")  # puedes cambiarlo a otra URL si tienes un login admin propio
+
+    # Si era estudiante u otro, lo mandamos al login de estudiante
     return redirect("usuario:login_estudiantes")
 
 
@@ -143,10 +169,51 @@ def forgot_password_view(request):
             messages.error(request, "No existe una cuenta con ese correo.")
             return render(request, "login/forgot_password.html")
         
-        return redirect("usuario:forgot_password") # O una pantalla de éxito
+        return redirect("usuario:forgot_password")  # O una pantalla de éxito
 
     return render(request, "login/forgot_password.html")
 
 
 def email_sent_view(request):
     return render(request, "login/email_sent.html")
+
+
+
+# ==========================================
+# DASHBOARD PARA ADMINISTRADOR
+# ==========================================
+@login_required
+def admin_dashboard(request):
+    # Solo deja pasar a usuarios con rol ADM o staff/superuser
+    if not (
+        getattr(request.user, "rol", None) == "ADM"
+        or request.user.is_staff
+        or request.user.is_superuser
+    ):
+        messages.error(request, "No tienes permisos para ver este panel.")
+        return redirect("usuario:panel_estudiante")
+
+    # 1) Número de estudiantes activos
+    estudiantes_activos = Usuario.objects.filter(
+        rol="EST",
+        is_active=True
+    ).count()
+
+    # 2) Cantidad de recursos
+    total_cursos = Curso.objects.count()
+    total_temas = Tema.objects.count()
+    total_videos = Video.objects.count()
+    total_preguntas = Pregunta.objects.count()
+    total_fichas = FichaClinica.objects.count()
+
+    contexto = {
+        "estudiantes_activos": estudiantes_activos,
+        "total_cursos": total_cursos,
+        "total_temas": total_temas,
+        "total_videos": total_videos,
+        "total_preguntas": total_preguntas,
+        "total_fichas": total_fichas,
+    }
+
+    # 👇 ESTA ES LA RUTA CORRECTA DEL TEMPLATE SEGÚN TU ESTRUCTURA
+    return render(request, "admin/admin_dashboard.html", contexto)

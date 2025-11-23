@@ -127,6 +127,8 @@ JAZZMIN_SETTINGS = {
 }
 
 
+
+
 ## Aplicación de temas y estilos adicionales para Jazzmin (Dashboard de Admin), se pueden modificar según preferencia
 
 JAZZMIN_UI_TWEAKS = {

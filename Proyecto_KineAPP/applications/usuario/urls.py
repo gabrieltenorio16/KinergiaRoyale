@@ -16,4 +16,7 @@ urlpatterns = [
 
     # Panel de usuario
     path("panel/", views.panel_estudiante, name="panel_estudiante"),
+
+    # Panel de estadísticas del administrador
+    path("admin/dashboard/", views.admin_dashboard, name="admin_dashboard"),
 ]

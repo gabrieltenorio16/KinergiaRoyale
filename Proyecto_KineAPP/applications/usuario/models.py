@@ -66,3 +66,11 @@ class Estudiante(models.Model):
 
     def __str__(self):
         return str(self.usuario)
+    
+# ---------- MODELO PROXY PARA MOSTRAR EL DASHBOARD EN EL ADMIN ----------
+
+class DashboardGeneralProxy(Usuario):
+    class Meta:
+        proxy = True
+        verbose_name = "Dashboard General"
+        verbose_name_plural = "Dashboard General"
