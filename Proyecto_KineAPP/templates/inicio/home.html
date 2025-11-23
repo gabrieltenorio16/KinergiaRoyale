@@ -31,10 +31,12 @@
       </div>
 
       <div class="header__actions">
+        <!-- Botón de notificaciones -->
         <button id="btnNotificaciones" class="icon-btn">
           <span id="badgeCount" class="badge">1</span>
         </button>
 
+        <!-- Avatar con iniciales -->
         <div class="avatar" title="{{ user.get_full_name }}">
           {% if user.first_name and user.last_name %}
               {{ user.first_name|slice:":1" }}{{ user.last_name|slice:":1" }}
@@ -42,6 +44,9 @@
               {{ user.username|slice:":2"|upper }}
           {% endif %}
         </div>
+
+        <!-- Cerrar sesión -->
+        <a href="{% url 'usuario:logout' %}" class="logout-link">Cerrar sesión</a>
       </div>
 
     </div>
@@ -73,18 +78,16 @@
             Nivel: {{ curso.get_nivel_display }}
           </p>
 
-        <div>
-          <div class="progress">
-            <div class="progress__bar" data-progress="{{ curso.progreso_calculado }}"></div>
-          </div>
+          <div>
+            <div class="progress">
+              <div class="progress__bar" data-progress="{{ curso.progreso_calculado }}"></div>
+            </div>
             <div class="progress__label">Progreso: {{ curso.progreso_calculado }}%</div>
-        </div>
-
+          </div>
 
           <div class="card__footer">
             <a href="#" class="btn">Continuar</a>
             <a href="{% url 'curso_y_modulo:curso_detalle' curso.id %}" class="btn btn--ghost">Detalles</a>
-
           </div>
 
         </div>
@@ -109,13 +112,11 @@
       </div>
 
       <div class="modal__content">
-
         <article class="notice">
           <div class="notice__title">Bienvenido a Kinergia Royale</div>
           <div class="notice__meta">Sistema · Hoy</div>
           <p>Tu perfil ha sido creado exitosamente. Revisa tus cursos asignados.</p>
         </article>
-
       </div>
 
     </aside>

@@ -162,6 +162,7 @@ body {
   font-weight: 700;
 }
 
+/* Avatar del header */
 .avatar {
   width: 44px;
   height: 44px;
@@ -172,6 +173,18 @@ body {
   place-items: center;
   font-weight: 700;
   font-size: 1.1rem;
+}
+
+/* Link Cerrar sesión */
+.logout-link {
+  font-size: 0.9rem;
+  color: var(--ucn-blue-900);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.logout-link:hover {
+  text-decoration: underline;
 }
 
 /* ============================================================
@@ -327,7 +340,8 @@ body {
   z-index: 200;
 }
 
-.modal[aria-hidden="false"] {
+.modal[aria-hidden="false"],
+.modal.modal--open {
   display: flex;
 }
 

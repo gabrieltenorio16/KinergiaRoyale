@@ -1,183 +1,174 @@
-/* =============================
-   PALETA DE COLORES UCN
-==============================*/
+/* ============================================================
+   VARIABLES
+============================================================ */
 :root {
-  --ucn-blue-900:#003366;
-  --ucn-blue-700:#006eb6;
-  --gray-50:#FAFAFA;
-  --gray-200:#E0E0E0;
-  --gray-400:#BDBDBD;
-  --gray-600:#4D4D4D;
-  --white:#FFFFFF;
-  --radius:18px;
-  --shadow:0 8px 24px rgba(0,0,0,.08);
+  --ucn-blue-900: #003366;
+  --ucn-blue-700: #005AA7;
+  --ucn-blue-50: #E6F2FF;
+
+  --white: #FFFFFF;
+
+  --gray-50: #FAFAFA;
+  --gray-100: #F5F5F5;
+  --gray-200: #ECECEC;
+  --gray-300: #E0E0E0;
+  --gray-400: #BDBDBD;
+  --gray-600: #4D4D4D;
+
+  --shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+  --radius: 20px;
 }
 
+/* ============================================================
+   RESET BÁSICO
+============================================================ */
 * {
-  margin:0;
-  padding:0;
   box-sizing: border-box;
 }
 
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+/* ============================================================
+   FONDO GENERAL (AZUL DEGRADADO)
+============================================================ */
 body {
-  font-family:"Inter","Roboto",sans-serif;
-  background: linear-gradient(90deg,rgba(0, 51, 102, 1) 0%, rgba(0, 110, 182, 1) 50%, rgba(139, 204, 247, 1) 100%);
-  min-height:100vh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
+  font-family: "Inter", "Roboto", system-ui, -apple-system, Segoe UI, Helvetica, Arial;
+  color: var(--gray-600);
+  background: linear-gradient(135deg, #0052a3, #41a4ff);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
 
-/* Wrapper general */
+/* ============================================================
+   CONTENEDOR DEL LOGIN
+============================================================ */
 .login-wrapper {
-  width:100%;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  padding:20px;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 16px;
 }
 
-/* Contenedor del login */
 .login-container {
-  width:100%;
-  max-width:390px;
-  background:var(--white);
-  border-radius:var(--radius);
-  padding:40px 32px;
-  box-shadow:var(--shadow);
-  animation:fadeIn .4s ease-out;
-}
-
-/* Animación */
-@keyframes fadeIn {
-  from {opacity:0; transform:translateY(20px);}
-  to   {opacity:1; transform:translateY(0);}
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  width: 100%;
+  max-width: 360px;
+  padding: 28px 30px 24px;
+  text-align: center;
 }
 
 /* Títulos */
 .login-title {
-  text-align:center;
-  font-size:1.8rem;
-  font-weight:800;
-  color:var(--ucn-blue-900);
-  margin-bottom:8px;
+  margin: 0 0 4px 0;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--ucn-blue-900);
 }
 
 .login-sub {
-  text-align:center;
-  font-size:.95rem;
-  color:#5A5A5A;
-  margin-bottom:32px;
+  margin: 0 0 22px 0;
+  font-size: 0.9rem;
+  color: #777;
 }
 
-/* Inputs */
+/* Mensajes Django (errores, etc.) */
+.alert-message {
+  background-color: #ffebee;
+  color: #c62828;
+  padding: 8px 10px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  font-size: 0.85rem;
+}
+
+/* ============================================================
+   FORMULARIO
+============================================================ */
 .form-group {
-  margin-bottom:20px;
-  display:flex;
-  flex-direction:column;
-  gap:6px;
+  text-align: left;
+  margin-bottom: 14px;
 }
 
 .form-group label {
-  font-size:.9rem;
-  font-weight:600;
-  color:#333;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #444;
+  display: block;
+  margin-bottom: 4px;
 }
 
 .form-input {
-  width:100%;
-  height:44px;
-  padding:0 14px;
-  border-radius:12px;
-  border:1px solid var(--gray-200);
-  font-size:1rem;
-  outline:none;
-  transition: all .2s ease;
+  width: 100%;
+  height: 36px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--gray-300);
+  font-size: 0.9rem;
+  outline: none;
 }
 
 .form-input:focus {
-  border-color:var(--ucn-blue-700);
-  box-shadow:0 0 0 3px rgba(0,90,167,.15);
+  border-color: var(--ucn-blue-700);
+  box-shadow: 0 0 0 2px rgba(0, 102, 255, 0.15);
 }
 
-/* Forgot password */
+/* Enlace "Olvidaste tu contraseña" */
 .forgot-link {
-  display:block;
-  text-align:right;
-  font-size:.9rem;
-  color:var(--ucn-blue-700);
-  margin-top:-10px;
-  margin-bottom:20px;
-  text-decoration:none;
+  display: block;
+  font-size: 0.78rem;
+  margin: 6px 0 14px;
+  text-align: right;
+  color: var(--ucn-blue-700);
+  text-decoration: none;
+}
+
+.forgot-link:hover {
+  text-decoration: underline;
 }
 
 /* Botón principal */
 .login-btn {
-  width:100%;
-  height:46px;
-  border:none;
-  border-radius:12px;
-  font-size:1rem;
-  font-weight:700;
-  cursor:pointer;
-  background:linear-gradient(180deg,var(--ucn-blue-700),var(--ucn-blue-900));
-  color:#fff;
-  transition:filter .15s ease;
+  width: 100%;
+  border: none;
+  border-radius: 999px;
+  height: 36px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #fff;
+  background: linear-gradient(180deg, var(--ucn-blue-700), var(--ucn-blue-900));
+  cursor: pointer;
+  margin-bottom: 12px;
 }
 
 .login-btn:hover {
-  filter:brightness(1.07);
+  filter: brightness(1.05);
 }
 
-/* Íconos sociales */
-.social {
-  display:flex;
-  justify-content:center;
-  gap:24px;
-  margin-top:26px;
-}
-
-.social i {
-  font-size:1.4rem;
-  color:var(--gray-600);
-  cursor:pointer;
-  transition:.2s;
-}
-
-.social i:hover {
-  color:var(--ucn-blue-700);
-}
-
-/* Registro */
+/* Texto registro */
 .register-text {
-  margin-top:30px;
-  text-align:center;
-  font-size:.9rem;
+  font-size: 0.8rem;
+  color: #555;
 }
 
 .register-text a {
-  color:var(--ucn-blue-700);
-  font-weight:700;
-  text-decoration:none;
+  color: var(--ucn-blue-700);
+  text-decoration: none;
+  font-weight: 600;
 }
 
-/* Mensajes Django */
-.alert-message {
-  background:#ffe5e5;
-  color:#b30000;
-  padding:10px;
-  border-radius:8px;
-  border:1px solid #ffcccc;
-  text-align:center;
-  margin-bottom:20px;
+.register-text a:hover {
+  text-decoration: underline;
 }
 
-/* Botón ancho para textos largos */
-.btn-wide {
-  padding: 12px 24px !important;
-  height: auto !important;
-  text-align: center;
-  line-height: 1.3;
-  display: inline-block;
-  text-decoration: none !important;
+/* Un poco de responsividad */
+@media (max-width: 480px) {
+  .login-container {
+    padding: 24px 20px 20px;
+  }
 }

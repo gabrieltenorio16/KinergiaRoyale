@@ -1,20 +1,14 @@
 {% load static %}
-{% load tz %}
 
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Recuperar Contraseña – KinergiaRoyale</title>
+  <title>Acceso Docente – KinergiaRoyale</title>
 
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-  <!-- CSS Login (mismo archivo) -->
   <link rel="stylesheet" href="{% static 'css/login.css' %}">
 
-  <!-- Estilos SOLO para los logos en las esquinas -->
   <style>
     .page-logos {
       position: fixed;
@@ -36,7 +30,6 @@
 
 <body>
 
-  <!-- LOGOS ARRIBA IZQ / DER -->
   <div class="page-logos">
       <img src="{% static 'img/logo_kinesiologia.jpeg' %}" alt="Logo Kinesiología">
       <img src="{% static 'img/logo_ucn.png' %}" alt="Logo UCN">
@@ -46,32 +39,39 @@
 
     <div class="login-container">
 
-      <!-- Título -->
-      <h1 class="login-title">Recuperar Contraseña</h1>
-      <p class="login-sub">Ingresa tu correo institucional para enviarte un enlace de recuperación</p>
+      <h1 class="login-title">Acceso Docente</h1>
+      <p class="login-sub">Ingresa tus credenciales para continuar</p>
 
-      <!-- Mensajes Django -->
       {% if messages %}
         {% for m in messages %}
-          <div class="alert-message">{{ m }}</div>
+          <div class="alert-message">
+              {{ m }}
+          </div>
         {% endfor %}
       {% endif %}
 
-      <!-- Formulario Recuperación -->
       <form method="POST">
         {% csrf_token %}
 
         <div class="form-group">
-          <label>Correo institucional</label>
-          <input type="email" name="email" class="form-input" required />
+          <label>Email / Usuario</label>
+          <input type="text" name="username" class="form-input" required />
         </div>
 
-        <button type="submit" class="login-btn">Enviar enlace</button>
+        <div class="form-group">
+          <label>Contraseña</label>
+          <input type="password" name="password" class="form-input" required />
+        </div>
+
+        <a href="{% url 'usuario:forgot_password' %}" class="forgot-link">
+          ¿Olvidaste tu contraseña?
+        </a>
+
+        <button type="submit" class="login-btn">Ingresar</button>
 
         <div class="register-text">
-          <a href="{% url 'usuario:login_estudiantes' %}">Inicia sesión</a>
+           ¿No tienes cuenta? <a href="{% url 'usuario:register_docente_view' %}">Regístrate</a>
         </div>
-
       </form>
 
     </div>

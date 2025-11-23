@@ -1,0 +1,90 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bienvenido – KinergiaRoyale</title>
+
+  <!-- CSS de esta pantalla -->
+  <link rel="stylesheet" href="{% static 'css/seleccionar_entrada.css' %}">
+
+  <!-- Estilos mínimos solo para logos -->
+  <style>
+    .page-logos {
+      position: fixed;
+      top: 16px;
+      left: 24px;
+      right: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      pointer-events: none;
+    }
+    .page-logos img {
+      height: 225px;
+      width: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LOGOS ESQUINAS -->
+  <div class="page-logos">
+    <img src="{% static 'img/logo_kinesiologia.jpeg' %}" alt="Logo Kinesiología">
+    <img src="{% static 'img/logo_ucn.png' %}" alt="Logo UCN">
+  </div>
+
+  <main class="entry-wrapper">
+
+    <section class="entry-card">
+
+      <header class="entry-header">
+        <h1 class="entry-title">Bienvenido KinergiaRoyale</h1>
+        <h2 class="entry-subtitle">¿Cómo quieres entrar?</h2>
+        <p class="entry-text">
+          Selecciona el tipo de acceso que deseas utilizar
+        </p>
+      </header>
+
+      <div class="entry-options">
+
+        <!-- ================== STAFF ================== -->
+        <article class="option-card">
+          <h3 class="option-title">Staff</h3>
+          <p class="option-text">
+            Acceso para gestionar cursos, usuarios y contenido.
+          </p>
+
+          <div class="option-actions">
+            <!-- Solo botón Ingresar -->
+            <a href="{% url 'usuario:seleccionar_staff' %}" class="option__btn">
+              Ingresar
+            </a>
+          </div>
+        </article>
+
+        <!-- ================== ESTUDIANTE ================== -->
+        <article class="option-card">
+          <h3 class="option-title">Estudiante</h3>
+          <p class="option-text">
+            Regístrate o ingresa para acceder a los cursos y casos clínicos.
+          </p>
+
+          <div class="option-actions">
+            <!-- Solo botón Ingresar -->
+            <a href="{% url 'usuario:login_estudiantes' %}" class="option__btn">
+              Ingresar
+            </a>
+          </div>
+        </article>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</body>
+</html>
