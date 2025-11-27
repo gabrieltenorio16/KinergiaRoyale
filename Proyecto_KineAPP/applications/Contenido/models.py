@@ -56,8 +56,8 @@ class Video(models.Model):
             video_id = parsed.path.lstrip("/")
             params = parsed.query
             if params:
-                return f"https://www.youtube.com/embed/{video_id}?{params}"
-            return f"https://www.youtube.com/embed/{video_id}"
+                return f"//www.youtube.com/embed/{video_id}?{params}"
+            return f"//www.youtube.com/embed/{video_id}"
 
         # Caso 2: watch?v=ID
         if "watch" in parsed.path:
@@ -67,8 +67,8 @@ class Video(models.Model):
                 f"{k}={v[0]}" for k, v in qs.items() if k != "v"
             )
             if params:
-                return f"https://www.youtube.com/embed/{video_id}?{params}"
-            return f"https://www.youtube.com/embed/{video_id}"
+                return f"//www.youtube.com/embed/{video_id}?{params}"
+            return f"//www.youtube.com/embed/{video_id}"
 
         # Caso 3: /embed/
         if "embed" in parsed.path:

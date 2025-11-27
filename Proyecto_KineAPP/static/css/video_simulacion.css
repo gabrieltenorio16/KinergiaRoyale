@@ -174,3 +174,56 @@ body {
     gap: 10px;
     margin-top: 20px;
 }
+
+/* --- ESTILOS PARA EL FORMULARIO DE FICHA --- */
+
+.estilo-formulario p {
+    margin-bottom: 20px; /* Espacio entre cada campo */
+    position: relative;  /* Para ordenar elementos */
+}
+
+/* 1. Etiquetas (Nombre, Edad, etc.) */
+.estilo-formulario label {
+    display: block;          /* Obliga a que la etiqueta ocupe su propia línea */
+    margin-bottom: 8px;      /* Espacio entre la etiqueta y el input */
+    font-weight: 600;        /* Letra un poco más gruesa */
+    color: var(--ucn-blue-900); /* Azul corporativo */
+    font-size: 0.95rem;
+}
+
+/* 2. Inputs y Textareas (Las cajas de texto) */
+.estilo-formulario input[type="text"],
+.estilo-formulario input[type="number"],
+.estilo-formulario textarea {
+    width: 100%;             /* Que ocupen todo el ancho disponible */
+    padding: 10px 12px;      /* Espacio interno para que no se vea apretado */
+    border: 1px solid #ccc;  /* Borde suave */
+    border-radius: 8px;      /* Bordes redondeados modernos */
+    font-family: inherit;    /* Usar la misma fuente de la página */
+    font-size: 1rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    box-sizing: border-box;  /* Para que el padding no rompa el ancho */
+}
+
+/* Efecto al hacer clic en el campo */
+.estilo-formulario input:focus,
+.estilo-formulario textarea:focus {
+    border-color: var(--ucn-blue-700);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 90, 167, 0.1); /* Pequeño resplandor azul */
+}
+
+/* 3. Texto de Ayuda (El que salía al lado apretado) */
+.estilo-formulario span.helptext {
+    display: block;          /* Lo baja a una nueva línea */
+    margin-top: 6px;         /* Lo separa un poco del input */
+    font-size: 0.85rem;      /* Letra más pequeña */
+    color: #666;             /* Color gris para que no distraiga */
+    font-style: italic;
+}
+
+/* Ajuste para el textarea para que se vea bien */
+.estilo-formulario textarea {
+    resize: vertical;        /* Permite al usuario agrandarlo solo hacia abajo */
+    min-height: 100px;       /* Altura mínima inicial */
+}
