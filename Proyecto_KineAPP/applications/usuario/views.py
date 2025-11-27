@@ -101,6 +101,7 @@ def seleccionar_staff(request):
 # 1. PANEL ESTUDIANTE
 # =====================================================
 
+@login_required
 def panel_estudiante(request):
     user = request.user
 

@@ -55,7 +55,7 @@
 
             <h2>Registrar Paciente</h2>
 
-            <form method="post" action="{% url 'crear_ficha_paciente' video.pk %}">
+            <form method="post" action="{% url 'curso_y_modulo:crear_ficha_paciente' video.pk %}">
                 {% csrf_token %}
 
                 <div class="form-container">

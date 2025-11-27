@@ -45,14 +45,14 @@ class FichaPacienteCreate(CreateView):
 
 def curso_detalle(request, curso_id):
     """
-    Pantalla del curso:
+    Pantalla del curso (vista pensada para el ESTUDIANTE):
     - Fechas del curso
     - Índice: Temas -> Videos -> Preguntas
-    - Pacientes de ejemplo
+    - Pacientes de ejemplo asociados al curso
     - Contenidos adicionales (Etapas)
     """
 
-    # 🔒 Si NO está logueado, lo mandamos a login_estudiantes (usuario/login/)
+    # 🔒 Si NO está logueado, lo mandamos al login de estudiantes
     if not request.user.is_authenticated:
         # 'login_estudiantes' es el name de tu URL de login en applications.usuario.urls
         return redirect("usuario:login_estudiantes")
@@ -142,4 +142,3 @@ def seleccionar_paciente_curso(request, curso_id, paciente_id):
 
     # Si NO hay videos → volver a la ficha del curso
     return redirect("curso_y_modulo:curso_detalle", curso_id=curso.id)
-

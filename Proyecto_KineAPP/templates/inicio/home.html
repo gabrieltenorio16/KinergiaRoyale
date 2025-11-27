@@ -37,13 +37,16 @@
         </button>
 
         <!-- Avatar con iniciales -->
-        <div class="avatar" title="{{ user.get_full_name }}">
-          {% if user.first_name and user.last_name %}
-              {{ user.first_name|slice:":1" }}{{ user.last_name|slice:":1" }}
+        {# usamos 'perfil' si viene en el contexto, si no, caemos en 'user' #}
+        {% with persona=perfil|default:user %}
+        <div class="avatar" title="{{ persona.get_full_name }}">
+          {% if persona.first_name and persona.last_name %}
+              {{ persona.first_name|slice:":1" }}{{ persona.last_name|slice:":1" }}
           {% else %}
-              {{ user.username|slice:":2"|upper }}
+              {{ persona.username|slice:":2"|upper }}
           {% endif %}
         </div>
+        {% endwith %}
 
         <!-- Cerrar sesión -->
         <a href="{% url 'usuario:logout' %}" class="logout-link">Cerrar sesión</a>
@@ -56,8 +59,15 @@
   <main class="container">
     <div class="section-head">
       <div>
-        <div class="section-head__title">Hola, {{ user.first_name|default:user.username }} 👋</div>
-        <div class="section-sub">Estos son tus cursos activos. Selecciona uno para continuar.</div>
+        {# igual que arriba, saludamos usando perfil si existe #}
+        {% with persona=perfil|default:user %}
+        <div class="section-head__title">
+          Hola, {{ persona.first_name|default:persona.username }} 👋
+        </div>
+        {% endwith %}
+        <div class="section-sub">
+          Estos son tus cursos activos. Selecciona uno para continuar.
+        </div>
       </div>
     </div>
 
@@ -86,7 +96,9 @@
           </div>
 
           <div class="card__footer">
-            <a href="#" class="btn">Continuar</a>
+            <!-- "Continuar" lleva al flujo principal del curso (detalle/menu del curso) -->
+            <a href="{% url 'curso_y_modulo:curso_detalle' curso.id %}" class="btn">Continuar</a>
+            <!-- "Detalles" queda como acción secundaria hacia el mismo detalle por ahora -->
             <a href="{% url 'curso_y_modulo:curso_detalle' curso.id %}" class="btn btn--ghost">Detalles</a>
           </div>
 
