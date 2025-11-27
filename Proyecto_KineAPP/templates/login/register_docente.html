@@ -1,0 +1,132 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro Docente – KinergiaRoyale</title>
+
+  <link rel="stylesheet" href="{% static 'css/login.css' %}">
+
+  <style>
+    .page-logos {
+      position: fixed;
+      top: 16px;
+      left: 24px;
+      right: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      pointer-events: none;
+    }
+
+    .page-logos img {
+      height: 225px;
+      width: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page-logos">
+      <img src="{% static 'img/logo_kinesiologia.jpeg' %}" alt="Logo Kinesiología">
+      <img src="{% static 'img/logo_ucn.png' %}" alt="Logo UCN">
+  </div>
+
+  <section class="login-wrapper">
+
+    <div class="login-container">
+
+      <h1 class="login-title">Registrarse como Docente</h1>
+      <p class="login-sub">Crea tu cuenta para acceder como docente a la plataforma</p>
+
+      {% if messages %}
+        {% for m in messages %}
+          <div class="alert-message">
+            {{ m }}
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      <form method="POST">
+        {% csrf_token %}
+
+        <!-- Nombre -->
+        <div class="form-group">
+          <label>Nombre</label>
+          <input
+            type="text"
+            name="first_name"
+            class="form-input"
+            required
+          />
+        </div>
+
+        <!-- Apellido -->
+        <div class="form-group">
+          <label>Apellido</label>
+          <input
+            type="text"
+            name="last_name"
+            class="form-input"
+            required
+          />
+        </div>
+
+        <!-- Correo institucional docente -->
+        <div class="form-group">
+          <label>Correo institucional</label>
+          <input
+            type="email"
+            name="email"
+            class="form-input"
+            required
+            placeholder="nombre.apellido@ucn.cl"
+          />
+        </div>
+
+        <!-- RUT -->
+        <div class="form-group">
+          <label>RUT</label>
+          <input
+            type="text"
+            name="rut"
+            class="form-input"
+            placeholder="12.345.678-9"
+            required
+          />
+        </div>
+
+        <!-- Usuario -->
+        <div class="form-group">
+          <label>Usuario</label>
+          <input type="text" name="username" class="form-input" required />
+        </div>
+
+        <!-- Contraseña -->
+        <div class="form-group">
+          <label>Contraseña</label>
+          <input type="password" name="password1" class="form-input" required />
+        </div>
+
+        <!-- Confirmar contraseña -->
+        <div class="form-group">
+          <label>Confirmar Contraseña</label>
+          <input type="password" name="password2" class="form-input" required />
+        </div>
+
+        <button type="submit" class="login-btn">Crear Cuenta Docente</button>
+
+        <div class="register-text">
+          ¿Ya tienes cuenta docente? <a href="{% url 'usuario:login_docente' %}">Inicia sesión</a>
+        </div>
+
+      </form>
+
+    </div>
+
+  </section>
+
+</body>
+</html>

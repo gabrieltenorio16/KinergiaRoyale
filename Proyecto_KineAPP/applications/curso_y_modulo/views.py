@@ -11,7 +11,7 @@ from .models import Curso, SeleccionPacienteCurso
 
 
 # -------------------------
-# VISTAS QUE YA TENÍAS
+# VISTAS DE VIDEO SIMULACIÓN
 # -------------------------
 class VideoDetailView(DetailView):
     model = Video
@@ -45,17 +45,17 @@ class FichaPacienteCreate(CreateView):
 
 def curso_detalle(request, curso_id):
     """
-    Pantalla del curso:
+    Pantalla del curso (vista pensada para el ESTUDIANTE):
     - Fechas del curso
     - Índice: Temas -> Videos -> Preguntas
-    - Pacientes de ejemplo
+    - Pacientes de ejemplo asociados al curso
     - Contenidos adicionales (Etapas)
     """
 
-    # 🔒 Si NO está logueado, lo mandamos a login_estudiantes (usuario/login/)
+    # 🔒 Si NO está logueado, lo mandamos al login de estudiantes
     if not request.user.is_authenticated:
         # 'login_estudiantes' es el name de tu URL de login en applications.usuario.urls
-        return redirect("login_estudiantes")
+        return redirect("usuario:login_estudiantes")
 
     curso = get_object_or_404(Curso, pk=curso_id)
 
@@ -106,9 +106,10 @@ def seleccionar_paciente_curso(request, curso_id, paciente_id):
     El estudiante selecciona un paciente de ejemplo dentro del curso.
     """
 
-    # 🔒 Igual que arriba: si no está logueado, mandamos a login_estudiantes
+    # 🔒 Si NO está logueado → mensaje y redirección limpia al login
     if not request.user.is_authenticated:
-        return redirect("login_estudiantes")
+        messages.error(request, "Debes iniciar sesión para seleccionar un paciente.")
+        return redirect("usuario:login_estudiantes")
 
     curso = get_object_or_404(Curso, pk=curso_id)
 
@@ -119,6 +120,7 @@ def seleccionar_paciente_curso(request, curso_id, paciente_id):
         casos_clinicos__curso=curso
     )
 
+    # Guardar la selección de paciente
     SeleccionPacienteCurso.objects.update_or_create(
         usuario=request.user,
         curso=curso,
@@ -126,4 +128,17 @@ def seleccionar_paciente_curso(request, curso_id, paciente_id):
     )
 
     messages.success(request, f"Paciente seleccionado: {paciente}")
-    return redirect("curso_detalle", curso_id=curso.id)
+
+    # 🔥 Redirigir al primer video del curso
+    primer_video = (
+        Video.objects
+        .filter(tema__curso=curso)
+        .order_by('tema__titulo', 'id')
+        .first()
+    )
+
+    if primer_video:
+        return redirect("curso_y_modulo:simulacion", pk=primer_video.id)
+
+    # Si NO hay videos → volver a la ficha del curso
+    return redirect("curso_y_modulo:curso_detalle", curso_id=curso.id)

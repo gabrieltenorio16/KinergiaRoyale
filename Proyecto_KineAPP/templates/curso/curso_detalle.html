@@ -1,501 +1,232 @@
-{# templates/curso/curso_detalle.html #}
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Plataforma Kinesiología UCN — {{ curso.nombre }}</title>
-  <style>
-    :root{
-      --ucn-blue-900:#003366;
-      --ucn-blue-700:#005AA7;
-      --ucn-blue-50:#E6F2FF;
-      --white:#FFFFFF;
-      --gray-100:#F5F5F5;
-      --gray-200:#ECECEC;
-      --gray-600:#4D4D4D;
-      --shadow:0 8px 24px rgba(0,0,0,.08);
-      --radius:16px;
-      --content-max:1200px;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family:"Inter","Roboto","Open Sans",system-ui;
-      background:linear-gradient(180deg,var(--ucn-blue-50),var(--white));
-      color:var(--gray-600)
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ curso.nombre }} — Plataforma Kinesiología UCN</title>
 
-    .layout{max-width:var(--content-max);margin:0 auto}
-    .content__inner{padding:20px 20px 100px;}
-
-    /* Cover */
-    .module-cover{
-      width:100%;height:260px;border-radius:16px;
-      overflow:hidden;position:relative;border:1px solid var(--gray-200)
-    }
-    .module-cover .frame{
-      width:100%;height:100%;background:#d7e8ff;
-      border:2px dashed var(--gray-200);
-      display:grid;place-items:center;color:var(--gray-600)
-    }
-
-    .module-head{
-      margin-top:-20px;background:#fff;border-radius:16px;
-      box-shadow:var(--shadow);padding:16px 20px;
-      position:relative;z-index:2;display:flex;flex-wrap:wrap;
-      justify-content:space-between;gap:12px
-    }
-    .module-head__title{
-      font-size:1.6rem;font-weight:900;
-      color:var(--ucn-blue-900);margin:0
-    }
-    .module-head__meta{
-      font-size:0.9rem;color:var(--gray-600)
-    }
-    .module-head__meta span{display:block}
-
-    .content-section{
-      background:#fff;border:1px solid var(--gray-200);
-      border-radius:16px;box-shadow:var(--shadow);
-      padding:24px;margin-top:16px;
-      transition:opacity .3s ease, transform .3s ease;
-      opacity:0;transform:translateY(12px);display:none;
-    }
-    .content-section.show{
-      opacity:1;transform:translateY(0);display:block;
-    }
-    .content-section h2{margin-top:0;color:var(--ucn-blue-900)}
-
-    /* Overview */
-    .overview{
-      display:none;position:fixed;inset:0;background:#ffffffee;
-      backdrop-filter:blur(4px);
-      overflow:auto;padding:40px 16px;z-index:100
-    }
-    .overview-inner{
-      max-width:var(--content-max);
-      margin:0 auto;
-    }
-    .overview.active{display:block;animation:fadeIn .3s ease}
-    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-    .overview__list{
-      display:flex;flex-direction:column;
-      gap:20px;margin-top:20px
-    }
-    .overview__card{
-      background:#fff;border:1px solid var(--gray-200);
-      border-radius:12px;box-shadow:var(--shadow);
-      padding:16px;cursor:pointer;display:flex;
-      align-items:center;gap:20px;transition:transform .2s ease
-    }
-    .overview__card:hover{transform:translateY(-4px)}
-    .overview h2{color:var(--ucn-blue-900);margin-top:0}
-
-    .img-frame{
-      width:100px;height:80px;background:#e0e0e0;
-      border:2px dashed #ccc;border-radius:8px;
-      display:grid;place-items:center;color:#777;
-      font-size:0.9rem;flex-shrink:0
-    }
-
-    /* Sala de espera / pacientes */
-    .avatars{
-      display:flex;flex-wrap:wrap;gap:16px;justify-content:flex-start;margin-top:20px
-    }
-    .avatar-card{
-      min-width:180px;
-      border-radius:16px;
-      border:1px solid var(--gray-200);
-      padding:12px 16px;
-      box-shadow:var(--shadow);
-      background:#fff;
-    }
-    .avatar-card strong{display:block;color:var(--ucn-blue-900)}
-    .avatar-card small{display:block;font-size:0.8rem;color:var(--gray-600)}
-    .avatar-placeholder{
-      width:64px;height:64px;border-radius:50%;
-      background:#e0e0e0;border:2px dashed #bbb;
-      display:grid;place-items:center;font-size:1.6rem;color:#777;margin-bottom:8px
-    }
-    .avatar-card--selected{
-      border-color:var(--ucn-blue-700);
-      box-shadow:0 0 0 2px rgba(0,90,167,.25);
-    }
-
-    .pill{
-      display:inline-block;
-      padding:4px 10px;
-      border-radius:999px;
-      font-size:0.7rem;
-      background:var(--ucn-blue-50);
-      color:var(--ucn-blue-900);
-      font-weight:600;
-      margin-bottom:4px;
-    }
-
-    /* Índice */
-    .tema-block{margin-bottom:20px}
-    .tema-title{
-      font-weight:700;color:var(--ucn-blue-900);margin-bottom:4px
-    }
-    .video-list{margin:0 0 0 16px;padding:0;list-style:disc}
-    .video-list li{margin-bottom:6px}
-    .question-list{margin:4px 0 10px 20px;padding:0;list-style:circle;font-size:0.9rem}
-
-    /* Contenidos adicionales */
-    .etapa-list{list-style:none;margin:0;padding:0}
-    .etapa-item{
-      padding:10px 0;border-bottom:1px solid var(--gray-200)
-    }
-    .etapa-item:last-child{border-bottom:none}
-    .etapa-title{font-weight:600;color:var(--ucn-blue-900)}
-    .etapa-links a{
-      display:inline-block;margin-right:8px;
-      font-size:0.85rem;text-decoration:none;
-      color:var(--ucn-blue-700)
-    }
-
-    /* Botones */
-    .footer-nav{
-      position:fixed;
-      left:50%;transform:translateX(-50%);
-      bottom:16px;z-index:50;
-      max-width:var(--content-max);
-      width:calc(100% - 32px);
-      display:flex;justify-content:space-between;
-      align-items:center;
-    }
-    .btn{
-      padding:12px 16px;border-radius:12px;
-      border:1px solid var(--ucn-blue-700);
-      cursor:pointer;font-weight:800;
-      text-decoration:none;font-size:0.9rem;
-    }
-    .btn--ghost{background:#fff;color:var(--ucn-blue-700)}
-    .btn--primary{
-      background:linear-gradient(180deg,var(--ucn-blue-700),var(--ucn-blue-900));
-      color:#fff;
-    }
-    .btn--index{
-      position:fixed;bottom:80px;left:50%;
-      transform:translateX(-50%);z-index:60;
-      padding:14px 20px;border-radius:999px;
-      background:#fff;color:var(--ucn-blue-900);
-      border:2px solid var(--ucn-blue-900);
-      box-shadow:0 4px 12px rgba(0,0,0,.2);
-      font-weight:800;
-    }
-
-    @media (max-width:768px){
-      .module-head{flex-direction:column;align-items:flex-start}
-      .footer-nav{flex-direction:column;gap:8px}
-    }
-  </style>
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'css/curso_detalle.css' %}">
 </head>
+
 <body>
-  <div class="layout">
-    <div class="content__inner" id="section-content">
 
-      <!-- COVER -->
-      <div class="module-cover">
-        <div class="frame">
-          [Imagen Cover Módulo {{ curso.nombre }}]
-        </div>
-      </div>
+    <div class="layout">
+        <div class="content__inner" id="section-content">
 
-      <!-- CABECERA DEL MÓDULO -->
-      <div class="module-head">
-        <div>
-          <h1 class="module-head__title">
-            {{ curso.nombre }}
-          </h1>
-          <span class="pill">
-            Nivel: {{ curso.get_nivel_display }}
-          </span>
-        </div>
-        <div class="module-head__meta">
-          <span><strong>Fecha inicio:</strong>
-            {% if curso.fecha_inicio %}
-              {{ curso.fecha_inicio|date:"d/m/Y" }}
-            {% else %}
-              No definida
-            {% endif %}
-          </span>
-          <span><strong>Fecha fin:</strong>
-            {% if curso.fecha_fin %}
-              {{ curso.fecha_fin|date:"d/m/Y" }}
-            {% else %}
-              No definida
-            {% endif %}
-          </span>
-          <span><strong>Temas:</strong> {{ temas|length }}</span>
-          <span><strong>Pacientes de ejemplo:</strong> {{ pacientes|length }}</span>
-        </div>
-      </div>
-
-      <!-- SECCIÓN 1: PRESENTACIÓN -->
-      <div class="content-section show" data-section="presentacion">
-        <h2>Presentación del módulo</h2>
-        <p>
-          Bienvenido al curso <strong>{{ curso.nombre }}</strong>.
-          Aquí podrás revisar los temas, casos clínicos y contenidos adicionales
-          asociados a este módulo de la carrera de Kinesiología UCN.
-        </p>
-        <p>
-          Utiliza el <strong>índice general</strong> o los botones de navegación
-          para moverte entre las secciones:
-          presentación, contenidos del módulo, sala de espera (selección de paciente)
-          y material adicional.
-        </p>
-        <div class="img-frame" style="margin-top:12px;">
-          [Imagen de presentación del módulo]
-        </div>
-      </div>
-
-      <!-- SECCIÓN 2: ÍNDICE DE CONTENIDOS -->
-      <div class="content-section" data-section="indice">
-        <h2>Índice de contenidos del módulo</h2>
-        {% if temas %}
-          {% for tema in temas %}
-            <div class="tema-block">
-              <div class="tema-title">{{ tema.titulo }}</div>
-              {% if tema.descripcion %}
-                <p>{{ tema.descripcion }}</p>
-              {% endif %}
-
-              {% with videos=tema.video_set.all %}
-                {% if videos %}
-                  <ul class="video-list">
-                    {% for v in videos %}
-                      <li>
-                        {{ v.titulo }}
-                        {% if v.preguntas.all %}
-                          <ul class="question-list">
-                            {% for p in v.preguntas.all %}
-                              <li>Pregunta: {{ p.contenido|truncatechars:80 }}</li>
-                            {% endfor %}
-                          </ul>
-                        {% endif %}
-                      </li>
-                    {% endfor %}
-                  </ul>
-                {% else %}
-                  <em>Sin videos en este tema.</em>
-                {% endif %}
-              {% endwith %}
+            <!-- COVER DEL CURSO -->
+            <div class="module-cover">
+                <div class="frame" aria-label="Imagen de portada del curso">
+                    [Imagen Cover Módulo {{ curso.nombre }}]
+                </div>
             </div>
-          {% endfor %}
-        {% else %}
-          <p>No hay temas asociados a este curso.</p>
-        {% endif %}
-      </div>
 
-      <!-- SECCIÓN 3: SALA DE ESPERA / PACIENTES -->
-      <div class="content-section" data-section="pacientes">
-        <h2>Sala de espera — Pacientes simulados</h2>
+            <!-- CABECERA DEL CURSO -->
+            <div class="module-head">
 
-        {% if seleccion %}
-          <p>
-            Paciente actualmente seleccionado:
-            <strong>{{ seleccion.paciente }}</strong>
-          </p>
-        {% else %}
-          <p>No has seleccionado un paciente para este curso.</p>
-        {% endif %}
-
-        {% if pacientes %}
-          <p>Selecciona un paciente para trabajar sus casos clínicos dentro de este módulo.</p>
-          <div class="avatars">
-            {% for pac in pacientes %}
-              <div class="avatar-card {% if seleccion and seleccion.paciente.id == pac.id %}avatar-card--selected{% endif %}">
-                <div class="avatar-placeholder">🧍</div>
-                <strong>{{ pac.apellidos }}, {{ pac.nombres }}</strong>
-                <small>Edad: {{ pac.edad }} años</small>
-                <small>Antecedentes: {{ pac.antecedentes|truncatechars:80 }}</small>
-                <div style="margin-top:8px;">
-                  <a
-                    href="{% url 'seleccionar_paciente_curso' curso.id pac.id %}"
-                    class="btn btn--ghost"
-                    style="padding:6px 10px;font-size:0.8rem;border-radius:999px;"
-                  >
-                    Usar este paciente
-                  </a>
+                <div>
+                    <h1 class="module-head__title">{{ curso.nombre }}</h1>
+                    <span class="pill">Nivel: {{ curso.get_nivel_display }}</span>
                 </div>
-              </div>
-            {% endfor %}
-          </div>
-        {% else %}
-          <p>Este curso aún no tiene pacientes vinculados mediante casos clínicos.</p>
-        {% endif %}
-      </div>
 
-      <!-- SECCIÓN 4: CONTENIDOS ADICIONALES -->
-      <div class="content-section" data-section="contenidos">
-        <h2>Material adicional y etapas de casos clínicos</h2>
-        {% if etapas %}
-          <ul class="etapa-list">
-            {% for etapa in etapas %}
-              <li class="etapa-item">
-                <div class="etapa-title">
-                  {{ etapa.caso.titulo }} — Etapa {{ etapa.orden }}: {{ etapa.nombre }}
+                <div class="module-head__meta">
+                    <span>
+                        <strong>Fecha inicio:</strong>
+                        {{ curso.fecha_inicio|default_if_none:"No definida" }}
+                    </span>
+                    <span>
+                        <strong>Fecha fin:</strong>
+                        {{ curso.fecha_fin|default_if_none:"No definida" }}
+                    </span>
+                    <span>
+                        <strong>Temas:</strong> {{ temas|length }}
+                    </span>
+                    <span>
+                        <strong>Pacientes de ejemplo:</strong> {{ pacientes|length }}
+                    </span>
                 </div>
-                {% if etapa.parte_cuerpo %}
-                  <small>Parte del cuerpo: {{ etapa.parte_cuerpo.nombre }}</small><br>
+
+            </div>
+
+            <!-- SECCIÓN: PRESENTACIÓN -->
+            <div class="content-section show" data-section="presentacion">
+                <h2>Presentación del módulo</h2>
+                <p>
+                    Bienvenido al curso <strong>{{ curso.nombre }}</strong>. Aquí podrás revisar los temas,
+                    casos clínicos, pacientes y contenidos adicionales del módulo.
+                </p>
+
+                <div class="img-frame">[Imagen presentación]</div>
+            </div>
+
+            <!-- SECCIÓN: ÍNDICE DE CONTENIDOS -->
+            <div class="content-section" data-section="indice">
+                <h2>Índice de contenidos del módulo</h2>
+
+                {% if temas %}
+                    {% for tema in temas %}
+                        <div class="tema-block">
+
+                            <div class="tema-title">{{ tema.titulo }}</div>
+
+                            {% if tema.descripcion %}
+                                <p>{{ tema.descripcion }}</p>
+                            {% endif %}
+
+                            <ul class="video-list">
+                                {% for video in tema.video_set.all %}
+                                    <li>
+                                        {{ video.titulo }}
+
+                                        {% if video.preguntas.all %}
+                                            <ul class="question-list">
+                                                {% for pregunta in video.preguntas.all %}
+                                                    <li>
+                                                        Pregunta: {{ pregunta.contenido|truncatechars:80 }}
+                                                    </li>
+                                                {% endfor %}
+                                            </ul>
+                                        {% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No hay temas asociados a este curso.</p>
                 {% endif %}
-                {% if etapa.pregunta %}
-                  <small>Pregunta guía: {{ etapa.pregunta|truncatechars:120 }}</small><br>
+            </div>
+
+            <!-- SECCIÓN: PACIENTES -->
+            <div class="content-section" data-section="pacientes">
+
+                <h2>Sala de espera — Pacientes simulados</h2>
+
+                {% if seleccion %}
+                    <p>Paciente seleccionado: <strong>{{ seleccion.paciente }}</strong></p>
                 {% endif %}
-                <div class="etapa-links" style="margin-top:6px;">
-                  {% if etapa.contenido_adicional_archivo %}
-                    <a href="{{ etapa.contenido_adicional_archivo.url }}" download>
-                      📄 Descargar archivo
-                    </a>
-                  {% endif %}
-                  {% if etapa.contenido_adicional_url %}
-                    <a href="{{ etapa.contenido_adicional_url }}" target="_blank">
-                      🌐 Ver contenido en línea
-                    </a>
-                  {% endif %}
-                  {% if not etapa.contenido_adicional_archivo and not etapa.contenido_adicional_url %}
-                    <small>Sin contenido adicional adjunto.</small>
-                  {% endif %}
-                </div>
-              </li>
-            {% endfor %}
-          </ul>
-        {% else %}
-          <p>No hay etapas con contenido adicional configurado para este curso.</p>
-        {% endif %}
-      </div>
 
+                {% if pacientes %}
+                    <div class="avatars">
+
+                        {% for pac in pacientes %}
+                            <div class="avatar-card 
+                                {% if seleccion and seleccion.paciente.id == pac.id %}
+                                    avatar-card--selected
+                                {% endif %}
+                            ">
+
+                                <div class="avatar-placeholder">🧍</div>
+
+                                <strong>{{ pac.nombres }}, {{ pac.apellidos }}</strong>
+                                <small>Edad: {{ pac.edad }} años</small>
+                                <small>
+                                    Antecedentes:
+                                    {{ pac.antecedentes|truncatechars:80 }}
+                                </small>
+
+                                <div class="avatar-actions">
+                                    <a class="btn btn--ghost"
+                                       href="{% url 'curso_y_modulo:seleccionar_paciente_curso' curso.id pac.id %}">
+                                        Usar este paciente
+                                    </a>
+                                </div>
+
+                            </div>
+                        {% endfor %}
+
+                    </div>
+                {% else %}
+                    <p>Este curso no tiene pacientes vinculados.</p>
+                {% endif %}
+
+            </div>
+
+            <!-- SECCIÓN: CONTENIDOS ADICIONALES -->
+            <div class="content-section" data-section="contenidos">
+                <h2>Material adicional y etapas clínicas</h2>
+
+                {% if etapas %}
+                    <ul class="etapa-list">
+
+                        {% for etapa in etapas %}
+                            <li class="etapa-item">
+
+                                <div class="etapa-title">
+                                    {{ etapa.caso.titulo }} — Etapa {{ etapa.orden }}: {{ etapa.nombre }}
+                                </div>
+
+                                {% if etapa.parte_cuerpo %}
+                                    <small>Parte del cuerpo: {{ etapa.parte_cuerpo.nombre }}</small><br>
+                                {% endif %}
+
+                                {% if etapa.pregunta %}
+                                    <small>Pregunta guía: {{ etapa.pregunta|truncatechars:120 }}</small><br>
+                                {% endif %}
+
+                                <div class="etapa-links">
+                                    {% if etapa.contenido_adicional_archivo %}
+                                        <a href="{{ etapa.contenido_adicional_archivo.url }}" download>
+                                            📄 Descargar archivo
+                                        </a>
+                                    {% endif %}
+
+                                    {% if etapa.contenido_adicional_url %}
+                                        <a href="{{ etapa.contenido_adicional_url }}" target="_blank">
+                                            🌐 Ver contenido online
+                                        </a>
+                                    {% endif %}
+
+                                    {% if not etapa.contenido_adicional_archivo and not etapa.contenido_adicional_url %}
+                                        <small>Sin material adicional.</small>
+                                    {% endif %}
+                                </div>
+
+                            </li>
+                        {% endfor %}
+
+                    </ul>
+                {% else %}
+                    <p>No hay material adicional configurado para este curso.</p>
+                {% endif %}
+
+            </div>
+
+        </div>
     </div>
-  </div>
 
-  <!-- OVERVIEW / ÍNDICE GENERAL -->
-  <div class="overview" id="overview">
-    <div class="overview-inner">
-      <h2>{{ curso.nombre }}</h2>
-      <p>Selecciona una sección para continuar.</p>
-      <div class="overview__list">
-        <div class="overview__card" data-target="presentacion">
-          <div class="img-frame">[Presentación]</div>
-          <div>
-            <h3>Presentación del módulo</h3>
-            <p>Introducción general y objetivos del módulo.</p>
-          </div>
+    <!-- OVERVIEW (Índice flotante) -->
+    <div class="overview" id="overview">
+        <div class="overview-inner">
+
+            <h2>{{ curso.nombre }}</h2>
+            <p>Selecciona una sección:</p>
+
+            <div class="overview__list">
+                <div class="overview__card" data-target="presentacion">Presentación del módulo</div>
+                <div class="overview__card" data-target="indice">Índice de contenidos</div>
+                <div class="overview__card" data-target="pacientes">Sala de espera</div>
+                <div class="overview__card" data-target="contenidos">Material adicional</div>
+            </div>
+
         </div>
-        <div class="overview__card" data-target="indice">
-          <div class="img-frame">[Índice]</div>
-          <div>
-            <h3>Contenidos del módulo</h3>
-            <p>Listado de temas, videos y preguntas asociadas.</p>
-          </div>
-        </div>
-        <div class="overview__card" data-target="pacientes">
-          <div class="img-frame">[Sala de espera]</div>
-          <div>
-            <h3>Sala de espera</h3>
-            <p>Selección del paciente simulado.</p>
-          </div>
-        </div>
-        <div class="overview__card" data-target="contenidos">
-          <div class="img-frame">[Material adicional]</div>
-          <div>
-            <h3>Material adicional</h3>
-            <p>Etapas y recursos descargables de los casos clínicos.</p>
-          </div>
-        </div>
-      </div>
     </div>
-  </div>
 
-  <!-- BOTÓN ÍNDICE GENERAL -->
-  <button id="btnIndex" class="btn btn--index">🧭 Ver índice general</button>
+    <!-- BOTÓN PARA ABRIR ÍNDICE -->
+    <button id="btnIndex" class="btn btn--index">🧭 Ver índice</button>
 
-  <!-- FOOTER NAVEGACIÓN -->
-  <div class="footer-nav">
-    <button type="button" id="btnPrev" class="btn btn--ghost">⬅ Volver</button>
-    <button type="button" id="btnNext" class="btn btn--primary">Siguiente sección ➡</button>
-  </div>
+    <!-- NAVEGACIÓN ENTRE SECCIONES -->
+    <div class="footer-nav">
+        <button id="btnPrev" class="btn btn--ghost">⬅ Anterior</button>
+        <button id="btnNext" class="btn btn--primary">Siguiente ➡</button>
+    </div>
 
-  <script>
-    const sections = Array.from(document.querySelectorAll('.content-section'));
-    const overview = document.getElementById('overview');
-    const btnIndex = document.getElementById('btnIndex');
-    const btnNext = document.getElementById('btnNext');
-    const btnPrev = document.getElementById('btnPrev');
+    <!-- JS -->
+    <script src="{% static 'js/curso_detalle.js' %}"></script>
 
-    const order = ['presentacion', 'indice', 'pacientes', 'contenidos'];
-    let currentIndex = 0;
-
-    function showSection(key){
-      const target = key;
-      sections.forEach(sec=>{
-        if(sec.dataset.section === target){
-          sec.classList.add('show');
-        }else{
-          sec.classList.remove('show');
-        }
-      });
-      currentIndex = order.indexOf(target);
-      updateButtons();
-      window.scrollTo({top:0, behavior:'smooth'});
-    }
-
-    function updateButtons(){
-      if(currentIndex <= 0){
-        btnPrev.disabled = true;
-        btnPrev.style.opacity = 0.5;
-      }else{
-        btnPrev.disabled = false;
-        btnPrev.style.opacity = 1;
-      }
-
-      if(currentIndex < order.length-1){
-        btnNext.textContent = 'Siguiente sección ➡';
-      }else{
-        btnNext.textContent = 'Volver al inicio del módulo ⬆';
-      }
-    }
-
-    document.querySelectorAll('.overview__card').forEach(card=>{
-      card.addEventListener('click',()=>{
-        const target = card.getAttribute('data-target');
-        showSection(target);
-        overview.classList.remove('active');
-      });
-    });
-
-    btnIndex.addEventListener('click',()=>{
-      overview.classList.add('active');
-    });
-
-    overview.addEventListener('click',(e)=>{
-      if(e.target === overview){
-        overview.classList.remove('active');
-      }
-    });
-
-    btnNext.addEventListener('click',()=>{
-      if(currentIndex < order.length-1){
-        const nextKey = order[currentIndex+1];
-        showSection(nextKey);
-      }else{
-        // Última sección: vuelve a la primera
-        showSection(order[0]);
-      }
-    });
-
-    btnPrev.addEventListener('click',()=>{
-      if(currentIndex > 0){
-        const prevKey = order[currentIndex-1];
-        showSection(prevKey);
-      }
-    });
-
-    // Estado inicial
-    showSection('presentacion');
-  </script>
 </body>
+
 </html>

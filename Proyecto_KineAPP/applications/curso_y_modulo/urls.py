@@ -3,13 +3,33 @@
 from django.urls import path
 from . import views
 
-urlpatterns = [
-    # Simulación de video
-    path("simulacion/<int:pk>/", views.VideoDetailView.as_view(), name="simulacion"),
-    path("simulacion/<int:pk>/crear-ficha/", views.FichaPacienteCreate.as_view(), name="crear_ficha_paciente"),
+app_name = "curso_y_modulo"
 
-    # NUEVAS RUTAS PARA LA PANTALLA DEL CURSO
-    path("curso/<int:curso_id>/", views.curso_detalle, name="curso_detalle"),
+urlpatterns = [
+    # -------------------------
+    # SIMULACIÓN DE VIDEO
+    # -------------------------
+    path(
+        "simulacion/<int:pk>/",
+        views.VideoDetailView.as_view(),
+        name="simulacion"
+    ),
+    path(
+        "simulacion/<int:pk>/crear-ficha/",
+        views.FichaPacienteCreate.as_view(),
+        name="crear_ficha_paciente"
+    ),
+
+    # -------------------------
+    # PANTALLA DEL CURSO (MENÚ INTERNO ESTUDIANTE)
+    # -------------------------
+    path(
+        "curso/<int:curso_id>/",
+        views.curso_detalle,
+        name="curso_detalle"
+    ),
+
+    # Selección de paciente dentro de un curso
     path(
         "curso/<int:curso_id>/seleccionar-paciente/<int:paciente_id>/",
         views.seleccionar_paciente_curso,

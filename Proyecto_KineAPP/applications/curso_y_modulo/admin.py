@@ -39,16 +39,16 @@ class CursoAdmin(admin.ModelAdmin):
     curso_id.admin_order_field = 'id'
 
 
-@admin.register(SeleccionPacienteCurso)
-class SeleccionPacienteCursoAdmin(admin.ModelAdmin):
-    list_display = ('usuario', 'curso', 'paciente', 'fecha_seleccion')
-    list_filter = ('curso', 'fecha_seleccion')
-    search_fields = (
-        'usuario__username',
-        'usuario__first_name',
-        'usuario__last_name',
-        'curso__nombre',
-        'paciente__nombres',
-        'paciente__apellidos',
-    )
-    ordering = ('-fecha_seleccion',)
+#@admin.register(SeleccionPacienteCurso)
+#class SeleccionPacienteCursoAdmin(admin.ModelAdmin):
+#    list_display = ('usuario', 'curso', 'paciente', 'fecha_seleccion')
+#    list_filter = ('curso', 'fecha_seleccion')
+#    search_fields = (
+#        'usuario__username',
+#        'usuario__first_name',
+#        'usuario__last_name',
+#        'curso__nombre',
+#        'paciente__nombres',
+#        'paciente__apellidos',
+#    )
+#    ordering = ('-fecha_seleccion',)

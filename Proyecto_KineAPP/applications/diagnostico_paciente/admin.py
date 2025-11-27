@@ -41,9 +41,7 @@ class EtapaInline(admin.TabularInline):
 
 @admin.register(CasoClinico)
 class CasoClinicoAdmin(admin.ModelAdmin):
-    # CAMBIO: quitamos 'modulo' de list_display
     list_display = ('id', 'titulo', 'paciente', 'curso', 'fecha_creacion')
-    # CAMBIO: quitamos 'modulo' de list_filter
     list_filter = ('curso',)
     search_fields = ('titulo', 'paciente__nombres', 'paciente__apellidos')
     ordering = ('-fecha_creacion',)
