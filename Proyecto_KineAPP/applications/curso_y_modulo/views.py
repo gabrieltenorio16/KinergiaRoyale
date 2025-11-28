@@ -6,27 +6,41 @@ from django.contrib import messages
 from django.db.models import Prefetch
 
 from applications.Contenido.models import Video, Tema
-from applications.diagnostico_paciente.models import Paciente, Etapa
+from applications.diagnostico_paciente.models import Paciente, Etapa, CasoClinico
 from .models import Curso, SeleccionPacienteCurso
 
 
 # -------------------------
 # VISTAS DE VIDEO SIMULACIÓN
 # -------------------------
-class VideoDetailView(DetailView):
-    model = Video
+# 🚨 1. RENOMBRAR Y RECONFIGURAR LA VISTA DE DETALLE
+class EtapaDetailView(DetailView):
+    # Cambiamos el modelo a Etapa y el nombre del contexto
+    model = Etapa
     template_name = "video/video_simulacion.html"
-    context_object_name = "video"
+    context_object_name = "etapa" # Ahora la plantilla recibe 'etapa'
+    pk_url_kwarg = 'pk' # La URL debe pasar el ID de la etapa como 'pk'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
+        etapa = self.object # El objeto Etapa actual
+        
+        # Obtenemos el Paciente asociado a esta Etapa a través del Caso Clínico
+        paciente = None
+        # Asumimos que Etapa tiene un FK llamado 'caso'
+        if hasattr(etapa, 'caso'):
+             # Asumimos que CasoClinico tiene un FK llamado 'paciente'
+             paciente = etapa.caso.paciente 
+        
+        context["paciente_actual"] = paciente
+        
+        # La lógica del formulario de paciente (si la usas) se mantiene:
         PacienteForm = modelform_factory(
-            Paciente,
-            fields=["nombres", "apellidos", "edad", "antecedentes", "historial_medico"]
+             Paciente,
+             fields=["nombres", "apellidos", "edad", "antecedentes", "historial_medico"]
         )
-
         context["form"] = PacienteForm()
+        
         return context
 
 
@@ -36,7 +50,7 @@ class FichaPacienteCreate(CreateView):
     template_name = "video/video_simulacion.html"
 
     def get_success_url(self):
-        return reverse_lazy("simulacion", kwargs={"pk": self.kwargs["pk"]})
+        return reverse_lazy("curso_y_modulo:simulacion_video", kwargs={"pk": self.kwargs["pk"]})
 
 
 # -------------------------
@@ -101,26 +115,29 @@ def curso_detalle(request, curso_id):
     return render(request, "curso/curso_detalle.html", context)
 
 
+# applications/curso_y_modulo/views.py
+
 def seleccionar_paciente_curso(request, curso_id, paciente_id):
     """
-    El estudiante selecciona un paciente de ejemplo dentro del curso.
+    El estudiante selecciona un paciente de ejemplo y se redirige 
+    a la PRIMERA Etapa de ese caso clínico.
     """
-
-    # 🔒 Si NO está logueado → mensaje y redirección limpia al login
+    
+    # 1. Verificación de Login
     if not request.user.is_authenticated:
         messages.error(request, "Debes iniciar sesión para seleccionar un paciente.")
         return redirect("usuario:login_estudiantes")
 
     curso = get_object_or_404(Curso, pk=curso_id)
 
-    # Solo pacientes que tengan caso clínico en este curso
+    # 2. Obtener Paciente
     paciente = get_object_or_404(
         Paciente,
         pk=paciente_id,
         casos_clinicos__curso=curso
     )
 
-    # Guardar la selección de paciente
+    # 3. Guardar la selección
     SeleccionPacienteCurso.objects.update_or_create(
         usuario=request.user,
         curso=curso,
@@ -129,16 +146,26 @@ def seleccionar_paciente_curso(request, curso_id, paciente_id):
 
     messages.success(request, f"Paciente seleccionado: {paciente}")
 
-    # 🔥 Redirigir al primer video del curso
-    primer_video = (
-        Video.objects
-        .filter(tema__curso=curso)
-        .order_by('tema__titulo', 'id')
-        .first()
-    )
+    # ------------------------------------------------------------------
+    # 🔥 NUEVA LÓGICA: Redirigir a la primera ETAPA del Caso Clínico
+    # ------------------------------------------------------------------
+    
+    # A. Buscar el caso clínico asociado a este paciente y curso
+    # (Asumiendo que Paciente tiene related_name='casos_clinicos')
+    caso_asociado = paciente.casos_clinicos.filter(curso=curso).first() 
 
-    if primer_video:
-        return redirect("curso_y_modulo:simulacion", pk=primer_video.id)
+    if caso_asociado:
+        # B. Buscar la primera Etapa (orden=1) de ese Caso
+        initial_etapa = Etapa.objects.filter(
+            caso=caso_asociado, 
+            orden=1 
+        ).first()
 
-    # Si NO hay videos → volver a la ficha del curso
+        if initial_etapa:
+            # C. ¡ÉXITO! Redirigir a la vista de simulación con el ID de la ETAPA
+            return redirect("curso_y_modulo:simulacion_video", pk=initial_etapa.pk)
+
+    # ------------------------------------------------------------------
+    # Fallback si no se encuentra la Etapa
+    messages.error(request, "No se encontró la Etapa inicial para este caso clínico.")
     return redirect("curso_y_modulo:curso_detalle", curso_id=curso.id)

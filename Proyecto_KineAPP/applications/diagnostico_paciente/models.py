@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from urllib.parse import urlparse, parse_qs ###
 
 
 class Paciente(models.Model):
@@ -72,6 +73,10 @@ class Etapa(models.Model):
         related_name='etapas',
         verbose_name='Caso clínico',
     )
+
+    # 2. Conexión al Paciente (¡AQUÍ ESTÁ LA CLAVE!)
+    paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE, related_name='etapas_asociadas')
+
     nombre = models.CharField('Nombre de la etapa', max_length=150)
     orden = models.PositiveIntegerField(
         'Orden',
@@ -93,17 +98,54 @@ class Etapa(models.Model):
         help_text='Pregunta principal de esta etapa'
     )
     url_video = models.URLField(
-        'Video asociado',
+        'Video asociado (URL)',
         max_length=300,
         blank=True,
-        help_text='Video explicativo u orientador (opcional)'
+        null=True
     )
+
+    ####
+    @property
+    def embed_url(self):
+        url = self.url_video # <--- ESTO ESTÁ BIEN, SE MANTIENE
+        if not url: return None
+        
+        parsed = urlparse(url)
+
+        # Caso 1: URL corta youtu.be
+        if "youtu.be" in parsed.netloc:
+            video_id = parsed.path.lstrip("/")
+            params = parsed.query
+            if params:
+                # CAMBIO: Usamos 'https' y 'youtube-nocookie'
+                return f"//www.youtube-nocookie.com/embed/{video_id}?{params}"
+            return f"//www.youtube-nocookie.com/embed/{video_id}"
+
+        # Caso 2: watch?v=ID
+        if "watch" in parsed.path:
+            qs = parse_qs(parsed.query)
+            video_id = qs.get("v", [""])[0]
+            params = "&".join(
+                f"{k}={v[0]}" for k, v in qs.items() if k != "v"
+            )
+            if params:
+                # CAMBIO: Usamos 'https' y 'youtube-nocookie'
+                return f"//www.youtube-nocookie.com/embed/{video_id}?{params}"
+            return f"//www.youtube-nocookie.com/embed/{video_id}"
+
+        # Caso 3: /embed/
+        if "embed" in parsed.path:
+            return url
+
+        return url
+    ####
 
     # NUEVO: contenido adicional opcional (lo que antes iba a Modulo/ContenidoAdicional)
     contenido_adicional_url = models.URLField(
         'Contenido adicional (URL)',
         max_length=500,
-        blank=True
+        blank=True,
+        help_text='Opcional'
     )
     contenido_adicional_archivo = models.FileField(
         'Contenido adicional (archivo)',

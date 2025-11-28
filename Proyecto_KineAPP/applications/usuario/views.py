@@ -574,3 +574,21 @@ def admin_dashboard(request):
     }
 
     return render(request, "admin/admin_dashboard.html", contexto)
+
+#PERFIL ESTUDIANTE
+@login_required
+def perfil_estudiante(request):
+    usuario = request.user
+    
+    # Intentamos obtener el perfil de estudiante usando el related_name='perfil'
+    # que definiste en tu models.py
+    try:
+        datos_estudiante = usuario.perfil
+    except AttributeError:
+        datos_estudiante = None # Por si entra un admin o docente por error
+
+    context = {
+        'usuario': usuario,
+        'estudiante': datos_estudiante
+    }
+    return render(request, 'usuario/perfil_estudiante.html', context)

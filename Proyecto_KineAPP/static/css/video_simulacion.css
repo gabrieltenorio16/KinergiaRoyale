@@ -43,6 +43,8 @@ body {
     box-shadow: var(--shadow);
     width: 100%;
     max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .header-case h1 {
@@ -65,6 +67,8 @@ body {
     border-radius: var(--radius);
     overflow: hidden;
     box-shadow: var(--shadow);
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .video-box iframe {
@@ -115,6 +119,8 @@ body {
     min-height: 220px;
     box-shadow: var(--shadow);
     animation: fadeIn .3s ease;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 @keyframes fadeIn {
@@ -226,4 +232,29 @@ body {
 .estilo-formulario textarea {
     resize: vertical;        /* Permite al usuario agrandarlo solo hacia abajo */
     min-height: 100px;       /* Altura mínima inicial */
+}
+
+/* ESTILO Y POSICIONAMIENTO DEL BOTÓN VOLVER */
+.btn-volver {
+    /* Alineación dentro del layout (Flexbox) */
+    align-self: flex-start; 
+    
+    /* Mantiene el ancho total (máx. 800px) centrado */
+    max-width: 800px;
+    width: 100%;
+    
+    /* Estilo del texto */
+    background: none;
+    border: none;
+    color: var(--ucn-blue-700); /* Usa el azul principal de tu plataforma */
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
+    padding: 8px 20px; /* Espacio interno, 20px para alinearse con los bordes de las tarjetas */
+    transition: color 0.2s;
+}
+
+.btn-volver:hover {
+    color: var(--ucn-blue-900);
+    text-decoration: underline;
 }

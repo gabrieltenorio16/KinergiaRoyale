@@ -1,0 +1,170 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mi Perfil — Kinesiología UCN</title>
+  
+  <link rel="stylesheet" href="{% static 'css/panel.css' %}">
+
+  <style>
+    /* Estilos específicos para la tarjeta de perfil */
+    .profile-container {
+      max-width: 700px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .profile-card {
+      background: #fff;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--gray-200);
+      overflow: hidden;
+    }
+
+    /* Cabecera azul con el avatar grande */
+    .profile-header {
+      background: linear-gradient(135deg, var(--ucn-blue-700), var(--ucn-blue-900));
+      padding: 40px 20px;
+      text-align: center;
+      color: white;
+    }
+
+    .profile-avatar-big {
+      width: 110px;
+      height: 110px;
+      margin: 0 auto 15px;
+      border-radius: 50%;
+      background: white;
+      color: var(--ucn-blue-900);
+      font-size: 2.5rem;
+      font-weight: 800;
+      display: grid;
+      place-items: center;
+      border: 4px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    .profile-name {
+      margin: 0;
+      font-size: 1.6rem;
+      font-weight: 700;
+    }
+
+    .profile-role {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 4px 12px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    /* Lista de datos */
+    .profile-body {
+      padding: 30px;
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--gray-200);
+      padding: 15px 0;
+    }
+
+    .info-row:last-child {
+      border-bottom: none;
+    }
+
+    .info-label {
+      color: var(--gray-600);
+      font-weight: 600;
+    }
+
+    .info-value {
+      color: var(--ucn-blue-900);
+      font-weight: 700;
+      text-align: right;
+    }
+
+    /* Botón volver */
+    .profile-footer {
+      background: var(--gray-50);
+      padding: 20px;
+      text-align: center;
+      border-top: 1px solid var(--gray-200);
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <div class="header__inner">
+      <div class="logo">
+        <div class="logo__mark">K</div>
+        <div class="logo__text">
+          <span class="logo__title">Kinesiología UCN</span>
+          <span class="logo__subtitle">Perfil de Usuario</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="profile-container">
+    <div class="profile-card">
+      
+      <div class="profile-header">
+        <div class="profile-avatar-big">
+          {% if usuario.first_name and usuario.last_name %}
+              {{ usuario.first_name|slice:":1" }}{{ usuario.last_name|slice:":1" }}
+          {% else %}
+              {{ usuario.username|slice:":2"|upper }}
+          {% endif %}
+        </div>
+        <h1 class="profile-name">{{ usuario.get_full_name|default:usuario.username }}</h1>
+        <span class="profile-role">{{ usuario.get_rol_display }}</span>
+      </div>
+
+      <div class="profile-body">
+        
+        <div class="info-row">
+          <span class="info-label">RUT</span>
+          <span class="info-value">{{ usuario.rut }}</span>
+        </div>
+
+        <div class="info-row">
+          <span class="info-label">Correo Electrónico</span>
+          <span class="info-value">{{ usuario.email }}</span>
+        </div>
+
+        <div class="info-row">
+          <span class="info-label">Fecha de Registro</span>
+          <span class="info-value">{{ usuario.date_joined|date:"d M, Y" }}</span>
+        </div>
+
+        {% if estudiante %}
+        <div class="info-row">
+          <span class="info-label">Carrera</span>
+          <span class="info-value">{{ estudiante.carrera|default:"No especificada" }}</span>
+        </div>
+
+        <div class="info-row">
+          <span class="info-label">Semestre Actual</span>
+          <span class="info-value">{{ estudiante.semestre|default:"-" }}° Semestre</span>
+        </div>
+        {% endif %}
+
+      </div>
+
+      <div class="profile-footer">
+        <a href="{% url 'usuario:panel_estudiante' %}" class="btn">Volver al Panel</a>
+      </div>
+
+    </div>
+  </main>
+
+</body>
+</html>

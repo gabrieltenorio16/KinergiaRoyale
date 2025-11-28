@@ -27,4 +27,7 @@ urlpatterns = [
     # Paneles
     path("panel/", views.panel_estudiante, name="panel_estudiante"),
     path("admin/dashboard/", views.admin_dashboard, name="admin_dashboard"),
+
+    #Perfil Estudiante
+    path("perfil/", views.perfil_estudiante, name="perfil"),
 ]

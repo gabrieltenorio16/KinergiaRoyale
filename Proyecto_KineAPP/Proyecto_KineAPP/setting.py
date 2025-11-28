@@ -54,7 +54,7 @@ ROOT_URLCONF = 'Proyecto_KineAPP.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [],  # <--- LO DEJAMOS VACÍO, COMO VIENE DE FÁBRICA
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

@@ -10,9 +10,9 @@ urlpatterns = [
     # SIMULACIÓN DE VIDEO
     # -------------------------
     path(
-        "simulacion/<int:pk>/",
-        views.VideoDetailView.as_view(),
-        name="simulacion"
+        "simulacion/etapa/<int:pk>/",
+        views.EtapaDetailView.as_view(),
+        name="simulacion_video"
     ),
     path(
         "simulacion/<int:pk>/crear-ficha/",

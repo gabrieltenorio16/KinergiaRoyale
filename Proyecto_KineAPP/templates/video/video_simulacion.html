@@ -11,79 +11,60 @@
     <link rel="stylesheet" href="{% static 'css/video_simulacion.css' %}">
 </head>
 
+    <a href="{% url 'curso_y_modulo:curso_detalle' etapa.caso.curso.pk %}" class="btn-volver">
+        ← Volver al Curso
+    </a>
+
 <body>
 
     <!-- CONTENEDOR PRINCIPAL -->
-    <div class="layout">
+    <div class="header-case">
+        <h1>{{ etapa.nombre }}</h1> 
+        <p>
+            Paciente: {{ paciente_actual.nombres }} {{ paciente_actual.apellidos }} 
+            | Corte {{ etapa.orden }}/5
+        </p>
+    </div>
 
-        <!-- CABECERA DEL CASO -->
-        <div class="header-case">
-            <h1>{{ video.titulo }}</h1>
-        </div>
-
-        <!-- VIDEO -->
-        <div class="video-box">
-            <iframe
-                src="{{ video.embed_url }}"
-                width="100%"
-                height="100%"
-                frameborder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                referrerpolicy="strict-origin-when-cross-origin"
-                allowfullscreen
-                title="{{ video.titulo }}">
-            </iframe>
-        </div>
+    <div class="video-box">
+        <iframe 
+            src="{{ etapa.embed_url }}" width="100%" 
+            height="100%" 
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin" 
+            allowfullscreen
+            title="{{ etapa.nombre }}">
+        </iframe>
+    </div>
 
         <!-- BOTONES DE SECCIONES -->
-        <div class="button-bar">
-            <div class="btn active" data-section="resumen">Resumen</div>
-            <div class="btn" data-section="preguntas">Preguntas</div>
-            <div class="btn" data-section="topicos">Tópicos</div>
-            <div class="btn" data-section="diagnostico">Diagnóstico</div>
-            <div class="btn" data-section="ficha">Ficha Médica</div>
-        </div>
+    <div class="button-bar">
+        
+        <div class="btn active" data-section="resumen">Resumen</div>
+        <div class="btn" data-section="preguntas">Preguntas</div>
+        <div class="btn" data-section="topicos">Tópicos</div>
+        <div class="btn" data-section="diagnostico">Diagnóstico</div>
+        <div class="btn" data-section="ficha">Ficha Médica</div>
+    </div>
 
         <!-- CONTENIDO DINÁMICO -->
-        <div id="contentWindow" class="content-window"></div>
+    <div id="contentWindow" class="content-window"></div>
 
     </div>
 
-    <!-- MODAL FICHA PACIENTE -->
-    <!--<div id="fichaModal" class="modal-backdrop">
-
-        <div class="modal-content">
-
-            <h2>Registrar Paciente</h2>
-
-            <form method="post" action="{% url 'curso_y_modulo:crear_ficha_paciente' video.pk %}">
-                {% csrf_token %}
-
-                <div class="form-container">
-                    {{ form.as_p }}
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" id="closeFichaModal" class="btn-cancelar">Cancelar</button>
-                    <button type="submit" class="btn-guardar">Guardar</button>
-                </div>
-            </form>
-
-        </div>
-
-    </div>-->
     <div id="ficha-template" style="display: none;">
         <div class="form-container-inline">
             <h2 style="color: var(--ucn-blue-900); margin-bottom: 20px;">Registrar Paciente</h2>
     
-            <form method="post" action="...">
+            <form method="post" action="{% url 'curso_y_modulo:crear_ficha_paciente' etapa.pk %}">
                 {% csrf_token %}
         
             <div class="estilo-formulario">
                 {{ form.as_p }}
             </div>
 
-            <div style="margin-top: 25px; text-align: right;">
+            <div style="margin-top: 25px; text-align: center;">
                 <button type="submit" class="btn active">Guardar Ficha</button>
             </div>
             </form>

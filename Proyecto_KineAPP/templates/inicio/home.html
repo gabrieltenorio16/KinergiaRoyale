@@ -36,16 +36,18 @@
           <span id="badgeCount" class="badge">1</span>
         </button>
 
-        <!-- Avatar con iniciales -->
+        <!-- Avatar con iniciales MODIFICADO PERFIL ESTUDIANTE--> 
         {# usamos 'perfil' si viene en el contexto, si no, caemos en 'user' #}
         {% with persona=perfil|default:user %}
-        <div class="avatar" title="{{ persona.get_full_name }}">
-          {% if persona.first_name and persona.last_name %}
-              {{ persona.first_name|slice:":1" }}{{ persona.last_name|slice:":1" }}
-          {% else %}
-              {{ persona.username|slice:":2"|upper }}
-          {% endif %}
-        </div>
+        <a href="{% url 'usuario:perfil' %}" style="text-decoration: none;"> 
+          <div class="avatar" title="Ver mi perfil">
+              {% if persona.first_name and persona.last_name %}
+                 {{ persona.first_name|slice:":1" }}{{ persona.last_name|slice:":1" }}
+              {% else %}
+                 {{ persona.username|slice:":2"|upper }}
+              {% endif %}
+          </div>
+        </a>
         {% endwith %}
 
         <!-- Cerrar sesión -->
