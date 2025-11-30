@@ -1,0 +1,307 @@
+/* ========================================
+   VARIABLES CORPORATIVAS — UCN
+======================================== */
+:root {
+    --ucn-blue: #004b87;
+    --ucn-blue-light: #1976d2;
+    --background-soft: #f6f9fc;
+
+    --gray-line: #e0e6ec;
+    --gray-text: #6b7280;
+    --gray-border: #d4d9df;
+
+    --hover-light: #f2f4f7;
+
+    --black: #1e1e1e;
+}
+
+/* ========================================
+   ESTILOS GENERALES
+======================================== */
+body {
+    background: var(--background-soft);
+    font-family: 'Segoe UI', Roboto, Helvetica, sans-serif;
+    margin: 0;
+}
+
+/* ========================================
+   TOPBAR
+======================================== */
+.topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--ucn-blue);
+    padding: 10px 20px;
+    position: relative;
+    z-index: 3000;
+}
+
+.topbar .left,
+.topbar .right {
+    display: flex;
+    align-items: center;
+    gap: 10px;             /* pequeña separación */
+    padding-left: 10px;
+}
+
+.topbar .center {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    position: relative;
+}
+
+.search-bar {
+    width: 260px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: none;
+}
+
+.search-bar:focus {
+    outline: 2px solid var(--ucn-blue-light);
+}
+
+/* ========================================
+   NAV SECUNDARIA
+======================================== */
+.nav-secondary {
+    background: white;
+    border-bottom: 1px solid var(--gray-border);
+    padding: 14px 32px;
+    display: flex;
+    gap: 32px;
+}
+
+.nav-secondary a {
+    font-weight: 600;
+    font-size: 15px;
+    text-decoration: none;
+    color: var(--gray-text);
+}
+
+.nav-secondary a.active {
+    color: var(--ucn-blue);
+    border-bottom: 3px solid var(--ucn-blue);
+    padding-bottom: 5px;
+}
+
+/* ========================================
+   CONTENIDO PRINCIPAL
+======================================== */
+.container-main {
+    max-width: 1200px;
+    margin-left: 32px;
+    margin-top: 35px;
+    padding-right: 290px;  /* evita tapar con sidebar derecho */
+}
+
+.container-main h2 {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--black);
+}
+
+.classes-header {
+    margin-top: 10px;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Link: Agregar clase */
+.add-class {
+    font-size: 14px;
+    color: var(--ucn-blue);
+    cursor: pointer;
+}
+
+.add-class:hover {
+    text-decoration: underline;
+}
+
+/* ========================================
+   TARJETAS DE CURSO
+======================================== */
+.card-curso {
+    background: white;
+    border: 1px solid var(--gray-border);
+    border-radius: 10px;
+    padding: 18px;
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: transform .15s ease, box-shadow .15s ease;
+}
+
+.card-curso:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.10);
+}
+
+.card-curso .left {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+}
+
+.card-curso .icon {
+    width: 32px;
+    height: 32px;
+}
+
+.card-curso .titulo {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--black);
+}
+
+.card-curso .desc {
+    font-size: 13px;
+    color: var(--gray-text);
+}
+
+.card-ampliada {
+    width: 95%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* ========================================
+   SIDEBAR DERECHO
+======================================== */
+.sidebar-right {
+    position: fixed;
+    top: 95px;
+    right: 32px;
+    width: 260px;
+    background: white;
+    border: 1px solid var(--gray-border);
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.06);
+}
+
+.sidebar-right h5 {
+    font-size: 17px;
+    margin-bottom: 15px;
+    font-weight: 700;
+    color: var(--gray-text);
+}
+
+.sidebar-right .tool p {
+    margin-bottom: 0;
+    color: var(--gray-text);
+}
+
+.sidebar-right button {
+    background: var(--ucn-blue-light);
+    border: none;
+}
+
+.sidebar-right button:hover {
+    background: var(--ucn-blue);
+}
+
+/* ========================================
+   USUARIO (avatar y nombre)
+======================================== */
+.user-menu {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    position: relative;
+}
+
+.user-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+}
+
+.user-name {
+    font-weight: 600;
+    color: white;
+}
+
+/* ========================================
+   DROPDOWN USUARIO
+======================================== */
+.user-dropdown {
+    position: absolute;
+    top: 55px;
+    right: 0;
+    background: white;
+    border: 1px solid var(--gray-border);
+    border-radius: 10px;
+    width: 180px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    padding: 8px 0;
+    z-index: 5000;
+    display: none;
+}
+
+.user-dropdown.show {
+    display: block !important;
+}
+
+.user-dropdown a {
+    display: block;
+    padding: 10px 14px;
+    font-size: 14px;
+    text-decoration: none;
+    color: var(--black);
+}
+
+.user-dropdown a:hover {
+    background: var(--hover-light);
+}
+
+.user-dropdown .logout {
+    color: #c62828 !important;
+    font-weight: bold;
+}
+
+/* LOGO TOPBAR */
+.logo-ucn {
+    height: 32px;         /* MÁS PEQUEÑO */
+    width: auto;
+    margin-right: 12px;
+    margin-left: 20px;    /* PEGADO AL BORDE IZQUIERDO */
+    object-fit: contain;  /* Garantiza que no se deforme */
+    display: block;
+}
+
+.curso-link {
+    cursor: pointer;
+}
+
+.btn-delete-curso {
+    background: transparent;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+    color: #444;
+    padding: 6px;
+    border-radius: 6px;
+}
+
+.btn-delete-curso:hover {
+    color: #c62828;
+    background: #ffe5e5;
+}
+
+.zone-click {
+    display: flex;
+    gap: 14px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.zone-click:hover {
+    background: #f5f7fa;
+    border-radius: 10px;
+}

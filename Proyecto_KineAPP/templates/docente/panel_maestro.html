@@ -1,0 +1,360 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Docente | Kinergía Royale</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'css/panel_maestro_docente.css' %}">
+</head>
+
+<body>
+
+<!-- =====================================================
+     TOP BAR
+===================================================== -->
+<div class="topbar">
+    
+    <!-- Left section -->
+    <div class="left">
+        <img src="{% static 'img/logo_ucn_largo.png' %}" class="logo-ucn">
+        <span class="menu-item" style="color: white;">Explorar ▾</span>
+    </div>
+
+    <!-- Search bar -->
+    <div class="center">
+        <input
+            type="text"
+            placeholder="Buscar curso..."
+            class="search-bar"
+            id="buscadorCursos"
+        >
+    </div>
+
+    <!-- Right section: User menu -->
+    <div class="right">
+
+    <!-- Botón que abre el dropdown -->
+    <div class="user-menu" id="userMenuToggle">
+        <img src="{% static 'img/icon_user.png' %}" class="user-icon">
+        <span class="user-name">
+            {{ request.user.first_name }} {{ request.user.last_name }} ▾
+        </span>
+    </div>
+
+    <!-- Dropdown (sin d-none) -->
+    <div class="user-dropdown" id="userDropdown">
+        <a href="#">Mi perfil</a>
+        <a href="#">Configuración</a>
+        <a href="{% url 'docente:panel' %}">Mis clases</a>
+        <hr>
+        <a href="{% url 'usuario:seleccionar_staff' %}" class="logout">Cerrar sesión</a>
+    </div>
+
+</div>
+
+</div>
+
+
+
+<!-- =====================================================
+     NAV SECUNDARIA (Clases / Estudiantes / Recursos)
+===================================================== -->
+<div class="nav-secondary">
+    <a href="{% url 'docente:panel' %}" class="{% if tab == 'clases' %}active{% endif %}">Clases</a>
+    <a href="{% url 'docente:estudiantes' %}" class="{% if tab == 'estudiantes' %}active{% endif %}">Estudiantes</a>
+    <a href="{% url 'docente:recursos' %}" class="{% if tab == 'recursos' %}active{% endif %}">Recursos</a>
+</div>
+
+<!-- =====================================================
+     WRAPPER GENERAL
+===================================================== -->
+<div class="page-wrapper">
+
+    <!-- ==========================================
+         CONTENIDO PRINCIPAL
+    =========================================== -->
+    <div class="container-main">
+
+        <h2 class="titulo-bienvenida">
+            Bienvenido(a), {{ request.user.first_name|default:"Docente" }}
+        </h2>
+
+        <div class="classes-header">
+            <h4>Tus clases</h4>
+            <!-- Botón que abre el modal de crear curso -->
+            <a
+                href="#"
+                class="add-class"
+                data-bs-toggle="modal"
+                data-bs-target="#modalCrearCurso"
+            >
+                Agregar una clase
+            </a>
+        </div>
+
+        <!-- LISTADO DINÁMICO DE CURSOS -->
+{% if cursos %}
+    {% for curso in cursos %}
+    
+    <div class="card-curso card-ampliada">
+
+        <!-- Zona clickeable que abre "asignar contenido" -->
+        <div class="left zone-click"
+             data-url="{% url 'docente:asignar_contenido' curso.id %}">
+             
+            <img src="{% static 'img/icon_clase.png' %}" class="icon">
+            
+            <div>
+                <div class="titulo">{{ curso.nombre }}</div>
+                <div class="desc">Nivel: {{ curso.get_nivel_display }}</div>
+                <div class="desc">Estudiantes: {{ curso.estudiantes.count }}</div>
+            </div>
+        </div>
+
+        <!-- Zona derecha con botones -->
+        <div class="right d-flex align-items-center" style="gap: 10px;">
+
+            <!-- Botón agregar estudiantes -->
+            <button
+                type="button"
+                class="btn btn-primary btn-sm btn-agregar-estudiantes"
+                data-curso-id="{{ curso.id }}"
+                data-curso-nombre="{{ curso.nombre }}"
+            >
+                Agregar estudiantes
+            </button>
+
+
+        </div>
+
+    </div>
+
+    {% endfor %}
+{% else %}
+    <p>No tienes cursos asociados actualmente.</p>
+{% endif %}
+
+
+    </div> <!-- /container-main -->
+
+    <!-- ==========================================
+         SIDEBAR DERECHO
+    =========================================== -->
+    <div class="sidebar-right">
+        <h5>Herramientas del Docente</h5>
+
+        <div class="tool">
+            <b>🔒 Planificación de clase</b>
+            <p>Crea planes estructurados para tus módulos.</p>
+        </div>
+
+        <div class="tool">
+            <b>🔒 Analítica de desempeño</b>
+            <p>Monitorea el progreso de tus estudiantes.</p>
+        </div>
+
+        <button class="btn btn-primary w-100 mt-3">Revisar desempeño</button>
+    </div>
+
+</div> <!-- /page-wrapper -->
+
+<!-- =====================================================
+     MODAL: CREAR CURSO
+===================================================== -->
+<div class="modal fade" id="modalCrearCurso" tabindex="-1" aria-labelledby="modalCrearCursoLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+
+      <form method="post" action="{% url 'docente:crear_curso' %}">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalCrearCursoLabel">Crear nuevo curso</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="row g-3">
+
+            <div class="col-md-12">
+              <label class="form-label">Nombre del curso</label>
+              <input type="text" name="nombre" class="form-control" required>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label">Nivel</label>
+              <select name="nivel" class="form-select">
+                <option value="BASICO">Básico</option>
+                <option value="INTERMEDIO">Intermedio</option>
+                <option value="AVANZADO">Avanzado</option>
+              </select>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label">Fecha inicio</label>
+              <input type="date" name="fecha_inicio" class="form-control">
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label">Fecha fin</label>
+              <input type="date" name="fecha_fin" class="form-control">
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Docentes a cargo</label>
+              <select
+                  name="docentes_ids"
+                  class="form-select"
+                  multiple
+              >
+                {% for d in docentes %}
+                  <option value="{{ d.id }}" {% if d.id == request.user.id %}selected{% endif %}>
+                    {{ d.first_name }} {{ d.last_name }} ({{ d.email }})
+                  </option>
+                {% endfor %}
+              </select>
+              <small class="text-muted">Ctrl+clic para seleccionar varios.</small>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Estudiantes</label>
+              <select
+                  name="estudiantes_ids"
+                  class="form-select"
+                  multiple
+              >
+                {% for est in estudiantes %}
+                  <option value="{{ est.id }}">
+                    {{ est.first_name }} {{ est.last_name }} — {{ est.rut }}
+                  </option>
+                {% endfor %}
+              </select>
+              <small class="text-muted">Opcional. Puedes agregarlos después.</small>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Crear curso</button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- =====================================================
+     MODAL: AGREGAR / QUITAR ESTUDIANTES
+===================================================== -->
+<div class="modal fade" id="modalAgregarEstudiantes" tabindex="-1" aria-labelledby="modalAgregarEstudiantesLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content">
+
+      <form id="formAgregarEstudiantes" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="accion" id="accionEstudiantes" value="agregar">
+
+        <div class="modal-header">
+          <h5 class="modal-title">
+            Gestionar estudiantes para el curso
+            <span id="nombreCursoSeleccionado" class="fw-bold"></span>
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+
+        <div class="modal-body">
+
+          <!-- FILTRO -->
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <input
+                  type="text"
+                  id="buscadorEstudiantes"
+                  class="form-control"
+                  placeholder="Buscar por nombre o RUT..."
+              >
+            </div>
+
+            <div class="col-md-3">
+              <!-- Botón placeholder para importación desde Excel/CSV -->
+              <button type="button" class="btn btn-outline-secondary w-100" id="btnImportarExcel">
+                Importar desde Excel/CSV
+              </button>
+            </div>
+          </div>
+
+          <!-- TABLA DE ESTUDIANTES DEL SISTEMA -->
+          <div class="table-responsive" style="max-height: 400px; overflow-y:auto;">
+            <table class="table table-sm align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th style="width: 40px;">
+                    <input type="checkbox" id="chkTodosEstudiantes">
+                  </th>
+                  <th>Nombre</th>
+                  <th>RUT</th>
+                  <th>Email</th>
+                </tr>
+              </thead>
+              <tbody id="tablaEstudiantes">
+                {% for est in estudiantes %}
+                  <tr>
+                    <td>
+                      <input
+                          type="checkbox"
+                          name="estudiantes_ids"
+                          value="{{ est.id }}"
+                          class="chk-estudiante"
+                      >
+                    </td>
+                    <td>{{ est.first_name }} {{ est.last_name }}</td>
+                    <td>{{ est.rut }}</td>
+                    <td>{{ est.email }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+
+          <!-- (Opcional) Resumen del curso actual podría ir aquí más adelante -->
+
+        </div>
+
+        <div class="modal-footer d-flex justify-content-between">
+          <div>
+            <button type="button" class="btn btn-outline-danger" id="btnQuitarEstudiantes">
+              Quitar seleccionados
+            </button>
+          </div>
+          <div>
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+              Cerrar
+            </button>
+            <button type="button" class="btn btn-primary" id="btnAgregarEstudiantes">
+              Agregar seleccionados
+            </button>
+          </div>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- JS Bootstrap + JS propio -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{% static 'js/panel_maestro_docente.js' %}"></script>
+
+</body>
+</html>

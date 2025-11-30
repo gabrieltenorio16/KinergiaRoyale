@@ -62,7 +62,7 @@
     <div class="section-head">
       <div>
         {# igual que arriba, saludamos usando perfil si existe #}
-        {% with persona=perfil|default:user %}
+        {% with persona=perfil|default:request.user %}
         <div class="section-head__title">
           Hola, {{ persona.first_name|default:persona.username }} 👋
         </div>
@@ -99,9 +99,9 @@
 
           <div class="card__footer">
             <!-- "Continuar" lleva al flujo principal del curso (detalle/menu del curso) -->
-            <a href="{% url 'curso_y_modulo:curso_detalle' curso.id %}" class="btn">Continuar</a>
+            <a href="{% url 'curso:curso_detalle' curso.id %}" class="btn">Continuar</a>
             <!-- "Detalles" queda como acción secundaria hacia el mismo detalle por ahora -->
-            <a href="{% url 'curso_y_modulo:curso_detalle' curso.id %}" class="btn btn--ghost">Detalles</a>
+            <a href="{% url 'curso:curso_detalle' curso.id %}" class="btn btn--ghost">Detalles</a>
           </div>
 
         </div>

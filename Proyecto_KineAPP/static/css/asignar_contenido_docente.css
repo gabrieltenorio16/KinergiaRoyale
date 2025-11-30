@@ -1,0 +1,303 @@
+/* ================================
+   ESTILOS GENERALES
+================================ */
+
+body {
+    background-color: #f7f9fb;
+}
+
+/* ================================
+   SIDEBAR
+================================ */
+
+.ucn_logo img {
+    width: 180px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+.ucn_logo {
+    padding-left: 15px;
+    margin-bottom: 20px;
+}
+
+.sidebar {
+    height: 100vh;
+    background: white;
+    border-right: 1px solid #e0e0e0;
+    padding-top: 20px;
+}
+
+.sidebar-title {
+    font-size: 0.8rem;
+    color: #9aa2b1;
+    text-transform: uppercase;
+    font-weight: 700;
+    padding: 0 15px;
+    margin-top: 20px;
+}
+
+.sidebar a {
+    padding: 10px 20px;
+    display: block;
+    color: #2d3a45;
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.sidebar a.active {
+    background: #eef6ff;
+    color: #1465d9;
+    border-left: 4px solid #1465d9;
+}
+
+.sidebar-course-box {
+    background: #0f5ec2;
+    padding: 14px 16px;
+    border-radius: 10px;
+    margin: 0 12px 22px 12px;
+}
+
+.sidebar-course-title {
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.sidebar-course-subtitle {
+    color: #e6ecf7;
+    font-size: 0.85rem;
+}
+
+/* ================================
+   UNIDADES Y CONTENIDOS
+================================ */
+
+.unit-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 6px;
+    background: #e8f3ff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 12px;
+}
+
+.unit-icon img {
+    width: 26px;
+    height: 26px;
+    border-radius: 4px;
+}
+
+.unit-header {
+    padding: 15px 10px;
+    cursor: pointer;
+}
+
+.unit-title {
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.lesson {
+    padding: 8px 55px;
+    border-top: 1px solid #eef2f6;
+}
+
+.toggle-btn.rotate {
+    transform: rotate(90deg);
+}
+
+/* ================================
+   TOP BAR (USER MENU)
+================================ */
+
+.top-bar {
+    background: #ffffff;
+    padding: 12px 20px;
+    border-bottom: 1px solid #e3e6ea;
+}
+
+.user-menu {
+    cursor: pointer;
+    position: relative;
+}
+
+.user-photo {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-right: 10px;
+}
+
+.user-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.user-name {
+    font-weight: 600;
+    color: #0d6efd;
+}
+
+.notification-dot {
+    width: 12px;
+    height: 12px;
+    background: #0d6efd;
+    border-radius: 50%;
+    margin-left: 8px;
+}
+
+.chevron {
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 7px solid #6c757d;
+    transition: 0.2s;
+    margin-left: 8px;
+}
+
+.chevron.open {
+    transform: rotate(180deg);
+}
+
+/* DROPDOWN */
+
+.user-dropdown {
+    position: absolute;
+    top: 120%;
+    right: 0;
+    background: white;
+    width: 240px;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+    display: none;
+    z-index: 2000;
+    overflow: hidden;
+}
+
+.dropdown-header {
+    padding: 12px 16px;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 700;
+}
+
+.user-dropdown a {
+    display: block;
+    padding: 12px 16px;
+    text-decoration: none;
+    color: #0d6efd;
+    font-weight: 500;
+}
+
+.user-dropdown a:hover {
+    background: #eef4ff;
+}
+
+.dropdown-danger {
+    color: #dc3545 !important;
+}
+
+/* ================================
+   FILTROS Y SELECT PERSONALIZADO
+================================ */
+
+.custom-dropdown {
+    position: relative;
+}
+
+.dropdown-btn {
+    background: white;
+    border: 1px solid #d2d6dc;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.95rem;
+}
+
+.dropdown-btn:hover {
+    background: #f5f7fb;
+}
+
+.dropdown-panel {
+    position: absolute;
+    top: 110%;
+    left: 0;
+    width: 260px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+    padding: 12px;
+    display: none;
+    z-index: 2000;
+}
+
+.dropdown-actions {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+}
+
+.dropdown-actions span {
+    font-size: 0.9rem;
+    padding: 6px 0;
+    cursor: pointer;
+    color: #0a58ca;
+}
+
+.dropdown-panel label {
+    font-size: 0.95rem;
+    display: flex;
+    gap: 8px;
+    padding: 6px 4px;
+    cursor: pointer;
+}
+
+.dropdown-panel label:hover {
+    background: #eef4ff;
+    border-radius: 6px;
+}
+
+.dropdown-panel input[type="checkbox"] {
+    cursor: pointer;
+}
+
+/* ================================
+   ACCESIBILIDAD
+================================ */
+
+:focus {
+    outline: 3px solid #99c2ff;
+    outline-offset: 2px;
+}
+
+/* ================================
+   TABS
+================================ */
+
+.nav-tabs .nav-link {
+    font-weight: 600;
+    color: #0d6efd;
+}
+
+.nav-tabs .nav-link.active {
+    color: #0d6efd;
+    border-color: #0d6efd #0d6efd #fff;
+}
+
+/* ================================
+   TARJETAS
+================================ */
+
+.unit-card {
+    border-radius: 10px;
+}

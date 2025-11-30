@@ -92,3 +92,55 @@ class SeleccionPacienteCurso(models.Model):
 
     def __str__(self):
         return f"{self.usuario} → {self.paciente} ({self.curso})"
+
+# Selección de paciente en curso finaliza aquí 
+# -----------------------------
+# Seleción de contenido asignado (Panel maestro docente)
+# -----------------------------
+
+class ContenidoAsignado(models.Model):
+    curso = models.ForeignKey(
+        Curso,
+        on_delete=models.CASCADE,
+        related_name='asignaciones_contenido'
+    )
+
+    tema = models.ForeignKey(
+        'Contenido.Tema',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='asignaciones_tema'
+    )
+
+    video = models.ForeignKey(
+        'Contenido.Video',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='asignaciones_video'
+    )
+
+    estudiante = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='contenidos_asignados',
+        limit_choices_to={'rol': 'EST'}
+    )
+
+    fecha_asignacion = models.DateTimeField(auto_now_add=True)
+
+    ESTADO_CHOICES = [
+        ('PENDIENTE', 'Pendiente'),
+        ('COMPLETADO', 'Completado'),
+    ]
+
+    estado = models.CharField(
+        max_length=12,
+        choices=ESTADO_CHOICES,
+        default='PENDIENTE'
+    )
+
+    def __str__(self):
+        recurso = self.video or self.tema or "Contenido"
+        return f"{self.estudiante} → {recurso} ({self.curso})"

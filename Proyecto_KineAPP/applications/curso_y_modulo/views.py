@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import DetailView, CreateView
 from django.urls import reverse_lazy
@@ -169,3 +170,9 @@ def seleccionar_paciente_curso(request, curso_id, paciente_id):
     # Fallback si no se encuentra la Etapa
     messages.error(request, "No se encontró la Etapa inicial para este caso clínico.")
     return redirect("curso_y_modulo:curso_detalle", curso_id=curso.id)
+=======
+# Este archivo ya no se usa.
+# Las vistas fueron movidas a la carpeta views/
+
+
+>>>>>>> Stashed changes

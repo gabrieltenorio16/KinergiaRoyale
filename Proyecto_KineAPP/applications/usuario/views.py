@@ -326,7 +326,7 @@ def login_docente(request):
         # --- Caso 4: Usuario válido ---
         login(request, user)
         # Por ahora lo mando al dashboard admin (puedes cambiar a un panel_docente)
-        return redirect("usuario:admin_dashboard")
+        return redirect("docente:panel")
 
     # GET: mostrar formulario
     return render(request, "login/login_docente.html")
