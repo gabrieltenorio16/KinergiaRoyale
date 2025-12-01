@@ -1,38 +1,43 @@
-# applications/curso_y_modulo/urls.py
+# applications/curso_y_modulo/urls/curso.py
 
 from django.urls import path
-from . import views
 
-app_name = "curso_y_modulo"
+# Vistas de estudiante
+from applications.curso_y_modulo.views.estudiante import (
+    curso_detalle,
+    seleccionar_paciente_curso,
+)
+
+# Vistas de contenido (para asignar contenido al curso)
+from applications.curso_y_modulo.views.contenido import (
+    asignar_contenido,
+)
+
+# 👉 SÍ definimos app_name
+app_name = "curso"
 
 urlpatterns = [
-    # -------------------------
-    # SIMULACIÓN DE VIDEO
-    # -------------------------
+    # Detalle del curso (panel interno del estudiante para un curso)
+    # URL final: /curso/<curso_id>/
     path(
-        "simulacion/etapa/<int:pk>/",
-        views.EtapaDetailView.as_view(),
-        name="simulacion_video"
-    ),
-    path(
-        "simulacion/<int:pk>/crear-ficha/",
-        views.FichaPacienteCreate.as_view(),
-        name="crear_ficha_paciente"
+        "<int:curso_id>/",
+        curso_detalle,
+        name="curso_detalle",
     ),
 
-    # -------------------------
-    # PANTALLA DEL CURSO (MENÚ INTERNO ESTUDIANTE)
-    # -------------------------
+    # Seleccionar paciente dentro del curso
+    # URL final: /curso/<curso_id>/seleccionar-paciente/<paciente_id>/
     path(
-        "curso/<int:curso_id>/",
-        views.curso_detalle,
-        name="curso_detalle"
-    ),
-
-    # Selección de paciente dentro de un curso
-    path(
-        "curso/<int:curso_id>/seleccionar-paciente/<int:paciente_id>/",
-        views.seleccionar_paciente_curso,
+        "<int:curso_id>/seleccionar-paciente/<int:paciente_id>/",
+        seleccionar_paciente_curso,
         name="seleccionar_paciente_curso",
+    ),
+
+    # Asignar contenido a un curso (puede ser usado por vistas de docente)
+    # URL final: /curso/<curso_id>/asignar-contenido/
+    path(
+        "<int:curso_id>/asignar-contenido/",
+        asignar_contenido,
+        name="asignar_contenido",
     ),
 ]

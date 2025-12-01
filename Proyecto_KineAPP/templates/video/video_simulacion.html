@@ -11,36 +11,38 @@
     <link rel="stylesheet" href="{% static 'css/video_simulacion.css' %}">
 </head>
 
-    <a href="{% url 'curso_y_modulo:curso_detalle' etapa.caso.curso.pk %}" class="btn-volver">
-        ← Volver al Curso
-    </a>
-
 <body>
 
-    <!-- CONTENEDOR PRINCIPAL -->
+    <!-- BOTÓN VOLVER -->
+    <a href="{% url 'curso_y_modulo:curso_detalle' etapa.caso.curso.pk %}" class="btn-volver">
+        ← Volver al curso
+    </a>
+
+    <!-- ENCABEZADO DEL CASO -->
     <div class="header-case">
-        <h1>{{ etapa.nombre }}</h1> 
+        <h1>{{ etapa.nombre }}</h1>
         <p>
-            Paciente: {{ paciente_actual.nombres }} {{ paciente_actual.apellidos }} 
+            Paciente: {{ paciente_actual.nombres }} {{ paciente_actual.apellidos }}
             | Corte {{ etapa.orden }}/5
         </p>
     </div>
 
+    <!-- VIDEO -->
     <div class="video-box">
-        <iframe 
-            src="{{ etapa.embed_url }}" width="100%" 
-            height="100%" 
-            frameborder="0" 
+        <iframe
+            src="{{ etapa.embed_url }}"
+            width="100%"
+            height="100%"
+            frameborder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            referrerpolicy="strict-origin-when-cross-origin" 
+            referrerpolicy="strict-origin-when-cross-origin"
             allowfullscreen
             title="{{ etapa.nombre }}">
         </iframe>
     </div>
 
-        <!-- BOTONES DE SECCIONES -->
+    <!-- BOTONES DE SECCIONES -->
     <div class="button-bar">
-        
         <div class="btn active" data-section="resumen">Resumen</div>
         <div class="btn" data-section="preguntas">Preguntas</div>
         <div class="btn" data-section="topicos">Tópicos</div>
@@ -48,36 +50,24 @@
         <div class="btn" data-section="ficha">Ficha Médica</div>
     </div>
 
-        <!-- CONTENIDO DINÁMICO -->
+    <!-- CONTENIDO DINÁMICO (lo rellena video_simulacion.js) -->
     <div id="contentWindow" class="content-window"></div>
 
-    </div>
-
-<<<<<<< Updated upstream
+    <!-- PLANTILLA OCULTA PARA LA FICHA DEL PACIENTE -->
     <div id="ficha-template" style="display: none;">
         <div class="form-container-inline">
             <h2 style="color: var(--ucn-blue-900); margin-bottom: 20px;">Registrar Paciente</h2>
-    
+
             <form method="post" action="{% url 'curso_y_modulo:crear_ficha_paciente' etapa.pk %}">
-=======
-    <!-- MODAL FICHA PACIENTE -->
-    <div id="fichaModal" class="modal-backdrop">
-
-        <div class="modal-content">
-
-            <h2>Registrar Paciente</h2>
-
-            <form method="post" action="{% url 'simulacion:crear_paciente' video.pk %}">
->>>>>>> Stashed changes
                 {% csrf_token %}
-        
-            <div class="estilo-formulario">
-                {{ form.as_p }}
-            </div>
 
-            <div style="margin-top: 25px; text-align: center;">
-                <button type="submit" class="btn active">Guardar Ficha</button>
-            </div>
+                <div class="estilo-formulario">
+                    {{ form.as_p }}
+                </div>
+
+                <div style="margin-top: 25px; text-align: center;">
+                    <button type="submit" class="btn active">Guardar ficha</button>
+                </div>
             </form>
         </div>
     </div>

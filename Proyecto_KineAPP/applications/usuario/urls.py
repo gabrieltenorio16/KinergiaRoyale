@@ -4,6 +4,7 @@ from . import views
 app_name = "usuario"
 
 urlpatterns = [
+    # Selección de tipo de entrada
     path("", views.seleccionar_entrada, name="seleccionar_entrada"),
     path("staff/", views.seleccionar_staff, name="seleccionar_staff"),
 
@@ -24,10 +25,14 @@ urlpatterns = [
         name="password_reset_confirm",
     ),
 
-    # Paneles
-    path("panel/", views.panel_estudiante, name="panel_estudiante"),
+    # Paneles estudiante
+    path("panel/", views.panel_estudiante, name="panel_estudiante"),          # INICIO
+    path("cursos/", views.cursos_estudiante, name="cursos_estudiante"),       # CURSOS
+    path("casos/", views.casos_estudiante, name="casos_estudiante"),          # CASOS CLÍNICOS
+
+    # Panel admin
     path("admin/dashboard/", views.admin_dashboard, name="admin_dashboard"),
 
-    #Perfil Estudiante
+    # Perfil Estudiante
     path("perfil/", views.perfil_estudiante, name="perfil"),
 ]

@@ -76,6 +76,42 @@ def validar_rut_chileno(rut: str) -> bool:
 
 
 # =====================================================
+#  CONTEXTO COMÚN PARA VISTAS DE ESTUDIANTE
+# =====================================================
+
+def obtener_contexto_estudiante(user):
+    """
+    Devuelve el perfil y los cursos activos con el progreso calculado.
+    Se usa en panel_estudiante, cursos_estudiante y casos_estudiante.
+    """
+    cursos_activos = user.cursos_como_estudiante.all()
+
+    for curso in cursos_activos:
+        # Indicador 1: Casos clínicos asignados al curso
+        total_casos = curso.casos_clinicos.count()
+        curso.total_casos_visibles = total_casos
+
+        # Indicador 2: Progreso del curso
+        total_etapas = Etapa.objects.filter(caso__curso=curso).count()
+        etapas_completadas = Historial.objects.filter(
+            tema__curso=curso,
+            estudiante=user,
+        ).count()
+
+        if total_etapas > 0:
+            progreso = int((etapas_completadas / total_etapas) * 100)
+        else:
+            progreso = 0
+
+        curso.progreso_calculado = progreso
+
+    return {
+        "perfil": user,
+        "cursos_activos": cursos_activos,
+    }
+
+
+# =====================================================
 # 0. SELECCIONAR TIPO DE ENTRADA
 # =====================================================
 
@@ -91,50 +127,52 @@ def seleccionar_entrada(request):
 def seleccionar_staff(request):
     """
     Pantalla intermedia para elegir tipo de acceso Staff:
-    - Administrador (deshabilitado por ahora)
-    - Docente (deshabilitado por ahora)
+    - Administrador
+    - Docente
     """
     return render(request, "login/seleccionar_staff.html")
 
 
 # =====================================================
-# 1. PANEL ESTUDIANTE
+# 1. PANEL ESTUDIANTE - INICIO (NUEVO)
 # =====================================================
 
 @login_required
 def panel_estudiante(request):
-    user = request.user
+    """
+    Nuevo INICIO del estudiante.
+    Muestra saludo y un pequeño resumen.
+    """
+    context = obtener_contexto_estudiante(request.user)
+    return render(request, "inicio/inicio_estudiante.html", context)
 
-    # 1) Cursos en los que el usuario está inscrito como estudiante
-    cursos_activos = user.cursos_como_estudiante.all()
 
-    # 2) Enriquecer cada curso con indicadores calculados
-    for curso in cursos_activos:
-        # Indicador 1: Casos clínicos asignados al curso
-        total_casos = curso.casos_clinicos.count()
-        curso.total_casos_visibles = total_casos
+# =====================================================
+# 1.1 PÁGINA DE CURSOS (usa tu HTML antiguo de inicio)
+# =====================================================
 
-        # Indicador 2: Progreso del curso
-        total_etapas = Etapa.objects.filter(caso__curso=curso).count()
+@login_required
+def cursos_estudiante(request):
+    """
+    Página de CURSOS activos del estudiante.
+    Utiliza el template con la lista de cursos.
+    """
+    context = obtener_contexto_estudiante(request.user)
+    return render(request, "inicio/cursos_estudiante.html", context)
 
-        etapas_completadas = Historial.objects.filter(
-            tema__curso=curso,
-            estudiante=user,
-        ).count()
 
-        if total_etapas > 0:
-            progreso = int((etapas_completadas / total_etapas) * 100)
-        else:
-            progreso = 0
+# =====================================================
+# 1.2 PÁGINA DE CASOS CLÍNICOS
+# =====================================================
 
-        curso.progreso_calculado = progreso
-
-    context = {
-        "perfil": user,
-        "cursos_activos": cursos_activos,
-    }
-
-    return render(request, "inicio/home.html", context)
+@login_required
+def casos_estudiante(request):
+    """
+    Página de CASOS CLÍNICOS para el estudiante.
+    De momento es básica; se puede enriquecer luego con datos reales.
+    """
+    context = obtener_contexto_estudiante(request.user)
+    return render(request, "inicio/casos_estudiante.html", context)
 
 
 # =====================================================
@@ -276,7 +314,7 @@ def register_view(request):
 
 
 # =====================================================
-# 2. LOGIN DOCENTE (misma lógica que login_estudiantes)
+# 2.b LOGIN DOCENTE (mismo patrón: usuario O correo)
 # =====================================================
 
 def login_docente(request):
@@ -325,11 +363,12 @@ def login_docente(request):
 
         # --- Caso 4: Usuario válido ---
         login(request, user)
-        # Por ahora lo mando al dashboard admin (puedes cambiar a un panel_docente)
+        # Por ahora lo mando a algún panel de docente (ajusta la url si quieres otra)
         return redirect("docente:panel")
 
     # GET: mostrar formulario
     return render(request, "login/login_docente.html")
+
 
 # =====================================================
 # 3.b REGISTRO DOCENTES (DISTINTO A ALUMNOS)
@@ -356,7 +395,6 @@ def register_docente_view(request):
             return render(request, "login/register_docente.html")
 
         # 2) Validar correo institucional de DOCENTE
-        # (diferente al alumno: aquí usamos @ucn.cl)
         if not email.lower().endswith("@ucn.cl"):
             messages.error(request, "El correo debe ser institucional de docente (@ucn.cl).")
             return render(request, "login/register_docente.html")
@@ -395,7 +433,7 @@ def register_docente_view(request):
                 messages.error(request, error)
             return render(request, "login/register_docente.html")
 
-        # 8) Crear usuario y marcarlo como STAFF
+        # 8) Crear usuario y marcarlo como DOCENTE
         user = User.objects.create_user(
             username=username,
             email=email,
@@ -405,9 +443,8 @@ def register_docente_view(request):
             rut=rut,
         )
 
-        # 👉 Aquí le damos "rol de staff"
-        user.is_staff = False      # lo convierte en staff de Django
-        # opcional: si quieres, además puedes guardar un rol lógico:
+        # rol lógico de docente
+        user.is_staff = False      # si quieres que pueda entrar al admin, cambia a True
         user.rol = "DOC"
         user.save()
 
@@ -575,20 +612,20 @@ def admin_dashboard(request):
 
     return render(request, "admin/admin_dashboard.html", contexto)
 
-#PERFIL ESTUDIANTE
+
+# PERFIL ESTUDIANTE
 @login_required
 def perfil_estudiante(request):
     usuario = request.user
-    
+
     # Intentamos obtener el perfil de estudiante usando el related_name='perfil'
-    # que definiste en tu models.py
     try:
         datos_estudiante = usuario.perfil
     except AttributeError:
-        datos_estudiante = None # Por si entra un admin o docente por error
+        datos_estudiante = None  # Por si entra un admin o docente por error
 
     context = {
-        'usuario': usuario,
-        'estudiante': datos_estudiante
+        "usuario": usuario,
+        "estudiante": datos_estudiante
     }
-    return render(request, 'usuario/perfil_estudiante.html', context)
+    return render(request, "usuario/perfil_estudiante.html", context)

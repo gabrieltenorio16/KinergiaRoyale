@@ -1,8 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include
-from django.shortcuts import redirect  # 👈 usamos redirect en la raíz
-
-print(">>> REGISTRANDO INCLUDE usuario <<<")
+from django.shortcuts import redirect
 
 urlpatterns = [
     path("", lambda request: redirect("usuario:seleccionar_entrada"), name="root_redirect"),
@@ -12,12 +10,17 @@ urlpatterns = [
     path("usuario/", include("applications.usuario.urls")),
     path("contenido/", include("applications.Contenido.urls")),
 
-    # Sección estudiante
-    path("curso/", include("applications.curso_y_modulo.urls.curso")),
-
-    # Sección simulación
-    path("simulacion/", include("applications.curso_y_modulo.urls.simulacion")),
-
-    # Sección docente
-    path("docente/", include("applications.curso_y_modulo.urls.docente")),
+    # 👇 Aquí ya puedes usar namespace porque curso.py tiene app_name = "curso"
+    path(
+        "curso/",
+        include("applications.curso_y_modulo.urls.curso", namespace="curso"),
+    ),
+    path(
+        "simulacion/",
+        include("applications.curso_y_modulo.urls.simulacion", namespace="simulacion"),
+    ),
+    path(
+        "docente/",
+        include("applications.curso_y_modulo.urls.docente", namespace="docente"),
+    ),
 ]

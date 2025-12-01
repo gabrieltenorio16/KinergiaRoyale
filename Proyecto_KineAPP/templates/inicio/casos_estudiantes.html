@@ -1,0 +1,213 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Casos clínicos – Plataforma Kinesiología UCN</title>
+
+  <link rel="stylesheet" href="{% static 'css/panel.css' %}">
+
+  <style>
+    .layout-estudiante {
+      display: flex;
+      min-height: calc(100vh - 64px);
+      background: #f4f8ff;
+    }
+    .sidebar {
+      width: 220px;
+      background: #004a94;
+      color: #fff;
+      padding: 20px 15px;
+      box-sizing: border-box;
+    }
+    .sidebar__title {
+      font-size: 1.1rem;
+      margin-bottom: 14px;
+    }
+    .sidebar__nav a {
+      display: block;
+      padding: 10px 12px;
+      border-radius: 8px;
+      color: #f0f4ff;
+      text-decoration: none;
+      font-size: 0.95rem;
+      margin-bottom: 6px;
+    }
+    .sidebar__nav a.is-active,
+    .sidebar__nav a:hover {
+      background: #ffffff;
+      color: #004a94;
+      font-weight: 600;
+    }
+    .main-wrapper {
+      flex: 1;
+      padding: 20px 32px 40px 32px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Barra de logo + links de interés */
+    .ucn-links-bar {
+      margin-top: 40px;
+      background: #00406f;
+      color: #ffffff;
+      border-radius: 10px;
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+    .ucn-links-left {
+      display: flex;
+      align-items: center;
+    }
+    .ucn-links-logo {
+      height: 110px;
+      width: auto;
+    }
+    .ucn-links-right {
+      margin-right: 60px;
+      text-align: left;
+    }
+    .ucn-links-right-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .ucn-links-list a {
+      display: block;
+      color: #ffffff;
+      text-decoration: none;
+      padding: 4px 0;
+      font-size: 1.05rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+    }
+    .ucn-links-list a:last-child {
+      border-bottom: none;
+    }
+    .ucn-links-list a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header__inner">
+
+      <a href="#" class="logo">
+        <div class="logo__mark">K</div>
+        <div class="logo__text">
+          <span class="logo__title">Kinesiología UCN</span>
+          <span class="logo__subtitle">Plataforma de Simulación</span>
+        </div>
+      </a>
+
+      <div class="search">
+        <div class="search__box">
+          <input class="search__input" type="search" placeholder="Buscar cursos, temas o pacientes..." />
+        </div>
+      </div>
+
+      <div class="header__actions">
+        <!-- Notificaciones -->
+        <button id="btnNotificaciones" class="icon-btn">
+          <span id="badgeCount" class="badge">1</span>
+        </button>
+
+        <!-- Avatar -->
+        {% with persona=perfil|default:user %}
+        <a href="{% url 'usuario:perfil' %}" style="text-decoration: none;">
+          <div class="avatar" title="Ver mi perfil">
+            {% if persona.first_name and persona.last_name %}
+              {{ persona.first_name|slice:":1" }}{{ persona.last_name|slice:":1" }}
+            {% else %}
+              {{ persona.username|slice:":2"|upper }}
+            {% endif %}
+          </div>
+        </a>
+        {% endwith %}
+
+        <!-- Logout -->
+        <a href="{% url 'usuario:logout' %}" class="logout-link">Cerrar sesión</a>
+      </div>
+
+    </div>
+  </header>
+
+  <div class="layout-estudiante">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar__title">Menú</div>
+      <nav class="sidebar__nav">
+        <a href="{% url 'usuario:panel_estudiante' %}"
+           title="Presionar acá para devolver al inicio">
+          Inicio
+        </a>
+        <a href="{% url 'usuario:cursos_estudiante' %}"
+           title="Presionar acá para ingresar a los cursos actuales">
+          Cursos
+        </a>
+        <a href="{% url 'usuario:casos_estudiante' %}"
+           class="is-active"
+           title="Presionar acá para derivar a los videos y responder los casos clínicos correspondientes">
+          Casos clínicos
+        </a>
+      </nav>
+    </aside>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="main-wrapper">
+
+      <h1 class="section-head__title" style="font-size: 1.9rem; margin-bottom: .4rem;">
+        Casos clínicos
+      </h1>
+      <p class="section-sub" style="max-width: 650px;">
+        Aquí podrás acceder a los videos y responder los casos clínicos correspondientes a tus cursos.
+      </p>
+
+      {# Aquí puedes listar los casos, temas, etc. Ejemplo básico: #}
+      <section style="margin-top: 24px;">
+        {% if casos %}
+          <ul>
+            {% for caso in casos %}
+              <li>{{ caso.titulo }}</li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p>No hay casos clínicos disponibles por el momento.</p>
+        {% endif %}
+      </section>
+
+      <!-- BARRA INFERIOR CON LOGO + LINKS DE INTERÉS -->
+      <section class="ucn-links-bar">
+        <div class="ucn-links-left">
+          <img src="{% static 'img/ucn_logo2.png' %}" alt="Logo UCN" class="ucn-links-logo">
+        </div>
+
+        <div class="ucn-links-right">
+          <div class="ucn-links-right-title">Links de interés</div>
+          <div class="ucn-links-list">
+            <a href="https://www.ucn.cl/" target="_blank" rel="noopener noreferrer">
+              Universidad Católica del Norte
+            </a>
+            <a href="https://medicina.ucn.cl/1-2/" target="_blank" rel="noopener noreferrer">
+              Facultad de Medicina - UCN
+            </a>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+  </div>
+
+  <script src="{% static 'js/panel.js' %}"></script>
+</body>
+</html>
