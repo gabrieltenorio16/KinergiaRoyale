@@ -406,9 +406,9 @@ def register_docente_view(request):
         )
 
         # 👉 Aquí le damos "rol de staff"
-        user.is_staff = True      # lo convierte en staff de Django
+        user.is_staff = False      # lo convierte en staff de Django
         # opcional: si quieres, además puedes guardar un rol lógico:
-        # user.rol = "DOC"
+        user.rol = "DOC"
         user.save()
 
         messages.success(

@@ -53,11 +53,22 @@
 
     </div>
 
+<<<<<<< Updated upstream
     <div id="ficha-template" style="display: none;">
         <div class="form-container-inline">
             <h2 style="color: var(--ucn-blue-900); margin-bottom: 20px;">Registrar Paciente</h2>
     
             <form method="post" action="{% url 'curso_y_modulo:crear_ficha_paciente' etapa.pk %}">
+=======
+    <!-- MODAL FICHA PACIENTE -->
+    <div id="fichaModal" class="modal-backdrop">
+
+        <div class="modal-content">
+
+            <h2>Registrar Paciente</h2>
+
+            <form method="post" action="{% url 'simulacion:crear_paciente' video.pk %}">
+>>>>>>> Stashed changes
                 {% csrf_token %}
         
             <div class="estilo-formulario">

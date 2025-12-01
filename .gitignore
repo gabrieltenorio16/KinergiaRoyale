@@ -1,0 +1,44 @@
+# Bootstrap landing (descartado)
+startbootstrap-landing-page-gh-pages/
+startbootstrap-landing-page-gh-pages.zip
+
+# Proyecto antiguo (descartar)
+Proyecto_kine/
+ProyectoKine/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+.eggs/
+.Python
+
+# Entornos/venvs
+.venv/
+venv/
+env/
+entornoVirtual/
+env.bak/
+.env
+.env.*
+
+# Django
+db.sqlite3
+*.sqlite3
+Proyecto_KineAPP/Proyecto_KineAPP/settings/local.py
+
+# Migraciones (no versionar; deja solo __init__.py)
+Proyecto_KineAPP/**/migrations/
+!Proyecto_KineAPP/**/migrations/__init__.py
+ProyectoKine/**/migrations/
+!ProyectoKine/**/migrations/__init__.py
+
+# Logs / SO / IDE
+*.log
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
