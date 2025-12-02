@@ -48,33 +48,49 @@ class Video(models.Model):
 
     @property
     def embed_url(self):
-        url = self.url
-        parsed = urlparse(url)
+        """
+        Devuelve una URL embebible para YouTube (incluye shorts/watch/embed)
+        usando siempre https://www.youtube-nocookie.com.
+        Si la URL no es de YouTube, devuelve la URL original.
+        """
+        if not self.url:
+            return ""
 
-        # Caso 1: URL corta youtu.be
-        if "youtu.be" in parsed.netloc:
-            video_id = parsed.path.lstrip("/")
+        parsed = urlparse(self.url)
+        netloc = parsed.netloc.lower()
+        path = parsed.path
+
+        def build_embed(video_id: str, extra_params: str = "") -> str:
+            if extra_params:
+                return f"https://www.youtube-nocookie.com/embed/{video_id}?{extra_params}"
+            return f"https://www.youtube-nocookie.com/embed/{video_id}"
+
+        # URLs tipo youtu.be/<id>
+        if "youtu.be" in netloc:
+            video_id = path.lstrip("/")
             params = parsed.query
-            if params:
-                return f"//www.youtube.com/embed/{video_id}?{params}"
-            return f"//www.youtube.com/embed/{video_id}"
+            return build_embed(video_id, params)
 
-        # Caso 2: watch?v=ID
-        if "watch" in parsed.path:
+        # URLs tipo /watch?v=<id>
+        if "youtube" in netloc and "watch" in path:
             qs = parse_qs(parsed.query)
             video_id = qs.get("v", [""])[0]
-            params = "&".join(
-                f"{k}={v[0]}" for k, v in qs.items() if k != "v"
-            )
-            if params:
-                return f"//www.youtube.com/embed/{video_id}?{params}"
-            return f"//www.youtube.com/embed/{video_id}"
+            params = "&".join(f"{k}={v[0]}" for k, v in qs.items() if k != "v")
+            return build_embed(video_id, params)
 
-        # Caso 3: /embed/
-        if "embed" in parsed.path:
-            return url
+        # URLs tipo /shorts/<id>
+        if "youtube" in netloc and "/shorts/" in path:
+            video_id = path.split("/shorts/")[-1].split("/")[0]
+            params = parsed.query
+            return build_embed(video_id, params)
 
-        return url
+        # URLs que ya vienen en /embed/...
+        if "youtube" in netloc and "embed" in path:
+            # Aseguramos https y dominio nocookie
+            return f"https://www.youtube-nocookie.com{path}" + (f"?{parsed.query}" if parsed.query else "")
+
+        # Fallback: devolver la URL tal cual (para otros proveedores)
+        return self.url
 
 class Pregunta(models.Model):
     contenido = models.TextField(null=False, verbose_name='Contenido de la pregunta')

@@ -1,6 +1,7 @@
-# applications/curso_y_modulo/urls/curso.py
-
 from django.urls import path
+
+# 👇 nuevo import para usar views.EtapaDetailView y views.FichaPacienteCreate
+from . import views
 
 # Vistas de estudiante
 from applications.curso_y_modulo.views.estudiante import (
@@ -18,15 +19,13 @@ app_name = "curso"
 
 urlpatterns = [
     # Detalle del curso (panel interno del estudiante para un curso)
-    # URL final: /curso/<curso_id>/
     path(
         "<int:curso_id>/",
         curso_detalle,
         name="curso_detalle",
     ),
 
-    # Seleccionar paciente dentro del curso
-    # URL final: /curso/<curso_id>/seleccionar-paciente/<paciente_id>/
+    # Seleccionar paciente dentro del curso/
     path(
         "<int:curso_id>/seleccionar-paciente/<int:paciente_id>/",
         seleccionar_paciente_curso,
@@ -34,7 +33,6 @@ urlpatterns = [
     ),
 
     # Asignar contenido a un curso (puede ser usado por vistas de docente)
-    # URL final: /curso/<curso_id>/asignar-contenido/
     path(
         "<int:curso_id>/asignar-contenido/",
         asignar_contenido,
@@ -47,5 +45,18 @@ from applications.curso_y_modulo.views.cursos_views import ver_curso
 urlpatterns = [
     # otras rutas...
     path("curso/<int:curso_id>/", ver_curso, name="curso_detalle"),
-]
 
+    # -----------------------
+    # SIMULACIÓN DE VIDEO
+    # -----------------------
+    path(
+        "simulacion/etapa/<int:pk>/",
+        views.EtapaDetailView.as_view(),
+        name="simulacion_video",
+    ),
+    path(
+        "simulacion/<int:pk>/crear-ficha/",
+        views.FichaPacienteCreate.as_view(),
+        name="crear_ficha_paciente",
+    ),
+]

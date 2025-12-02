@@ -15,6 +15,6 @@ urlpatterns = [
     # Videos de un tema
     path("tema/<int:tema_id>/videos/", views.videos_del_tema, name="videos_del_tema"),
 
-    # Preguntas del video
-    path("video/<int:video_id>/preguntas/", views.preguntas_del_video, name="preguntas_del_video"),
+    path("video/curso/<int:video_id>/", views.preguntas_del_video, name="preguntas_del_video")
+
 ]
