@@ -1,10 +1,11 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
+
+from .models import Video
 
 # ===========================
-#  VISTAS BÁSICAS DE CONTENIDO
+#  VISTAS BASICAS DE CONTENIDO
 # ===========================
 
-from django.shortcuts import render
 
 def temas_list(request):
     return render(request, "contenido/temas_list.html")
@@ -19,4 +20,17 @@ def videos_del_tema(request, tema_id):
 
 
 def preguntas_del_video(request, video_id):
-    return render(request, "contenido/preguntas_del_video.html")
+    video = get_object_or_404(
+        Video.objects.prefetch_related("preguntas"),
+        pk=video_id,
+    )
+    preguntas = video.preguntas.all()
+
+    return render(
+        request,
+        "contenido/preguntas_del_video.html",
+        {
+            "video": video,
+            "preguntas": preguntas,
+        },
+    )

@@ -28,16 +28,18 @@
     .sidebar {
       width: 260px;
       background: #004b8d;
-      padding: 22px 18px;
+      padding: 22px 18px 26px;
       border-radius: 16px;
       color: #ffffff;
       height: fit-content;
       box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
     }
 
     .sidebar__title {
       font-size: 1.1rem;
-      margin-bottom: 14px;
       font-weight: 600;
     }
 
@@ -68,6 +70,29 @@
       background: #ffffff;
       color: #004b8d;
       font-weight: 600;
+    }
+
+    /* Botón volver a cursos dentro del sidebar */
+    .btn-volver-cursos {
+      display: block;
+      width: 100%;
+      text-align: center;
+      margin-top: 8px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: #ffffff;
+      color: #004b8d;
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-decoration: none;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+      transition: background 0.2s, color 0.2s, transform 0.1s, box-shadow 0.2s;
+    }
+
+    .btn-volver-cursos:hover {
+      background: #e6f2ff;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.22);
     }
 
     .main-wrapper {
@@ -226,12 +251,18 @@
     <!-- SIDEBAR DEL CURSO -->
     <aside class="sidebar">
       <div class="sidebar__title">Menú</div>
+
       <nav class="sidebar__nav sidebar__nav--curso">
         <button class="sidebar__item is-active" data-section="presentacion">Presentación del módulo</button>
         <button class="sidebar__item" data-section="indice">Índice de contenidos del módulo</button>
         <button class="sidebar__item" data-section="sala">Sala de espera – Pacientes simulados</button>
         <button class="sidebar__item" data-section="material">Material adicional – Etapas clínicas</button>
       </nav>
+
+      <!-- Botón VOLVER A CURSOS en la parte de abajo del sidebar -->
+      <a href="{% url 'usuario:panel_estudiante' %}" class="btn-volver-cursos">
+        Volver a cursos
+      </a>
     </aside>
 
     <!-- CONTENIDO -->
@@ -330,6 +361,7 @@
       <section id="material" class="curso-section">
         <h2>Material adicional – Etapas clínicas</h2>
         <p>Contenido complementario para el estudiante.</p>
+        <!-- Aquí ya NO va el botón -->
       </section>
 
       <!-- BARRA UCN -->

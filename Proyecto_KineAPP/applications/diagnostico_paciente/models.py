@@ -1,14 +1,24 @@
+# applications/diagnostico_paciente/models.py
+
 from django.db import models
 from django.conf import settings
-from urllib.parse import urlparse, parse_qs ###
+
+# Usamos el modelo Video de la app Contenido
+from applications.Contenido.models import Video
 
 
 class Paciente(models.Model):
     nombres = models.CharField('Nombres', max_length=100)
     apellidos = models.CharField('Apellidos', max_length=100)
     edad = models.PositiveIntegerField('Edad')
-    antecedentes = models.TextField('Antecedentes', help_text='Antecedentes relevantes del paciente')
-    historial_medico = models.TextField('Historial médico', help_text='Resumen del historial médico')
+    antecedentes = models.TextField(
+        'Antecedentes',
+        help_text='Antecedentes relevantes del paciente'
+    )
+    historial_medico = models.TextField(
+        'Historial médico',
+        help_text='Resumen del historial médico'
+    )
 
     class Meta:
         verbose_name = 'Paciente'
@@ -43,7 +53,6 @@ class CasoClinico(models.Model):
         verbose_name='Paciente',
     )
 
-    # Mantengo solo el curso
     curso = models.ForeignKey(
         'curso_y_modulo.Curso',
         on_delete=models.PROTECT,
@@ -74,8 +83,12 @@ class Etapa(models.Model):
         verbose_name='Caso clínico',
     )
 
-    # 2. Conexión al Paciente (¡AQUÍ ESTÁ LA CLAVE!)
-    paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE, related_name='etapas_asociadas')
+    # Conexión directa al paciente
+    paciente = models.ForeignKey(
+        Paciente,
+        on_delete=models.CASCADE,
+        related_name='etapas_asociadas'
+    )
 
     nombre = models.CharField('Nombre de la etapa', max_length=150)
     orden = models.PositiveIntegerField(
@@ -97,50 +110,18 @@ class Etapa(models.Model):
         'Pregunta o enunciado',
         help_text='Pregunta principal de esta etapa'
     )
-    url_video = models.URLField(
-        'Video asociado (URL)',
-        max_length=300,
+
+    # 🔹 NUEVO: usamos el modelo Video de la app Contenido
+    video = models.ForeignKey(
+        Video,
+        on_delete=models.SET_NULL,
+        null=True,
         blank=True,
-        null=True
+        related_name='etapas',
+        verbose_name='Video asociado',
     )
 
-    ####
-    @property
-    def embed_url(self):
-        url = self.url_video # <--- ESTO ESTÁ BIEN, SE MANTIENE
-        if not url: return None
-        
-        parsed = urlparse(url)
-
-        # Caso 1: URL corta youtu.be
-        if "youtu.be" in parsed.netloc:
-            video_id = parsed.path.lstrip("/")
-            params = parsed.query
-            if params:
-                # CAMBIO: Usamos 'https' y 'youtube-nocookie'
-                return f"//www.youtube-nocookie.com/embed/{video_id}?{params}"
-            return f"//www.youtube-nocookie.com/embed/{video_id}"
-
-        # Caso 2: watch?v=ID
-        if "watch" in parsed.path:
-            qs = parse_qs(parsed.query)
-            video_id = qs.get("v", [""])[0]
-            params = "&".join(
-                f"{k}={v[0]}" for k, v in qs.items() if k != "v"
-            )
-            if params:
-                # CAMBIO: Usamos 'https' y 'youtube-nocookie'
-                return f"//www.youtube-nocookie.com/embed/{video_id}?{params}"
-            return f"//www.youtube-nocookie.com/embed/{video_id}"
-
-        # Caso 3: /embed/
-        if "embed" in parsed.path:
-            return url
-
-        return url
-    ####
-
-    # NUEVO: contenido adicional opcional (lo que antes iba a Modulo/ContenidoAdicional)
+    # Contenido adicional opcional
     contenido_adicional_url = models.URLField(
         'Contenido adicional (URL)',
         max_length=500,
@@ -162,6 +143,16 @@ class Etapa(models.Model):
 
     def __str__(self):
         return f"Etapa {self.orden} - {self.nombre} ({self.caso.titulo})"
+
+    @property
+    def embed_url(self):
+        """
+        Devuelve la URL embebida del video usando el modelo Contenido.Video.
+        Si no hay video asociado, retorna None.
+        """
+        if self.video:
+            return self.video.embed_url
+        return None
 
 
 class TipoRespuesta(models.Model):
@@ -234,34 +225,31 @@ class HistorialCurso(models.Model):
     def __str__(self):
         return f"{self.estudiante} en {self.curso}"
 
-# Asegúrate de que el modelo 'PartesCuerpo' sea accesible
-# from .models import Paciente, PartesCuerpo 
-#MODELODIAGNOSTICONUEVO
+
 class Diagnostico(models.Model):
     descripcion = models.TextField(
         'Descripción del Diagnóstico',
         blank=True,
         null=True,
         help_text='Diagnóstico preliminar y sugerencias de tratamiento.'
-    ) 
-    
-    # --- CAMPO FALTANTE: PARTE DEL CUERPO (Relación 1:N) ---
+    )
+
     parte_cuerpo = models.ForeignKey(
-        'ParteCuerpo', # Referencia a la clase ParteCuerpo
-        on_delete=models.SET_NULL, # Si se borra la ParteCuerpo, se pone NULL
+        ParteCuerpo,
+        on_delete=models.SET_NULL,
         related_name='diagnosticos_en_parte',
         verbose_name='Parte del Cuerpo Afectada',
         blank=True,
         null=True
     )
-    
+
     paciente = models.ForeignKey(
-        'Paciente',
+        Paciente,
         on_delete=models.CASCADE,
         related_name='diagnosticos',
         verbose_name='Paciente'
     )
-    
+
     class Meta:
         verbose_name = 'Diagnóstico'
         verbose_name_plural = 'Diagnósticos'
