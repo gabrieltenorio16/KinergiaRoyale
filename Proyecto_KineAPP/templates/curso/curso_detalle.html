@@ -1,232 +1,369 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ curso.nombre }} — Plataforma Kinesiología UCN</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{ curso.nombre }} – Plataforma Kinesiología UCN</title>
 
-    <!-- CSS -->
-    <link rel="stylesheet" href="{% static 'css/curso_detalle.css' %}">
+  <link rel="stylesheet" href="{% static 'css/panel.css' %}">
+
+  <style>
+    body {
+      background: #f4f8ff;
+      margin: 0;
+      font-family: "Inter", "Roboto", system-ui;
+    }
+
+    .layout-estudiante {
+      display: flex;
+      min-height: calc(100vh - 72px);
+      padding: 20px;
+      gap: 24px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    /* Sidebar del curso */
+    .sidebar {
+      width: 260px;
+      background: #004b8d;
+      padding: 22px 18px;
+      border-radius: 16px;
+      color: #ffffff;
+      height: fit-content;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    }
+
+    .sidebar__title {
+      font-size: 1.1rem;
+      margin-bottom: 14px;
+      font-weight: 600;
+    }
+
+    .sidebar__nav--curso {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .sidebar__item {
+      background: rgba(255,255,255,0.20);
+      color: #ffffff;
+      font-size: 0.95rem;
+      border: none;
+      padding: 12px 14px;
+      border-radius: 12px;
+      cursor: pointer;
+      text-align: left;
+      transition: 0.2s;
+      width: 100%;
+    }
+
+    .sidebar__item:hover {
+      background: rgba(255,255,255,0.32);
+    }
+
+    .sidebar__item.is-active {
+      background: #ffffff;
+      color: #004b8d;
+      font-weight: 600;
+    }
+
+    .main-wrapper {
+      flex: 1;
+      padding: 0 20px 40px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Tarjeta superior del curso */
+    .curso-card {
+      background: #ffffff;
+      border-radius: 18px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+      padding: 20px 24px;
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .curso-card__title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+      color: #003c71;
+    }
+
+    .curso-card__badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: #e6f2ff;
+      color: #005aa7;
+      font-weight: 600;
+      font-size: 0.8rem;
+    }
+
+    .curso-card__meta {
+      font-size: 0.9rem;
+      color: #4d4d4d;
+      line-height: 1.4;
+      text-align: right;
+    }
+
+    /* Secciones */
+    .curso-section {
+      display: none;
+      background: #ffffff;
+      padding: 24px 28px;
+      border-radius: 18px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    }
+
+    .curso-section.is-active {
+      display: block;
+    }
+
+    .curso-section h2 {
+      font-size: 1.3rem;
+      margin-bottom: 12px;
+      color: #003c71;
+    }
+
+    .indice-tema {
+      margin-bottom: 18px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #ececec;
+    }
+
+    .indice-tema h3 {
+      font-size: 1.1rem;
+      margin-bottom: 6px;
+      color: #003c71;
+    }
+
+    .indice-tema ul { padding-left: 20px; }
+
+    .indice-tema a {
+      text-decoration: none;
+      color: #005aa7;
+      font-weight: 500;
+    }
+
+    .indice-tema a:hover { text-decoration: underline; }
+
+    /* Barra inferior links UCN */
+    .links-interes {
+      margin-top: 40px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .link-box {
+      width: 90%;
+      background: #004b8d;
+      padding: 20px;
+      color: #ffffff;
+      border-radius: 16px;
+      text-align: center;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    }
+
+    .link-box img {
+      width: 80px;
+      margin-bottom: 8px;
+    }
+  </style>
 </head>
 
 <body>
 
-    <div class="layout">
-        <div class="content__inner" id="section-content">
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header__inner">
 
-            <!-- COVER DEL CURSO -->
-            <div class="module-cover">
-                <div class="frame" aria-label="Imagen de portada del curso">
-                    [Imagen Cover Módulo {{ curso.nombre }}]
-                </div>
-            </div>
-
-            <!-- CABECERA DEL CURSO -->
-            <div class="module-head">
-
-                <div>
-                    <h1 class="module-head__title">{{ curso.nombre }}</h1>
-                    <span class="pill">Nivel: {{ curso.get_nivel_display }}</span>
-                </div>
-
-                <div class="module-head__meta">
-                    <span>
-                        <strong>Fecha inicio:</strong>
-                        {{ curso.fecha_inicio|default_if_none:"No definida" }}
-                    </span>
-                    <span>
-                        <strong>Fecha fin:</strong>
-                        {{ curso.fecha_fin|default_if_none:"No definida" }}
-                    </span>
-                    <span>
-                        <strong>Temas:</strong> {{ temas|length }}
-                    </span>
-                    <span>
-                        <strong>Pacientes de ejemplo:</strong> {{ pacientes|length }}
-                    </span>
-                </div>
-
-            </div>
-
-            <!-- SECCIÓN: PRESENTACIÓN -->
-            <div class="content-section show" data-section="presentacion">
-                <h2>Presentación del módulo</h2>
-                <p>
-                    Bienvenido al curso <strong>{{ curso.nombre }}</strong>. Aquí podrás revisar los temas,
-                    casos clínicos, pacientes y contenidos adicionales del módulo.
-                </p>
-
-                <div class="img-frame">[Imagen presentación]</div>
-            </div>
-
-            <!-- SECCIÓN: ÍNDICE DE CONTENIDOS -->
-            <div class="content-section" data-section="indice">
-                <h2>Índice de contenidos del módulo</h2>
-
-                {% if temas %}
-                    {% for tema in temas %}
-                        <div class="tema-block">
-
-                            <div class="tema-title">{{ tema.titulo }}</div>
-
-                            {% if tema.descripcion %}
-                                <p>{{ tema.descripcion }}</p>
-                            {% endif %}
-
-                            <ul class="video-list">
-                                {% for video in tema.video_set.all %}
-                                    <li>
-                                        {{ video.titulo }}
-
-                                        {% if video.preguntas.all %}
-                                            <ul class="question-list">
-                                                {% for pregunta in video.preguntas.all %}
-                                                    <li>
-                                                        Pregunta: {{ pregunta.contenido|truncatechars:80 }}
-                                                    </li>
-                                                {% endfor %}
-                                            </ul>
-                                        {% endif %}
-                                    </li>
-                                {% endfor %}
-                            </ul>
-
-                        </div>
-                    {% endfor %}
-                {% else %}
-                    <p>No hay temas asociados a este curso.</p>
-                {% endif %}
-            </div>
-
-            <!-- SECCIÓN: PACIENTES -->
-            <div class="content-section" data-section="pacientes">
-
-                <h2>Sala de espera — Pacientes simulados</h2>
-
-                {% if seleccion %}
-                    <p>Paciente seleccionado: <strong>{{ seleccion.paciente }}</strong></p>
-                {% endif %}
-
-                {% if pacientes %}
-                    <div class="avatars">
-
-                        {% for pac in pacientes %}
-                            <div class="avatar-card 
-                                {% if seleccion and seleccion.paciente.id == pac.id %}
-                                    avatar-card--selected
-                                {% endif %}
-                            ">
-
-                                <div class="avatar-placeholder">🧍</div>
-
-                                <strong>{{ pac.nombres }}, {{ pac.apellidos }}</strong>
-                                <small>Edad: {{ pac.edad }} años</small>
-                                <small>
-                                    Antecedentes:
-                                    {{ pac.antecedentes|truncatechars:80 }}
-                                </small>
-
-                                <div class="avatar-actions">
-                                    <a class="btn btn--ghost"
-                                       href="{% url 'curso:seleccionar_paciente_curso' curso.id pac.id %}">
-                                        Usar este paciente
-                                    </a>
-                                </div>
-
-                            </div>
-                        {% endfor %}
-
-                    </div>
-                {% else %}
-                    <p>Este curso no tiene pacientes vinculados.</p>
-                {% endif %}
-
-            </div>
-
-            <!-- SECCIÓN: CONTENIDOS ADICIONALES -->
-            <div class="content-section" data-section="contenidos">
-                <h2>Material adicional y etapas clínicas</h2>
-
-                {% if etapas %}
-                    <ul class="etapa-list">
-
-                        {% for etapa in etapas %}
-                            <li class="etapa-item">
-
-                                <div class="etapa-title">
-                                    {{ etapa.caso.titulo }} — Etapa {{ etapa.orden }}: {{ etapa.nombre }}
-                                </div>
-
-                                {% if etapa.parte_cuerpo %}
-                                    <small>Parte del cuerpo: {{ etapa.parte_cuerpo.nombre }}</small><br>
-                                {% endif %}
-
-                                {% if etapa.pregunta %}
-                                    <small>Pregunta guía: {{ etapa.pregunta|truncatechars:120 }}</small><br>
-                                {% endif %}
-
-                                <div class="etapa-links">
-                                    {% if etapa.contenido_adicional_archivo %}
-                                        <a href="{{ etapa.contenido_adicional_archivo.url }}" download>
-                                            📄 Descargar archivo
-                                        </a>
-                                    {% endif %}
-
-                                    {% if etapa.contenido_adicional_url %}
-                                        <a href="{{ etapa.contenido_adicional_url }}" target="_blank">
-                                            🌐 Ver contenido online
-                                        </a>
-                                    {% endif %}
-
-                                    {% if not etapa.contenido_adicional_archivo and not etapa.contenido_adicional_url %}
-                                        <small>Sin material adicional.</small>
-                                    {% endif %}
-                                </div>
-
-                            </li>
-                        {% endfor %}
-
-                    </ul>
-                {% else %}
-                    <p>No hay material adicional configurado para este curso.</p>
-                {% endif %}
-
-            </div>
-
+      <a href="#" class="logo">
+        <div class="logo__mark">K</div>
+        <div class="logo__text">
+          <span class="logo__title">Kinesiología UCN</span>
+          <span class="logo__subtitle">Plataforma de Simulación</span>
         </div>
-    </div>
+      </a>
 
-    <!-- OVERVIEW (Índice flotante) -->
-    <div class="overview" id="overview">
-        <div class="overview-inner">
-
-            <h2>{{ curso.nombre }}</h2>
-            <p>Selecciona una sección:</p>
-
-            <div class="overview__list">
-                <div class="overview__card" data-target="presentacion">Presentación del módulo</div>
-                <div class="overview__card" data-target="indice">Índice de contenidos</div>
-                <div class="overview__card" data-target="pacientes">Sala de espera</div>
-                <div class="overview__card" data-target="contenidos">Material adicional</div>
-            </div>
-
+      <div class="search">
+        <div class="search__box">
+          <input class="search__input" type="search" placeholder="Buscar cursos, temas o pacientes..." />
         </div>
+      </div>
+
+      <div class="header__actions">
+        <button id="btnNotificaciones" class="icon-btn">
+          <span id="badgeCount" class="badge">1</span>
+        </button>
+
+        {% with persona=perfil|default:user %}
+        <a href="{% url 'usuario:perfil' %}" style="text-decoration: none;">
+          <div class="avatar">
+            {% if persona.first_name and persona.last_name %}
+              {{ persona.first_name|slice:":1" }}{{ persona.last_name|slice:":1" }}
+            {% else %}
+              {{ persona.username|slice:":2"|upper }}
+            {% endif %}
+          </div>
+        </a>
+        {% endwith %}
+
+        <a href="{% url 'usuario:logout' %}" class="logout-link">Cerrar sesión</a>
+      </div>
+
     </div>
+  </header>
 
-    <!-- BOTÓN PARA ABRIR ÍNDICE -->
-    <button id="btnIndex" class="btn btn--index">🧭 Ver índice</button>
+  <div class="layout-estudiante">
 
-    <!-- NAVEGACIÓN ENTRE SECCIONES -->
-    <div class="footer-nav">
-        <button id="btnPrev" class="btn btn--ghost">⬅ Anterior</button>
-        <button id="btnNext" class="btn btn--primary">Siguiente ➡</button>
+    <!-- SIDEBAR DEL CURSO -->
+    <aside class="sidebar">
+      <div class="sidebar__title">Menú</div>
+      <nav class="sidebar__nav sidebar__nav--curso">
+        <button class="sidebar__item is-active" data-section="presentacion">Presentación del módulo</button>
+        <button class="sidebar__item" data-section="indice">Índice de contenidos del módulo</button>
+        <button class="sidebar__item" data-section="sala">Sala de espera – Pacientes simulados</button>
+        <button class="sidebar__item" data-section="material">Material adicional – Etapas clínicas</button>
+      </nav>
+    </aside>
+
+    <!-- CONTENIDO -->
+    <div class="main-wrapper">
+
+      <!-- Tarjeta superior -->
+      <div class="curso-card">
+        <div>
+          <h1 class="curso-card__title">{{ curso.nombre }}</h1>
+          <span class="curso-card__badge">{{ curso.get_nivel_display }}</span>
+        </div>
+
+        <div class="curso-card__meta">
+          <p><strong>Docentes:</strong>
+            {% for d in curso.docentes.all %}
+              {{ d.first_name }} {{ d.last_name }}{% if not forloop.last %}, {% endif %}
+            {% empty %} Sin docentes asignados {% endfor %}
+          </p>
+        </div>
+      </div>
+
+      <!-- PRESENTACIÓN -->
+      <section id="presentacion" class="curso-section is-active">
+        <h2>Presentación del módulo</h2>
+        <p>
+          {% if curso.descripcion %}
+            {{ curso.descripcion }}
+          {% else %}
+            Este módulo no tiene una descripción cargada aún.
+          {% endif %}
+        </p>
+      </section>
+
+      <!-- ÍNDICE -->
+      <section id="indice" class="curso-section">
+        <h2>Índice de contenidos del módulo</h2>
+
+        {% if indice %}
+          {% for tema, videos in indice.items %}
+            <div class="indice-tema">
+              <h3>{{ tema.titulo }}</h3>
+
+              {% if videos %}
+                <ul>
+                  {% for video in videos %}
+                  <li>
+                    <a href="{% url 'Contenido:preguntas_del_video' video.id %}">
+                      🎬 {{ video.titulo }}
+                    </a>
+                  </li>
+                  {% endfor %}
+                </ul>
+              {% else %}
+                <p>No hay videos asignados para este tema.</p>
+              {% endif %}
+            </div>
+          {% endfor %}
+        {% else %}
+          <p>No tienes contenidos asignados para este curso.</p>
+        {% endif %}
+      </section>
+
+      <!-- SALA DE ESPERA -->
+      <section id="sala" class="curso-section">
+        <h2>Sala de espera – Pacientes simulados</h2>
+
+        {% if seleccion %}
+          <p>
+            <strong>Paciente seleccionado actualmente:</strong><br>
+            {{ seleccion.paciente.apellidos }}, {{ seleccion.paciente.nombres }}
+            ({{ seleccion.paciente.edad }} años)
+          </p>
+        {% else %}
+          <p>No has seleccionado un paciente aún.</p>
+        {% endif %}
+
+        <h3>Seleccionar paciente</h3>
+
+        {% if pacientes %}
+          <ul>
+            {% for p in pacientes %}
+              <li>
+                {{ p.apellidos }}, {{ p.nombres }} ({{ p.edad }} años)
+                <a href="{% url 'curso:seleccionar_paciente_curso' curso.id p.id %}">
+                  Seleccionar
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p>No hay pacientes disponibles.</p>
+        {% endif %}
+      </section>
+
+      <!-- MATERIAL ADICIONAL -->
+      <section id="material" class="curso-section">
+        <h2>Material adicional – Etapas clínicas</h2>
+        <p>Contenido complementario para el estudiante.</p>
+      </section>
+
+      <!-- BARRA UCN -->
+      <div class="links-interes">
+        <div class="link-box">
+          <img src="{% static 'img/ucn_logo2.png' %}" alt="UCN">
+          Universidad Católica del Norte – Facultad de Medicina
+        </div>
+      </div>
+
     </div>
+  </div>
 
-    <!-- JS -->
-    <script src="{% static 'js/curso_detalle.js' %}"></script>
+  <!-- JS: cambia entre secciones -->
+  <script>
+    const buttons = document.querySelectorAll(".sidebar__item");
+    const sections = document.querySelectorAll(".curso-section");
+
+    buttons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        buttons.forEach(b => b.classList.remove("is-active"));
+        btn.classList.add("is-active");
+
+        const target = btn.dataset.section;
+
+        sections.forEach(sec => {
+          sec.classList.remove("is-active");
+          if (sec.id === target) {
+            sec.classList.add("is-active");
+          }
+        });
+      });
+    });
+  </script>
 
 </body>
-
 </html>

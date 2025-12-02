@@ -176,3 +176,17 @@ def seleccionar_paciente_curso(request, curso_id, paciente_id):
 
 
 >>>>>>> Stashed changes
+def ver_curso(request, curso_id):
+    curso = Curso.objects.get(id=curso_id)
+
+    view = request.GET.get("view", "presentacion")
+
+    temas = curso.temas.all() if hasattr(curso, 'temas') else None
+
+    context = {
+        'curso': curso,
+        'temas': temas,
+        'active': view,
+    }
+
+    return render(request, "cursos/curso_detalle.html", context)

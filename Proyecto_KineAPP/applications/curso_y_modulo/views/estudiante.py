@@ -20,6 +20,9 @@ def curso_detalle(request, curso_id):
 
     curso = get_object_or_404(Curso, pk=curso_id)
 
+    # pestaña activa del menú (presentacion / indice / sala / material)
+    active_section = request.GET.get("section", "presentacion")
+
     temas = (
         Tema.objects.filter(curso=curso)
         .prefetch_related(
@@ -53,7 +56,7 @@ def curso_detalle(request, curso_id):
         "pacientes": pacientes,
         "seleccion": seleccion,
         "etapas": etapas,
-        "secciones_menu": ["fechas", "indice", "pacientes", "contenidos"],
+        "active_section": active_section,
     }
     return render(request, "curso/curso_detalle.html", context)
 
@@ -76,6 +79,7 @@ def seleccionar_paciente_curso(request, curso_id, paciente_id):
         casos_clinicos__curso=curso
     )
 
+    # Guardar / actualizar selección
     SeleccionPacienteCurso.objects.update_or_create(
         usuario=request.user,
         curso=curso,
@@ -84,6 +88,7 @@ def seleccionar_paciente_curso(request, curso_id, paciente_id):
 
     messages.success(request, f"Paciente seleccionado: {paciente}")
 
+    # Buscar el primer video del curso (según tus modelos actuales)
     primer_video = (
         Video.objects.filter(tema__curso=curso)
         .order_by('tema__titulo', 'id')
@@ -91,6 +96,10 @@ def seleccionar_paciente_curso(request, curso_id, paciente_id):
     )
 
     if primer_video:
-        return redirect("curso_y_modulo:simulacion", pk=primer_video.id)
+        # Ahora te mando directo a la vista de preguntas del video
+        # definida en applications/Contenido/urls.py
+        # path("video/<int:video_id>/preguntas/", views.preguntas_del_video, name="preguntas_del_video")
+        return redirect("Contenido:preguntas_del_video", video_id=primer_video.id)
 
-    return redirect("curso_y_modulo:curso_detalle", curso_id=curso.id)
+    # Si no hay videos, vuelves al detalle del curso
+    return redirect("curso:curso_detalle", curso_id=curso.id)

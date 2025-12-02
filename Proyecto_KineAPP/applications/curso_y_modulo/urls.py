@@ -41,3 +41,11 @@ urlpatterns = [
         name="asignar_contenido",
     ),
 ]
+
+from applications.curso_y_modulo.views.cursos_views import ver_curso
+
+urlpatterns = [
+    # otras rutas...
+    path("curso/<int:curso_id>/", ver_curso, name="curso_detalle"),
+]
+
