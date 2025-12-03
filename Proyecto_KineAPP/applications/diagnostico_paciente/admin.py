@@ -5,10 +5,8 @@ from .models import (
     ParteCuerpo,
     CasoClinico,
     Etapa,
-    TipoRespuesta,
-    Respuesta,
     HistorialCurso,
-    Diagnostico #NUEVODANI
+    Diagnostico,
 )
 
 
@@ -49,39 +47,18 @@ class CasoClinicoAdmin(admin.ModelAdmin):
 
 
 # ==========================
-# ETAPA + RESPUESTAS inline
+# ETAPA
 # ==========================
-class RespuestaInline(admin.TabularInline):
-    model = Respuesta
-    extra = 2
-
-
 @admin.register(Etapa)
 class EtapaAdmin(admin.ModelAdmin):
-    list_display = ('id', 'caso', 'orden', 'nombre', 'parte_cuerpo')
+    list_display = ('id', 'caso', 'nombre', 'parte_cuerpo')
     list_filter = ('caso', 'parte_cuerpo')
     search_fields = ('nombre', 'caso__titulo')
-    ordering = ('caso', 'orden')
-    inlines = [RespuestaInline]
+    ordering = ('caso', 'nombre')
 
-
-# ==========================
-# TIPO DE RESPUESTA
-# ==========================
-@admin.register(TipoRespuesta)
-class TipoRespuestaAdmin(admin.ModelAdmin):
-    list_display = ('id', 'nombre')
-    search_fields = ('nombre',)
-
-
-# ==========================
-# RESPUESTA
-# ==========================
-@admin.register(Respuesta)
-class RespuestaAdmin(admin.ModelAdmin):
-    list_display = ('id', 'etapa', 'tipo', 'es_correcta')
-    list_filter = ('etapa', 'tipo', 'es_correcta')
-    search_fields = ('contenido',)
+    # esto hace que aparezca el widget de dos listas con filtro,
+    # para elegir las preguntas disponibles para la etapa
+    filter_horizontal = ('preguntas',)
 
 
 # ==========================
@@ -99,4 +76,16 @@ class HistorialCursoAdmin(admin.ModelAdmin):
     list_filter = ('curso',)
     ordering = ('-fecha_inicio',)
 
-#############################################NUEVONUEVONUEVO(DANI)
+
+# ==========================
+# DIAGNÓSTICO
+# ==========================
+@admin.register(Diagnostico)
+class DiagnosticoAdmin(admin.ModelAdmin):
+    list_display = ('id', 'paciente', 'parte_cuerpo')
+    list_filter = ('parte_cuerpo',)
+    search_fields = (
+        'paciente__nombres',
+        'paciente__apellidos',
+        'parte_cuerpo__nombre',
+    )

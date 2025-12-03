@@ -6,7 +6,7 @@ from django.forms import modelform_factory
 from django.contrib import messages
 from django.db.models import Prefetch
 
-from applications.Contenido.models import Video, Tema
+from applications.Contenido.models import Video, Tema, Topico, Pregunta, Respuesta
 from applications.diagnostico_paciente.models import Paciente, Etapa, CasoClinico
 from .models import Curso, SeleccionPacienteCurso
 
@@ -41,6 +41,22 @@ class EtapaDetailView(DetailView):
              fields=["nombres", "apellidos", "edad", "antecedentes", "historial_medico"]
         )
         context["form"] = PacienteForm()
+
+        # Topicos del banco de contenido
+        context["topicos_data"] = list(
+            Topico.objects.values("id", "nombre", "descripcion").order_by("nombre")
+        )
+
+        # Preguntas agrupables por tópico
+        context["preguntas_data"] = list(
+            Pregunta.objects.select_related("topico")
+            .values("id", "pregunta", "topico_id")
+            .order_by("topico_id", "id")
+        )
+        # Respuestas asociadas a cada pregunta
+        context["respuestas_data"] = list(
+            Respuesta.objects.values("id", "contenido", "es_correcta", "pregunta_id").order_by("pregunta_id", "id")
+        )
         
         return context
 
@@ -102,7 +118,7 @@ def curso_detalle(request, curso_id):
     etapas = (
         Etapa.objects.filter(caso__curso=curso)
         .select_related('caso', 'parte_cuerpo')
-        .order_by('caso', 'orden')
+        .order_by('caso', 'id')  # ya no existe el campo "orden" en Etapa
     )
 
     context = {
@@ -157,10 +173,11 @@ def seleccionar_paciente_curso(request, curso_id, paciente_id):
 
     if caso_asociado:
         # B. Buscar la primera Etapa (orden=1) de ese Caso
-        initial_etapa = Etapa.objects.filter(
-            caso=caso_asociado, 
-            orden=1 
-        ).first()
+        initial_etapa = (
+            Etapa.objects.filter(caso=caso_asociado)
+            .order_by('id')  # sin campo "orden", tomamos la primera por id
+            .first()
+        )
 
         if initial_etapa:
             # C. ¡ÉXITO! Redirigir a la vista de simulación con el ID de la ETAPA

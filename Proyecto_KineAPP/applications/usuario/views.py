@@ -15,11 +15,9 @@ from django.template.loader import render_to_string
 
 from applications.diagnostico_paciente.models import Etapa
 from applications.Contenido.models import (
-    Historial,
     Tema,
     Video,
     Pregunta,
-    FichaClinica,
 )
 from applications.curso_y_modulo.models import Curso
 
@@ -93,10 +91,8 @@ def obtener_contexto_estudiante(user):
 
         # Indicador 2: Progreso del curso
         total_etapas = Etapa.objects.filter(caso__curso=curso).count()
-        etapas_completadas = Historial.objects.filter(
-            tema__curso=curso,
-            estudiante=user,
-        ).count()
+        # Si se desea progreso real, reintroducir modelo Historial y su consulta.
+        etapas_completadas = 0
 
         if total_etapas > 0:
             progreso = int((etapas_completadas / total_etapas) * 100)
@@ -599,7 +595,7 @@ def admin_dashboard(request):
     total_temas = Tema.objects.count()
     total_videos = Video.objects.count()
     total_preguntas = Pregunta.objects.count()
-    total_fichas = FichaClinica.objects.count()
+    total_fichas = 0  # Modelo FichaClinica eliminado de Contenido
 
     contexto = {
         "estudiantes_activos": estudiantes_activos,

@@ -1,17 +1,12 @@
 # applications/curso_y_modulo/views/simulacion.py
 
 from django.forms import modelform_factory
-from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import DetailView, CreateView
 
-from applications.Contenido.models import Video, Tema
+from applications.Contenido.models import Video, Topico, Pregunta, Respuesta
 from applications.diagnostico_paciente.models import Paciente
 
-
-# =====================================================
-# VISTA DE VIDEO SIMULACIÓN
-# =====================================================
 
 class VideoDetailView(DetailView):
     model = Video
@@ -23,10 +18,23 @@ class VideoDetailView(DetailView):
 
         PacienteForm = modelform_factory(
             Paciente,
-            fields=["nombres", "apellidos", "edad", "antecedentes", "historial_medico"]
+            fields=["nombres", "apellidos", "edad", "antecedentes", "historial_medico"],
         )
 
         context["form"] = PacienteForm()
+
+        # Topicos y preguntas (para filtrar por tópico en la vista)
+        context["topicos_data"] = list(
+            Topico.objects.values("id", "nombre", "descripcion").order_by("nombre")
+        )
+        context["preguntas_data"] = list(
+            Pregunta.objects.select_related("topico")
+            .values("id", "pregunta", "topico_id")
+            .order_by("topico_id", "id")
+        )
+        context["respuestas_data"] = list(
+            Respuesta.objects.values("id", "contenido", "es_correcta", "pregunta_id").order_by("pregunta_id", "id")
+        )
         return context
 
 

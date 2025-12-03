@@ -47,7 +47,7 @@ def curso_detalle(request, curso_id):
     etapas = (
         Etapa.objects.filter(caso__curso=curso)
         .select_related('caso', 'parte_cuerpo')
-        .order_by('caso', 'orden')
+        .order_by('caso', 'id')  # campo orden ya no existe en Etapa
     )
 
     context = {

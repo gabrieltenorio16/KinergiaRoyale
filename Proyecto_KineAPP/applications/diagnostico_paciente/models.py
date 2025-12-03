@@ -1,10 +1,7 @@
-# applications/diagnostico_paciente/models.py
-
 from django.db import models
 from django.conf import settings
 
-# Usamos el modelo Video de la app Contenido
-from applications.Contenido.models import Video
+from applications.Contenido.models import Video, Pregunta  # Importamos Video y Pregunta
 
 
 class Paciente(models.Model):
@@ -83,7 +80,6 @@ class Etapa(models.Model):
         verbose_name='Caso clínico',
     )
 
-    # Conexión directa al paciente
     paciente = models.ForeignKey(
         Paciente,
         on_delete=models.CASCADE,
@@ -91,11 +87,6 @@ class Etapa(models.Model):
     )
 
     nombre = models.CharField('Nombre de la etapa', max_length=150)
-    orden = models.PositiveIntegerField(
-        'Orden',
-        default=1,
-        help_text='Orden de la etapa dentro del caso clínico'
-    )
 
     parte_cuerpo = models.ForeignKey(
         ParteCuerpo,
@@ -106,12 +97,15 @@ class Etapa(models.Model):
         verbose_name='Parte del cuerpo relacionada',
     )
 
-    pregunta = models.TextField(
-        'Pregunta o enunciado',
-        help_text='Pregunta principal de esta etapa'
+    # Relación con el banco de preguntas de Contenido
+    preguntas = models.ManyToManyField(
+        Pregunta,
+        related_name='etapas',
+        blank=True,
+        verbose_name='Preguntas disponibles para esta etapa'
     )
 
-    # 🔹 NUEVO: usamos el modelo Video de la app Contenido
+    # Video opcional
     video = models.ForeignKey(
         Video,
         on_delete=models.SET_NULL,
@@ -121,7 +115,6 @@ class Etapa(models.Model):
         verbose_name='Video asociado',
     )
 
-    # Contenido adicional opcional
     contenido_adicional_url = models.URLField(
         'Contenido adicional (URL)',
         max_length=500,
@@ -138,67 +131,17 @@ class Etapa(models.Model):
     class Meta:
         verbose_name = 'Etapa'
         verbose_name_plural = 'Etapas'
-        ordering = ('caso', 'orden')
-        unique_together = ('caso', 'orden')
+        # ya no usamos "orden"
+        ordering = ('caso', 'nombre')
 
     def __str__(self):
-        return f"Etapa {self.orden} - {self.nombre} ({self.caso.titulo})"
+        return f"{self.nombre} ({self.caso.titulo})"
 
     @property
     def embed_url(self):
-        """
-        Devuelve la URL embebida del video usando el modelo Contenido.Video.
-        Si no hay video asociado, retorna None.
-        """
         if self.video:
             return self.video.embed_url
         return None
-
-
-class TipoRespuesta(models.Model):
-    nombre = models.CharField('Tipo de respuesta', max_length=50)
-    descripcion = models.TextField('Descripción', blank=True)
-
-    class Meta:
-        verbose_name = 'Tipo de respuesta'
-        verbose_name_plural = 'Tipos de respuesta'
-        ordering = ('nombre',)
-
-    def __str__(self):
-        return self.nombre
-
-
-class Respuesta(models.Model):
-    etapa = models.ForeignKey(
-        Etapa,
-        on_delete=models.CASCADE,
-        related_name='respuestas',
-        verbose_name='Etapa asociada',
-    )
-    tipo = models.ForeignKey(
-        TipoRespuesta,
-        on_delete=models.PROTECT,
-        related_name='respuestas',
-        verbose_name='Tipo de respuesta',
-    )
-
-    contenido = models.TextField('Contenido de la respuesta')
-    es_correcta = models.BooleanField('¿Es la respuesta correcta?', default=False)
-    retroalimentacion = models.TextField(
-        'Retroalimentación',
-        blank=True,
-        help_text='Texto que se muestra al estudiante después de responder'
-    )
-
-    class Meta:
-        verbose_name = 'Respuesta'
-        verbose_name_plural = 'Respuestas'
-        ordering = ('etapa', 'id')
-
-    def __str__(self):
-        preview = (self.contenido[:40] + '...') if len(self.contenido) > 40 else self.contenido
-        estado = "✅" if self.es_correcta else "—"
-        return f"{estado} {preview} (Etapa {self.etapa.orden} - {self.etapa.caso.titulo})"
 
 
 class HistorialCurso(models.Model):

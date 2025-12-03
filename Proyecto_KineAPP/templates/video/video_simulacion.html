@@ -54,6 +54,16 @@
     <!-- CONTENIDO DINÁMICO -->
     <div id="contentWindow" class="content-window"></div>
 
+    {% if topicos_data %}
+    {{ topicos_data|json_script:"topicos-data" }}
+    {% endif %}
+    {% if preguntas_data %}
+    {{ preguntas_data|json_script:"preguntas-data" }}
+    {% endif %}
+    {% if respuestas_data %}
+    {{ respuestas_data|json_script:"respuestas-data" }}
+    {% endif %}
+
     <div id="ficha-template" style="display: none;">
         <div class="form-container-inline">
             <h2 style="color: var(--ucn-blue-900); margin-bottom: 20px;">Registrar Paciente</h2>
@@ -73,7 +83,7 @@
     </div>
 
     <!-- JS -->
-    <script src="{% static 'js/video_simulacion.js' %}"></script>
+    <script src="{% static 'js/video_simulacion.js' %}?v=2"></script>
 
 </body>
 </html>
