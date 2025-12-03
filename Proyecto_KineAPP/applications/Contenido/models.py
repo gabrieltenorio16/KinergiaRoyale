@@ -2,12 +2,17 @@ from django.db import models
 from django.conf import settings
 from urllib.parse import urlparse, parse_qs
 
-class Contenido(models.Model):
-    titulo = models.CharField(max_length=200)
+class Topico(models.Model):
+    nombre = models.CharField('Nombre del tópico', max_length=100, unique=True)
+    descripcion = models.TextField('Descripción', blank=True)
+
+    class Meta:
+        verbose_name = 'Tópico'
+        verbose_name_plural = 'Tópicos'
+        ordering = ['nombre']
 
     def __str__(self):
-        return self.titulo
-
+        return self.nombre
 
 class Tema(models.Model):
     titulo = models.CharField(max_length=150, null=False, verbose_name='Título')
@@ -93,45 +98,39 @@ class Video(models.Model):
         return self.url
 
 class Pregunta(models.Model):
-    contenido = models.TextField(null=False, verbose_name='Contenido de la pregunta')
-
-    video = models.ForeignKey(
-        'Video',
-        on_delete=models.CASCADE,
+    pregunta = models.TextField(verbose_name='Pregunta')
+    topico = models.ForeignKey(
+        Topico,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         related_name='preguntas',
-        verbose_name='Video asociado'
-    )
-
-    # OPCIONAL: orden de la pregunta dentro del video
-    orden = models.PositiveIntegerField(
-        'Orden',
-        default=1,
-        help_text='Orden de la pregunta dentro del video'
+        verbose_name='Tópico',
     )
 
     class Meta:
-        ordering = ['video', 'orden']
         verbose_name = 'Pregunta'
         verbose_name_plural = 'Preguntas'
-        unique_together = ('video', 'orden')
+        ordering = ['id']
 
     def __str__(self):
-        return f"{self.video.titulo} - P{self.orden}: {self.contenido[:40]}"
+        return self.pregunta[:60]
 
-
-class Buscador_de_respuesta(models.Model):
-    contenido = models.TextField(null=False, verbose_name='Contenido de la respuesta')
+class Respuesta(models.Model):
+    contenido = models.TextField(verbose_name='Contenido de la respuesta')
     retroalimentacion = models.TextField(
-        blank=True, null=True, verbose_name='Retroalimentación',
-        help_text='Explicación mostrada al estudiante'
+        blank=True,
+        null=True,
+        verbose_name='Retroalimentación',
+        help_text='Explicación mostrada al estudiante',
     )
     es_correcta = models.BooleanField(default=False, verbose_name='¿Es la respuesta correcta?')
 
     pregunta = models.ForeignKey(
-        'Pregunta',
+        Pregunta,
         on_delete=models.CASCADE,
         related_name='respuestas',
-        verbose_name='Pregunta asociada'
+        verbose_name='Pregunta asociada',
     )
 
     class Meta:
@@ -141,66 +140,5 @@ class Buscador_de_respuesta(models.Model):
 
     def __str__(self):
         preview = (self.contenido[:40] + '...') if len(self.contenido) > 40 else self.contenido
-        estado = "✅" if self.es_correcta else "—"
-        return f"{estado} {preview} (Video {self.pregunta.video.titulo})"
-
-
-class FichaClinica(models.Model):
-    descripcion = models.TextField(blank=True, null=True, verbose_name='Descripción de la ficha clínica')
-
-    # OPCIONAL: enganchar con un caso clínico del otro modelo
-    caso_clinico = models.ForeignKey(
-        'diagnostico_paciente.CasoClinico',
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='fichas_contenido',
-        verbose_name='Caso clínico asociado'
-    )
-
-    class Meta:
-        verbose_name = 'Ficha clínica'
-        verbose_name_plural = 'Fichas clínicas'
-
-    def __str__(self):
-        if self.caso_clinico:
-            return f"Ficha {self.id} - {self.caso_clinico.titulo}"
-        return f"Ficha {self.id}"
-
-
-class Historial(models.Model):
-    tema = models.ForeignKey(
-        'Tema',
-        on_delete=models.CASCADE,
-        related_name='historiales',
-        verbose_name='Tema asociado'
-    )
-    estudiante = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name='historiales',
-        verbose_name='Estudiante asociado',
-        limit_choices_to={'rol': 'EST'},  # solo estudiantes
-    )
-    ficha = models.ForeignKey(
-        'FichaClinica',
-        on_delete=models.CASCADE,
-        related_name='historiales',
-        verbose_name='Ficha clínica asociada'
-    )
-
-    fecha_registro = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de registro')
-
-    class Meta:
-        verbose_name = 'Historial'
-        verbose_name_plural = 'Historiales'
-        ordering = ['-fecha_registro']
-        constraints = [
-            models.UniqueConstraint(
-                fields=['tema', 'estudiante', 'ficha'],
-                name='unique_tema_estudiante_ficha'
-            )
-        ]
-
-    def __str__(self):
-        return f"Historial: {self.estudiante} / {self.tema} / Ficha {self.ficha_id}"
+        estado = "✔" if self.es_correcta else "-"
+        return f"{estado} {preview}"

@@ -5,7 +5,6 @@ from .models import (
     ParteCuerpo,
     CasoClinico,
     Etapa,
-    HistorialCurso,
     Diagnostico,
 )
 
@@ -30,7 +29,7 @@ class ParteCuerpoAdmin(admin.ModelAdmin):
 
 
 # ==========================
-# CASO CLÍNICO + ETAPAS inline
+# CASO CLINICO + ETAPAS inline
 # ==========================
 class EtapaInline(admin.TabularInline):
     model = Etapa
@@ -62,23 +61,7 @@ class EtapaAdmin(admin.ModelAdmin):
 
 
 # ==========================
-# HISTORIAL DE CURSO
-# ==========================
-@admin.register(HistorialCurso)
-class HistorialCursoAdmin(admin.ModelAdmin):
-    list_display = ('id', 'curso', 'estudiante', 'fecha_inicio')
-    search_fields = (
-        'curso__nombre',
-        'estudiante__username',
-        'estudiante__first_name',
-        'estudiante__last_name',
-    )
-    list_filter = ('curso',)
-    ordering = ('-fecha_inicio',)
-
-
-# ==========================
-# DIAGNÓSTICO
+# DIAGNOSTICO
 # ==========================
 @admin.register(Diagnostico)
 class DiagnosticoAdmin(admin.ModelAdmin):
@@ -89,3 +72,5 @@ class DiagnosticoAdmin(admin.ModelAdmin):
         'paciente__apellidos',
         'parte_cuerpo__nombre',
     )
+
+

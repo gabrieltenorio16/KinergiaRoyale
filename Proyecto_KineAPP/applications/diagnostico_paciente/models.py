@@ -13,8 +13,8 @@ class Paciente(models.Model):
         help_text='Antecedentes relevantes del paciente'
     )
     historial_medico = models.TextField(
-        'Historial médico',
-        help_text='Resumen del historial médico'
+        'Historial mdico',
+        help_text='Resumen del historial mdico'
     )
 
     class Meta:
@@ -28,7 +28,7 @@ class Paciente(models.Model):
 
 class ParteCuerpo(models.Model):
     nombre = models.CharField('Parte del cuerpo', max_length=100)
-    descripcion = models.TextField('Descripción', blank=True)
+    descripcion = models.TextField('Descripci6n', blank=True)
 
     class Meta:
         verbose_name = 'Parte del cuerpo'
@@ -40,8 +40,8 @@ class ParteCuerpo(models.Model):
 
 
 class CasoClinico(models.Model):
-    titulo = models.CharField('Título del caso', max_length=150)
-    descripcion = models.TextField('Descripción general')
+    titulo = models.CharField('T2atulo del caso', max_length=150)
+    descripcion = models.TextField('Descripci6n general')
 
     paciente = models.ForeignKey(
         Paciente,
@@ -59,13 +59,13 @@ class CasoClinico(models.Model):
 
     motivo_consulta = models.TextField('Motivo de consulta')
     antecedentes = models.TextField('Antecedentes del caso')
-    historial_clinico = models.TextField('Historial clínico detallado')
+    historial_clinico = models.TextField('Historial clnico detallado')
 
     fecha_creacion = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        verbose_name = 'Caso clínico'
-        verbose_name_plural = 'Casos clínicos'
+        verbose_name = 'Caso clnico'
+        verbose_name_plural = 'Casos clnicos'
         ordering = ('-fecha_creacion', 'titulo')
 
     def __str__(self):
@@ -77,7 +77,7 @@ class Etapa(models.Model):
         CasoClinico,
         on_delete=models.CASCADE,
         related_name='etapas',
-        verbose_name='Caso clínico',
+        verbose_name='Caso clnico',
     )
 
     paciente = models.ForeignKey(
@@ -97,7 +97,7 @@ class Etapa(models.Model):
         verbose_name='Parte del cuerpo relacionada',
     )
 
-    # Relación con el banco de preguntas de Contenido
+    # Relaci6n con el banco de preguntas de Contenido
     preguntas = models.ManyToManyField(
         Pregunta,
         related_name='etapas',
@@ -144,37 +144,12 @@ class Etapa(models.Model):
         return None
 
 
-class HistorialCurso(models.Model):
-    curso = models.ForeignKey(
-        'curso_y_modulo.Curso',
-        on_delete=models.CASCADE,
-        related_name='historiales_curso',
-        verbose_name='Curso'
-    )
-    estudiante = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name='historiales_curso',
-        verbose_name='Estudiante',
-        limit_choices_to={'rol': 'EST'},
-    )
-    fecha_inicio = models.DateTimeField('Fecha de inicio', auto_now_add=True)
-
-    class Meta:
-        verbose_name = 'Historial de curso'
-        verbose_name_plural = 'Historiales de curso'
-        unique_together = ('curso', 'estudiante')
-
-    def __str__(self):
-        return f"{self.estudiante} en {self.curso}"
-
-
 class Diagnostico(models.Model):
     descripcion = models.TextField(
-        'Descripción del Diagnóstico',
+        'Descripcion del Diagnostico',
         blank=True,
         null=True,
-        help_text='Diagnóstico preliminar y sugerencias de tratamiento.'
+        help_text='Diagnostico preliminar y sugerencias de tratamiento.'
     )
 
     parte_cuerpo = models.ForeignKey(
@@ -194,9 +169,9 @@ class Diagnostico(models.Model):
     )
 
     class Meta:
-        verbose_name = 'Diagnóstico'
-        verbose_name_plural = 'Diagnósticos'
+        verbose_name = 'Diagn0stico'
+        verbose_name_plural = 'Diagnosticos'
         ordering = ('paciente',)
 
     def __str__(self):
-        return f"Diagnóstico #{self.id} de {self.paciente.apellidos}, {self.paciente.nombres}"
+        return f"Diagnostico #{self.id} de {self.paciente.apellidos}, {self.paciente.nombres}"
