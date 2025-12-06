@@ -81,6 +81,7 @@ def crear_curso_view(request):
     nivel = request.POST.get("nivel")
     fecha_inicio = request.POST.get("fecha_inicio") or None
     fecha_fin = request.POST.get("fecha_fin") or None
+    descripcion = (request.POST.get("descripcion") or "").strip()
 
     docentes_ids = request.POST.getlist("docentes_ids")
     estudiantes_ids = request.POST.getlist("estudiantes_ids")
@@ -94,6 +95,7 @@ def crear_curso_view(request):
         nivel=nivel,
         fecha_inicio=fecha_inicio,
         fecha_fin=fecha_fin,
+        descripcion=descripcion,
     )
 
     docentes = User.objects.filter(id__in=docentes_ids, rol="DOC")

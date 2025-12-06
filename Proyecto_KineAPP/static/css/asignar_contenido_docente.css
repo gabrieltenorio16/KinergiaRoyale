@@ -301,3 +301,26 @@ body {
 .unit-card {
     border-radius: 10px;
 }
+
+/* ================================
+   MODAL
+   /* Estilos específicos del modal Crear Tema */
+#modalCrearTema .modal-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+#modalCrearTema .form-label {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #2d3a45;
+}
+
+#modalCrearTema .form-control {
+    font-size: 0.95rem;
+    border-radius: 8px;
+}
+
+#modalCrearTema textarea.form-control {
+    min-height: 140px;
+}

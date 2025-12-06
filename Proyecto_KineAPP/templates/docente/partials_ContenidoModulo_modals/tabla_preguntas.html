@@ -1,0 +1,144 @@
+<div class="d-flex gap-3 mb-3 align-items-center">
+    <input
+        id="buscadorPreguntas"
+        type="text"
+        class="form-control w-25"
+        placeholder="Buscar pregunta por texto o tópico"
+    >
+
+    <button
+        id="btnAddPregunta"
+        type="button"
+        class="btn btn-primary btn-sm"
+        data-bs-toggle="modal"
+        data-bs-target="#modalCrearPregunta"
+    >
+        Añadir pregunta
+    </button>
+</div>
+
+<form method="post" id="formEliminarPreguntas" class="unit-list-container">
+    {% csrf_token %}
+    <input type="hidden" name="tipo" value="pregunta">
+    <input type="hidden" name="accion" value="eliminar">
+
+    <table class="table table-sm align-middle" id="tablaPreguntas">
+        <thead class="table-light">
+            <tr>
+                <th style="width: 40px;">
+                    <input type="checkbox" id="chkTodosPreguntas">
+                </th>
+                <th style="width: 60px;">ID</th>
+                <th>Pregunta</th>
+                <th>Anamnesis Remota - Topico</th>
+                <th style="width: 130px;">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pregunta in preguntas %}
+            <tr>
+                <td>
+                    <input
+                        type="checkbox"
+                        name="preguntas_seleccionadas"
+                        value="{{ pregunta.id }}"
+                        class="chk-pregunta"
+                    >
+                </td>
+                <td>{{ pregunta.id }}</td>
+                <td>{{ pregunta.pregunta }}</td>
+                <td>
+                    {% if pregunta.topico %}
+                        {{ pregunta.topico.nombre }}
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+
+                <td>
+                    <button
+                        type="button"
+                        class="btn btn-outline-secondary btn-sm btn-editar-pregunta"
+                        data-id="{{ pregunta.id }}"
+                        data-texto="{{ pregunta.pregunta|escapejs }}"
+                        data-topico-id="{{ pregunta.topico_id }}"
+                    >
+                        Editar
+                    </button>
+                </td>
+            </tr>
+            {% empty %}
+            <tr data-empty-preguntas="1">
+                <td colspan="5">No hay preguntas creadas.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="mt-2">
+        <button
+            type="submit"
+            class="btn btn-danger btn-sm"
+            id="btnBorrarPreguntas"
+        >
+            Borrar preguntas seleccionadas
+        </button>
+    </div>
+</form>
+
+<div class="modal fade" id="modalCrearPregunta" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="tipo" value="pregunta">
+                <input type="hidden" name="accion" id="accionPregunta" value="crear">
+                <input type="hidden" name="pregunta_id" id="preguntaIdInput" value="">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Crear nueva pregunta</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="row g-3">
+
+                        <div class="col-12">
+                            <label
+                                for="{{ pregunta_form.pregunta.id_for_label }}"
+                                class="form-label"
+                            >
+                                {{ pregunta_form.pregunta.label }}
+                            </label>
+                            {{ pregunta_form.pregunta }}
+                        </div>
+
+                        <div class="col-12">
+                            <label
+                                for="{{ pregunta_form.topico.id_for_label }}"
+                                class="form-label"
+                            >
+                                {{ pregunta_form.topico.label }}
+                            </label>
+                            {{ pregunta_form.topico }}
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button
+                        type="button"
+                        class="btn btn-outline-secondary"
+                        data-bs-dismiss="modal"
+                    >
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        Guardar pregunta
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

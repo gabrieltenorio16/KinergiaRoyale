@@ -8,7 +8,7 @@ from applications.curso_y_modulo.views.docente import (
     crear_curso_view,
     agregar_estudiantes_view,
 )
-from applications.curso_y_modulo.views.contenido import asignar_contenido
+from applications.curso_y_modulo.views.contenido import asignar_contenido, asignar_pacientes
 
 app_name = "docente"
 
@@ -20,4 +20,5 @@ urlpatterns = [
     path("curso/<int:curso_id>/agregar-estudiantes/", agregar_estudiantes_view,
          name="agregar_estudiantes"),
     path("curso/<int:curso_id>/asignar/", asignar_contenido, name="asignar_contenido"),
+    path("curso/<int:curso_id>/pacientes/", asignar_pacientes, name="asignar_pacientes"),
 ]

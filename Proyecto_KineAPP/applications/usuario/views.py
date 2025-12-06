@@ -168,7 +168,7 @@ def casos_estudiante(request):
     De momento es básica; se puede enriquecer luego con datos reales.
     """
     context = obtener_contexto_estudiante(request.user)
-    return render(request, "inicio/casos_estudiante.html", context)
+    return render(request, "inicio/casos_estudiantes.html", context)
 
 
 # =====================================================

@@ -41,6 +41,11 @@ class Curso(models.Model):
         blank=True,
         verbose_name='Estudiantes',
     )
+    descripcion = models.TextField(
+        verbose_name='Descripción del curso',
+        blank=True,
+    )
+    
 
     class Meta:
         verbose_name = 'Curso'

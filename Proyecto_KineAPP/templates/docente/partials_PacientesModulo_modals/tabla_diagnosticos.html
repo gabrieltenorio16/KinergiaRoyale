@@ -1,0 +1,156 @@
+{# LISTADO Y GESTIÓN DE DIAGNÓSTICOS #}
+
+{# Barra de búsqueda + botón Añadir #}
+<div class="d-flex gap-3 mb-4 align-items-center">
+  <input
+      type="text"
+      class="form-control w-25"
+      placeholder="Buscar diagnóstico..."
+      data-table-search="tablaDiagnosticos">
+  <button
+      type="button"
+      class="btn btn-primary btn-sm"
+      id="btnAddDiagnostico"
+      data-bs-toggle="modal"
+      data-bs-target="#modalDiagnostico">
+    Añadir diagnóstico
+  </button>
+</div>
+
+{# Formulario para borrado múltiple #}
+<form method="post" id="formEliminarDiagnosticos" class="unit-list-container">
+  {% csrf_token %}
+  <input type="hidden" name="tipo" value="diagnostico">
+  <input type="hidden" name="accion" value="eliminar">
+
+  <div class="table-responsive">
+    <table class="table table-sm align-middle" id="tablaDiagnosticos">
+      <thead class="table-light">
+        <tr>
+          <th style="width: 40px;">
+            <input type="checkbox" id="chkTodosDiagnosticos">
+          </th>
+          <th style="width: 60px;">ID</th>
+          <th>Paciente</th>
+          <th>Caso clínico asociado</th>
+          <th>Diagnóstico del paciente</th>
+          <th style="width: 130px;">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for diag in diagnosticos %}
+          <tr>
+            <td>
+              <input
+                  type="checkbox"
+                  name="diagnosticos_seleccionados"
+                  value="{{ diag.id }}"
+                  class="chk-diagnostico">
+            </td>
+            <td>{{ diag.id }}</td>
+            <td>{{ diag.paciente }}</td>
+            <td>
+              {% if diag.caso %}
+                {{ diag.caso.titulo }}
+              {% else %}
+                -
+              {% endif %}
+            </td>
+            <td>{{ diag.descripcion|default:"-" }}</td>
+            <td>
+              <button
+                  type="button"
+                  class="btn btn-outline-secondary btn-sm btn-editar-diagnostico"
+                  data-id="{{ diag.id }}"
+                  data-paciente-id="{{ diag.paciente_id }}"
+                  data-caso-id="{{ diag.caso_id|default_if_none:'' }}"
+                  data-descripcion="{{ diag.descripcion|default_if_none:''|escapejs }}">
+                Editar
+              </button>
+            </td>
+          </tr>
+        {% empty %}
+          <tr data-empty-diagnosticos="1">
+            <td colspan="6">No hay diagnósticos asociados a este curso.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="mt-2">
+    <button
+        type="submit"
+        class="btn btn-danger btn-sm"
+        id="btnBorrarDiagnosticos">
+      Borrar diagnósticos seleccionados
+    </button>
+  </div>
+</form>
+
+{# MODAL CREAR / EDITAR DIAGNÓSTICO #}
+<div class="modal fade" id="modalDiagnostico" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="tipo" value="diagnostico">
+        <input type="hidden" name="accion" id="accionDiagnostico" value="crear">
+        <input type="hidden" name="diagnostico_id" id="diagnosticoIdInput" value="">
+
+        <div class="modal-header">
+          <h5 class="modal-title">Crear nuevo diagnóstico</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Paciente</label>
+              <select name="paciente" class="form-select" id="selectPacienteDiagnostico">
+                {% for paciente in pacientes %}
+                  <option value="{{ paciente.id }}">
+                    {{ paciente.nombres }} {{ paciente.apellidos }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Caso clínico</label>
+              <select name="caso" class="form-select" id="selectCasoDiagnostico">
+                <option value="">Selecciona un caso...</option>
+                {% for caso in casos_clinicos %}
+                  <option
+                      value="{{ caso.id }}"
+                      data-paciente-id="{{ caso.paciente_id }}">
+                    {{ caso.titulo }} ({{ caso.paciente.nombres }} {{ caso.paciente.apellidos }})
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+
+
+            <div class="col-12">
+              <label class="form-label">Descripción del diagnóstico</label>
+              <textarea
+                  name="descripcion"
+                  class="form-control"
+                  rows="4"
+                  placeholder="Describe el diagnóstico y observaciones relevantes..."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+            Cancelar
+          </button>
+          <button type="submit" class="btn btn-primary">
+            Guardar diagnóstico
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -24,7 +24,7 @@
     <!-- Left section -->
     <div class="left">
         <img src="{% static 'img/logo_ucn_largo.png' %}" class="logo-ucn">
-        <span class="menu-item" style="color: white;">Explorar ▾</span>
+        <span class="app-name" style="color: aliceblue;">Plataforma Kinesiología UCN</span>
     </div>
 
     <!-- Search bar -->
@@ -69,7 +69,6 @@
 <div class="nav-secondary">
     <a href="{% url 'docente:panel' %}" class="{% if tab == 'clases' %}active{% endif %}">Clases</a>
     <a href="{% url 'docente:estudiantes' %}" class="{% if tab == 'estudiantes' %}active{% endif %}">Estudiantes</a>
-    <a href="{% url 'docente:recursos' %}" class="{% if tab == 'recursos' %}active{% endif %}">Recursos</a>
 </div>
 
 <!-- =====================================================
@@ -160,7 +159,16 @@
             <p>Monitorea el progreso de tus estudiantes.</p>
         </div>
 
-        <button class="btn btn-primary w-100 mt-3">Revisar desempeño</button>
+        <!---Falta agregar el link al Dashboard -->
+        <button  
+           type="button"
+           class="btn btn-primary w-100 mt-3"
+           data-url="{% url admin:admin_dashboard}" 
+
+          > 
+          Revisar desempeño
+
+        </button>
     </div>
 
 </div> <!-- /page-wrapper -->
@@ -204,6 +212,15 @@
             <div class="col-md-4">
               <label class="form-label">Fecha fin</label>
               <input type="date" name="fecha_fin" class="form-control">
+            </div>
+
+            <div class="col-12">
+              <label class="form-label">Descripción del curso <span class="text-muted">(opcional)</span></label>
+              <textarea
+                  name="descripcion"
+                  class="form-control"
+                  rows="3"
+                  placeholder="Describe brevemente los objetivos o el enfoque del módulo"></textarea>
             </div>
 
             <div class="col-md-6">

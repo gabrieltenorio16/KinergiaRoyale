@@ -15,7 +15,7 @@
 <div class="topbar">
     <div class="left">
         <img src="{% static 'img/logo_ucn_largo.png' %}" class="logo-ucn">
-        <span class="menu-item" style="color: white;">Explorar ▾</span>
+        <div class="app-name"; style="color: aliceblue;">Plataforma Kinesiología UCN</div>
     </div>
 
     <div class="center">
@@ -41,7 +41,6 @@
 <div class="nav-secondary">
     <a href="{% url 'docente:panel' %}" class="{% if tab == 'clases' %}active{% endif %}">Clases</a>
     <a href="{% url 'docente:estudiantes' %}" class="{% if tab == 'estudiantes' %}active{% endif %}">Estudiantes</a>
-    <a href="{% url 'docente:recursos' %}" class="{% if tab == 'recursos' %}active{% endif %}">Recursos</a>
 </div>
 
 <div class="page-wrapper">

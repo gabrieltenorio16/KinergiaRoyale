@@ -1,0 +1,63 @@
+{% extends "docente/base_curso_config.html" %}
+{% load static %}
+
+{% block page_title %}Pacientes del curso | Kinergia Royale{% endblock %}
+
+{% block page_heading %}
+Crea o selecciona pacientes y casos clínicos para el curso.
+{% endblock %}
+
+{% block page_subtitle %}
+En esta sección puedes revisar los pacientes y casos clínicos asociados a este curso.
+{% endblock %}
+
+{% block tabs_nav %}
+<ul class="nav nav-tabs mb-4" id="contentTabs">
+  <li class="nav-item">
+    <a class="nav-link active" href="#" data-section="casos">Casos clínicos</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="#" data-section="diagnosticos">Diagnósticos</a>
+  </li>
+  <!--<li class="nav-item">
+    <a class="nav-link" href="#" data-section="etapas">Etapas</a>
+  </li>-->
+  <li class="nav-item">
+    <a class="nav-link" href="#" data-section="pacientes">Pacientes</a>
+  </li>
+  <!--<li class="nav-item">
+    <a class="nav-link" href="#" data-section="partes">Partes del cuerpo</a>
+  </li> -->
+</ul>
+{% endblock %}
+
+{% block sections_content %}
+<div id="section-casos" class="content-section-modulo">
+  {% include "docente/partials_PacientesModulo_modals/tabla_casos_clinicos.html" %}
+</div>
+
+<div id="section-diagnosticos" class="content-section-modulo d-none">
+  {% include "docente/partials_PacientesModulo_modals/tabla_diagnosticos.html" %}
+</div>
+
+
+<div id="section-etapas" class="content-section-modulo d-none">
+  {% include "docente/partials_PacientesModulo_modals/tabla_etapas.html" %}
+</div> 
+
+
+<div id="section-pacientes" class="content-section-modulo d-none">
+  {% include "docente/partials_PacientesModulo_modals/tabla_pacientes.html" %}
+</div>
+
+
+<div id="section-partes" class="content-section-modulo d-none">
+  {% include "docente/partials_PacientesModulo_modals/tabla_partes_cuerpo.html" %}
+</div> 
+
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/asignar_pacientes.js' %}"></script>
+{% endblock %}

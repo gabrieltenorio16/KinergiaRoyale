@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let topicos = [];
     let preguntas = [];
     let respuestas = [];
+    let diagnosticos = [];
 
     const topicosEl = document.getElementById("topicos-data");
     if (topicosEl) {
@@ -39,6 +40,57 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    const diagnosticosEl = document.getElementById("diagnosticos-data");
+    if (diagnosticosEl) {
+        try {
+            diagnosticos = JSON.parse(diagnosticosEl.textContent);
+        } catch (e) {
+            diagnosticos = [];
+        }
+    }
+
+    const escapeHtml = (value) => {
+        if (value === null || value === undefined) {
+            return "";
+        }
+        return String(value)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#39;");
+    };
+
+    const renderDiagnosticos = () => {
+        if (!diagnosticos.length) {
+            return "<h2>Diagnóstico</h2><p>El docente aún no ha configurado un diagnóstico para este caso.</p>";
+        }
+
+        const bloques = diagnosticos
+            .map((diag) => {
+                const caso = diag.caso
+                    ? `<p><strong>Caso clínico:</strong> ${escapeHtml(diag.caso)}</p>`
+                    : "";
+                const parteCuerpo = diag.parte_cuerpo
+                    ? `<p><strong>Parte del cuerpo:</strong> ${escapeHtml(diag.parte_cuerpo)}</p>`
+                    : "";
+                const descripcion = diag.descripcion
+                    ? `<p>${escapeHtml(diag.descripcion).replace(/\n/g, "<br>")}</p>`
+                    : "<p>Sin descripción disponible.</p>";
+
+                return `
+                    <div class="diagnostico-block">
+                        ${caso}
+                        ${parteCuerpo}
+                        ${descripcion}
+                    </div>
+                `;
+            })
+            .join("");
+
+        return `<h2>Diagnóstico</h2>${bloques}`;
+    };
+
     const renderTopicos = () => {
         if (!topicos.length) {
             return "<h2>Tópicos</h2><p>No hay tópicos disponibles.</p>";
@@ -65,15 +117,18 @@ document.addEventListener("DOMContentLoaded", () => {
             .map((p) => {
                 const opciones = respuestas
                     .filter((r) => String(r.pregunta_id) === String(p.id))
-                    .map(
-                        (r) =>
-                            `<li>
+                    .map((r) => {
+                        const feedbackAttr = r.retroalimentacion
+                            ? `data-feedback="${encodeURIComponent(r.retroalimentacion)}"`
+                            : "";
+                        return `
+                            <li>
                                 <label>
-                                    <input type="radio" name="preg-${p.id}" data-correct="${r.es_correcta}" />
+                                    <input type="radio" name="preg-${p.id}" data-correct="${r.es_correcta}" ${feedbackAttr} />
                                     ${r.contenido}
                                 </label>
-                             </li>`
-                    )
+                            </li>`;
+                    })
                     .join("");
 
                 const opcionesHtml = opciones || "<li>No hay respuestas configuradas.</li>";
@@ -97,7 +152,7 @@ document.addEventListener("DOMContentLoaded", () => {
         resumen: "<h2>Resumen del caso</h2><p>Seleccione una sección.</p>",
         preguntas: renderPreguntas(),
         topicos: renderTopicos(),
-        diagnostico: "<h2>Diagnóstico</h2><p>Aquí iría el diagnóstico...</p>",
+        diagnostico: renderDiagnosticos(),
 
         // Tomamos el HTML del formulario oculto si existe
         ficha: fichaTemplate
@@ -160,8 +215,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     return;
                 }
                 const ok = selected.dataset.correct === "True" || selected.dataset.correct === "true";
+                const feedback = selected.dataset.feedback
+                    ? decodeURIComponent(selected.dataset.feedback)
+                    : "";
                 if (resultEl) {
-                    resultEl.textContent = ok ? "Correcto" : "Incorrecto";
+                    const estado = ok ? "Correcto" : "Incorrecto";
+                    resultEl.innerHTML = feedback
+                        ? `<strong>${estado}</strong><div class="feedback">${feedback}</div>`
+                        : `<strong>${estado}</strong>`;
                     resultEl.style.color = ok ? "green" : "red";
                 }
             });

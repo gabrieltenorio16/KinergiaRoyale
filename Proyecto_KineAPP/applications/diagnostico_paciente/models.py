@@ -20,7 +20,7 @@ class Paciente(models.Model):
     class Meta:
         verbose_name = 'Paciente'
         verbose_name_plural = 'Pacientes'
-        ordering = ('apellidos', 'nombres')
+        ordering = ('nombres', 'apellidos')
 
     def __str__(self):
         return f"{self.apellidos}, {self.nombres} (Edad: {self.edad})"
@@ -150,6 +150,14 @@ class Diagnostico(models.Model):
         blank=True,
         null=True,
         help_text='Diagnostico preliminar y sugerencias de tratamiento.'
+    )
+
+    caso = models.ForeignKey(
+        CasoClinico,
+        on_delete=models.CASCADE,
+        related_name='diagnosticos',
+        verbose_name='Caso clnico',
+        null= True, blank= True,
     )
 
     parte_cuerpo = models.ForeignKey(

@@ -24,8 +24,7 @@
     <div class="header-case">
         <h1>{{ etapa.nombre|default:video.titulo }}</h1>
         <p>
-            Paciente: {{ paciente_actual.nombres|default_if_none:"" }} {{ paciente_actual.apellidos|default_if_none:"" }}
-            | Corte {{ etapa.orden|default:"" }}/5
+            Paciente: {{ paciente_actual.nombres}} {{ paciente_actual.apellidos}}
         </p>
     </div>
 
@@ -44,11 +43,11 @@
 
     <!-- BOTONES DE SECCIONES -->
     <div class="button-bar">
-        <div class="btn active" data-section="resumen">Resumen</div>
-        <div class="btn" data-section="preguntas">Preguntas</div>
-        <div class="btn" data-section="topicos">Tópicos</div>
-        <div class="btn" data-section="diagnostico">Diagnóstico</div>
         <div class="btn" data-section="ficha">Ficha Médica</div>
+        <div class="btn" data-section="topicos">Anamnesis Remota: Topicos</div>
+        <div class="btn" data-section="preguntas">Preguntas</div>
+        <div class="btn" data-section="diagnostico">Diagnóstico</div>
+        <!-- <div class="btn active" data-section="resumen">Resumen</div> -->
     </div>
 
     <!-- CONTENIDO DINÁMICO -->
@@ -62,6 +61,9 @@
     {% endif %}
     {% if respuestas_data %}
     {{ respuestas_data|json_script:"respuestas-data" }}
+    {% endif %}
+    {% if diagnosticos_data %}
+    {{ diagnosticos_data|json_script:"diagnosticos-data" }}
     {% endif %}
 
     <div id="ficha-template" style="display: none;">

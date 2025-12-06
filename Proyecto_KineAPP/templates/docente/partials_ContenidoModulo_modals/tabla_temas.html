@@ -1,0 +1,176 @@
+{# BUSCADOR + BOTÓN AÑADIR TEMA #}
+<div class="d-flex gap-3 mb-4 align-items-center">
+
+    <input
+        id="buscadorTemas"
+        type="text"
+        class="form-control w-25"
+        placeholder="Buscar tema por título o descripción"
+    >
+
+    <button
+        id="btnAddTema"
+        type="button"
+        class="btn btn-primary btn-sm"
+        data-bs-toggle="modal"
+        data-bs-target="#modalCrearTema"
+    >
+        Añadir tema
+    </button>
+</div>
+
+{# TABLA + BORRADO MÚLTIPLE #}
+<form method="post" id="formEliminarTemas" class="unit-list-container">
+    {% csrf_token %}
+    <input type="hidden" name="tipo" value="tema">
+    <input type="hidden" name="accion" value="eliminar">
+
+    <table class="table table-sm align-middle">
+        <thead class="table-light">
+            <tr>
+                <th style="width: 40px;">
+                    <input type="checkbox" id="chkTodosTemas">
+                </th>
+                <th style="width: 60px;">ID</th>
+                <th>Título</th>
+                <th>Descripción</th>
+                <th style="width: 130px;">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for tema in temas %}
+            <tr>
+                <td>
+                    <input
+                        type="checkbox"
+                        name="temas_seleccionados"
+                        value="{{ tema.id }}"
+                        class="chk-tema"
+                    >
+                </td>
+                <td>{{ tema.id }}</td>
+                <td>{{ tema.titulo }}</td>
+                <td>{{ tema.descripcion|default:"—" }}</td>
+                <td>
+                    <button
+                        type="button"
+                        class="btn btn-outline-secondary btn-sm btn-editar-tema"
+                        data-id="{{ tema.id }}"
+                        data-titulo="{{ tema.titulo|escapejs }}"
+                        data-descripcion="{{ tema.descripcion|default_if_none:''|escapejs }}"
+                        data-estado="{{ tema.estado_completado|yesno:'1,0' }}"
+                        data-fecha-inicio="{{ tema.fecha_inicio|date:'Y-m-d\\TH:i' }}"
+                        data-fecha-fin="{{ tema.fecha_fin|date:'Y-m-d\\TH:i' }}"
+                    >
+                        Editar
+                    </button>
+                </td>
+            </tr>
+            {% empty %}
+            <tr data-empty="1">
+                <td colspan="5">No hay temas asociados a este curso.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="mt-2">
+        <button
+            type="submit"
+            class="btn btn-danger btn-sm"
+            id="btnBorrarTemas"
+        >
+            Borrar temas seleccionados
+        </button>
+    </div>
+</form>
+
+{# MODAL CREAR / EDITAR TEMA #}
+<div class="modal fade" id="modalCrearTema" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="tipo" value="tema">
+                <input type="hidden" name="accion" id="accionTema" value="crear">
+                <input type="hidden" name="tema_id" id="temaIdInput" value="">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Crear nuevo tema</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="row g-3">
+
+                        <div class="col-12">
+                            <label
+                                for="{{ tema_form.titulo.id_for_label }}"
+                                class="form-label"
+                            >
+                                {{ tema_form.titulo.label }}
+                            </label>
+                            {{ tema_form.titulo }}
+                        </div>
+
+                        <div class="col-12">
+                            <label
+                                for="{{ tema_form.descripcion.id_for_label }}"
+                                class="form-label"
+                            >
+                                {{ tema_form.descripcion.label }}
+                            </label>
+                            {{ tema_form.descripcion }}
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-check mt-2">
+                                {{ tema_form.estado_completado }}
+                                <label
+                                    class="form-check-label"
+                                    for="{{ tema_form.estado_completado.id_for_label }}"
+                                >
+                                    {{ tema_form.estado_completado.label }}
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label
+                                for="{{ tema_form.fecha_inicio.id_for_label }}"
+                                class="form-label"
+                            >
+                                {{ tema_form.fecha_inicio.label }}
+                            </label>
+                            {{ tema_form.fecha_inicio }}
+                        </div>
+
+                        <div class="col-md-4">
+                            <label
+                                for="{{ tema_form.fecha_fin.id_for_label }}"
+                                class="form-label"
+                            >
+                                {{ tema_form.fecha_fin.label }}
+                            </label>
+                            {{ tema_form.fecha_fin }}
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button
+                        type="button"
+                        class="btn btn-outline-secondary"
+                        data-bs-dismiss="modal"
+                    >
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        Guardar tema
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

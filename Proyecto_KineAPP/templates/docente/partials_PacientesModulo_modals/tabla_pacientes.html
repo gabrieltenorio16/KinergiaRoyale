@@ -1,0 +1,154 @@
+{# LISTADO Y GESTIÓN DE PACIENTES #}
+
+{# Barra de búsqueda + botón Añadir #}
+<div class="d-flex gap-3 mb-4 align-items-center">
+  <input
+      type="text"
+      class="form-control w-25"
+      placeholder="Buscar paciente..."
+      data-table-search="tablaPacientesCurso">
+  <button
+      type="button"
+      class="btn btn-primary btn-sm"
+      id="btnAddPaciente"
+      data-bs-toggle="modal"
+      data-bs-target="#modalPaciente">
+    Añadir paciente
+  </button>
+</div>
+
+{# Formulario para borrado múltiple #}
+<form method="post" id="formEliminarPacientes" class="unit-list-container">
+  {% csrf_token %}
+  <input type="hidden" name="tipo" value="paciente">
+  <input type="hidden" name="accion" value="eliminar">
+
+  <div class="table-responsive">
+    <table class="table table-sm align-middle" id="tablaPacientesCurso">
+      <thead class="table-light">
+        <tr>
+          <th style="width: 40px;">
+            <input type="checkbox" id="chkTodosPacientes">
+          </th>
+          <th style="width: 60px;">ID</th>
+          <th>Nombres</th>
+          <th>Apellidos</th>
+          <th>Edad</th>
+          <th>Antecedentes</th>
+          <th style="width: 130px;">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for paciente in pacientes %}
+          <tr>
+            <td>
+              <input
+                  type="checkbox"
+                  name="pacientes_seleccionados"
+                  value="{{ paciente.id }}"
+                  class="chk-paciente">
+            </td>
+            <td>{{ paciente.id }}</td>
+            <td>{{ paciente.nombres }}</td>
+            <td>{{ paciente.apellidos }}</td>
+            <td>{{ paciente.edad }}</td>
+            <td>{{ paciente.antecedentes|default:"-" }}</td>
+            <td>
+              <button
+                  type="button"
+                  class="btn btn-outline-secondary btn-sm btn-editar-paciente"
+                  data-id="{{ paciente.id }}"
+                  data-nombres="{{ paciente.nombres|escapejs }}"
+                  data-apellidos="{{ paciente.apellidos|escapejs }}"
+                  data-edad="{{ paciente.edad }}"
+                  data-antecedentes="{{ paciente.antecedentes|default_if_none:''|escapejs }}"
+                  data-historial="{{ paciente.historial_medico|default_if_none:''|escapejs }}">
+                Editar
+              </button>
+            </td>
+          </tr>
+        {% empty %}
+          <tr data-empty-pacientes="1">
+            <td colspan="7">No hay pacientes asociados a este curso.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="mt-2">
+    <button
+        type="submit"
+        class="btn btn-danger btn-sm"
+        id="btnBorrarPacientes">
+      Borrar pacientes seleccionados
+    </button>
+  </div>
+</form>
+
+{# MODAL CREAR / EDITAR PACIENTE #}
+<div class="modal fade" id="modalPaciente" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="tipo" value="paciente">
+        <input type="hidden" name="accion" id="accionPaciente" value="crear">
+        <input type="hidden" name="paciente_id" id="pacienteIdInput" value="">
+
+        <div class="modal-header">
+          <h5 class="modal-title">Crear nuevo paciente</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label for="{{ paciente_form.nombres.id_for_label }}" class="form-label">
+                {{ paciente_form.nombres.label }}
+              </label>
+              {{ paciente_form.nombres }}
+            </div>
+
+            <div class="col-md-6">
+              <label for="{{ paciente_form.apellidos.id_for_label }}" class="form-label">
+                {{ paciente_form.apellidos.label }}
+              </label>
+              {{ paciente_form.apellidos }}
+            </div>
+
+            <div class="col-md-3">
+              <label for="{{ paciente_form.edad.id_for_label }}" class="form-label">
+                {{ paciente_form.edad.label }}
+              </label>
+              {{ paciente_form.edad }}
+            </div>
+
+            <div class="col-md-9">
+              <label for="{{ paciente_form.antecedentes.id_for_label }}" class="form-label">
+                {{ paciente_form.antecedentes.label }}
+              </label>
+              {{ paciente_form.antecedentes }}
+            </div>
+
+            <div class="col-12">
+              <label for="{{ paciente_form.historial_medico.id_for_label }}" class="form-label">
+                {{ paciente_form.historial_medico.label }}
+              </label>
+              {{ paciente_form.historial_medico }}
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+            Cancelar
+          </button>
+          <button type="submit" class="btn btn-primary">
+            Guardar paciente
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,183 @@
+<div class="d-flex gap-3 mb-3 align-items-center">
+    <input
+        id="buscadorRespuestas"
+        type="text"
+        class="form-control w-25"
+        placeholder="Buscar respuesta por texto o pregunta"
+    >
+
+    <button
+        id="btnAddRespuesta"
+        type="button"
+        class="btn btn-primary btn-sm"
+        data-bs-toggle="modal"
+        data-bs-target="#modalCrearRespuesta"
+    >
+        Añadir respuesta
+    </button>
+</div>
+
+<form method="post" id="formEliminarRespuestas" class="unit-list-container">
+    {% csrf_token %}
+    <input type="hidden" name="tipo" value="respuesta">
+    <input type="hidden" name="accion" value="eliminar">
+
+    <table class="table table-sm align-middle" id="tablaRespuestas">
+        <thead class="table-light">
+            <tr>
+                <th style="width: 40px;">
+                    <input type="checkbox" id="chkTodosRespuestas">
+                </th>
+                <th style="width: 60px;">ID</th>
+                <th>Respuesta</th>
+                <th>Correcta</th>
+                <th>Pregunta</th>
+                <th>Retroalimentacion</th>
+                <th style="width: 130px;">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for respuesta in respuestas %}
+            <tr>
+                <td>
+                    <input
+                        type="checkbox"
+                        name="respuestas_seleccionadas"
+                        value="{{ respuesta.id }}"
+                        class="chk-respuesta"
+                    >
+                </td>
+                <td>{{ respuesta.id }}</td>
+                <td>{{ respuesta.contenido }}</td>
+                <td>
+                    {% if respuesta.es_correcta %}
+                        <span class="badge bg-success">Sí</span>
+                    {% else %}
+                        <span class="badge bg-secondary">No</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if respuesta.pregunta %}
+                        {{ respuesta.pregunta.pregunta|truncatechars:60 }}
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+                <td>
+                    {% if respuesta.retroalimentacion %}
+                        {{ respuesta.retroalimentacion|truncatechars:60 }}
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+                <td>
+                    <button
+                        type="button"
+                        class="btn btn-outline-secondary btn-sm btn-editar-respuesta"
+                        data-id="{{ respuesta.id }}"
+                        data-contenido="{{ respuesta.contenido|escapejs }}"
+                        data-retro="{{ respuesta.retroalimentacion|default_if_none:''|escapejs }}"
+                        data-correcta="{{ respuesta.es_correcta|yesno:'1,0' }}"
+                        data-pregunta-id="{{ respuesta.pregunta_id }}"
+                    >
+                        Editar
+                    </button>
+                </td>
+            </tr>
+            {% empty %}
+            <tr data-empty-respuestas="1">
+                <td colspan="6">No hay respuestas creadas.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="mt-2">
+        <button
+            type="submit"
+            class="btn btn-danger btn-sm"
+            id="btnBorrarRespuestas"
+        >
+            Borrar respuestas seleccionadas
+        </button>
+    </div>
+</form>
+
+<div class="modal fade" id="modalCrearRespuesta" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="tipo" value="respuesta">
+                <input type="hidden" name="accion" id="accionRespuesta" value="crear">
+                <input type="hidden" name="respuesta_id" id="respuestaIdInput" value="">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Crear nueva respuesta</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="row g-3">
+
+                        <div class="col-12">
+                            <label
+                                for="{{ respuesta_form.contenido.id_for_label }}"
+                                class="form-label"
+                            >
+                                {{ respuesta_form.contenido.label }}
+                            </label>
+                            {{ respuesta_form.contenido }}
+                        </div>
+
+                        <div class="col-12">
+                            <label
+                                for="{{ respuesta_form.retroalimentacion.id_for_label }}"
+                                class="form-label"
+                            >
+                                {{ respuesta_form.retroalimentacion.label }}
+                            </label>
+                            {{ respuesta_form.retroalimentacion }}
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-check mt-2">
+                                {{ respuesta_form.es_correcta }}
+                                <label
+                                    class="form-check-label"
+                                    for="{{ respuesta_form.es_correcta.id_for_label }}"
+                                >
+                                    {{ respuesta_form.es_correcta.label }}
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-8">
+                            <label
+                                for="{{ respuesta_form.pregunta.id_for_label }}"
+                                class="form-label"
+                            >
+                                {{ respuesta_form.pregunta.label }}
+                            </label>
+                            {{ respuesta_form.pregunta }}
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button
+                        type="button"
+                        class="btn btn-outline-secondary"
+                        data-bs-dismiss="modal"
+                    >
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        Guardar respuesta
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,134 @@
+{# Barra de búsqueda + botón Añadir #}
+<div class="d-flex gap-3 mb-4 align-items-center">
+  <input
+      type="text"
+      class="form-control w-25"
+      placeholder="Buscar caso clínico..."
+      data-table-search="tablaCasosClinicos">
+  <button
+      type="button"
+      class="btn btn-primary btn-sm"
+      id="btnAddCasoClinico"
+      data-bs-toggle="modal"
+      data-bs-target="#modalCasoClinico">
+    Añadir caso clínico
+  </button>
+</div>
+
+{# Formulario para borrado múltiple #}
+<form method="post" id="formEliminarCasosClinicos" class="unit-list-container">
+  {% csrf_token %}
+  <input type="hidden" name="tipo" value="caso">
+  <input type="hidden" name="accion" value="eliminar">
+
+  <div class="table-responsive">
+    <table class="table table-sm align-middle" id="tablaCasosClinicos">
+      <thead class="table-light">
+        <tr>
+          <th style="width: 40px;">
+            <input type="checkbox" id="chkTodosCasos">
+          </th>
+          <th style="width: 60px;">ID</th>
+          <th>Título</th>
+          <th>Paciente</th>
+          <th>Descripción</th>
+          <th style="width: 130px;">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for caso in casos_clinicos %}
+          <tr>
+            <td>
+              <input
+                  type="checkbox"
+                  name="casos_seleccionados"
+                  value="{{ caso.id }}"
+                  class="chk-caso">
+            </td>
+            <td>{{ caso.id }}</td>
+            <td>{{ caso.titulo }}</td>
+            <td>{{ caso.paciente }}</td>
+            <td>{{ caso.descripcion|default:"-" }}</td>
+            <td>
+              <button
+                  type="button"
+                  class="btn btn-outline-secondary btn-sm btn-editar-caso"
+                  data-id="{{ caso.id }}"
+                  data-titulo="{{ caso.titulo|escapejs }}"
+                  data-descripcion="{{ caso.descripcion|default_if_none:''|escapejs }}"
+                  data-paciente-id="{{ caso.paciente_id }}">
+                Editar
+              </button>
+            </td>
+          </tr>
+        {% empty %}
+          <tr data-empty-casos="1">
+            <td colspan="6">No hay casos clínicos asociados a este curso.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="mt-2">
+    <button
+        type="submit"
+        class="btn btn-danger btn-sm"
+        id="btnBorrarCasos">
+      Borrar casos seleccionados
+    </button>
+  </div>
+</form>
+
+{# Modal crear / editar caso clínico #}
+<div class="modal fade" id="modalCasoClinico" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="tipo" value="caso">
+        <input type="hidden" name="accion" id="accionCasoClinico" value="crear">
+        <input type="hidden" name="caso_id" id="casoClinicoIdInput" value="">
+
+        <div class="modal-header">
+          <h5 class="modal-title">Crear nuevo caso clínico</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-12">
+              <label for="{{ caso_form.titulo.id_for_label }}" class="form-label">
+                {{ caso_form.titulo.label }}
+              </label>
+              {{ caso_form.titulo }}
+            </div>
+
+            <div class="col-12">
+              <label for="{{ caso_form.descripcion.id_for_label }}" class="form-label">
+                {{ caso_form.descripcion.label }}
+              </label>
+              {{ caso_form.descripcion }}
+            </div>
+
+            <div class="col-md-6">
+              <label for="{{ caso_form.paciente.id_for_label }}" class="form-label">
+                {{ caso_form.paciente.label }}
+              </label>
+              {{ caso_form.paciente }}
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+            Cancelar
+          </button>
+          <button type="submit" class="btn btn-primary">
+            Guardar caso clínico
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

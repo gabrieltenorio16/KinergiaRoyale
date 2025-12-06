@@ -1,180 +1,59 @@
+{% extends "docente/base_curso_config.html" %}
 {% load static %}
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de Curso | Kinergía Royale</title>
+{% block page_title %}Panel de Curso | Kinergia Royale{% endblock %}
 
-    <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+{% block page_heading %}
+Crea y asigna contenidos al curso 
+{% endblock %}
 
-    <!-- CSS SEPARADO -->
-   <link rel="stylesheet" href="{% static 'css/asignar_contenido_docente.css' %}">
-</head>
+{% block page_subtitle %}
+En esta sección puedes crear y asignar el contenido que tendrá cada curso.
+{% endblock %}
 
-<body>
+{% block tabs_nav %}
+<ul class="nav nav-tabs mb-4" id="contentTabs">
+    <li class="nav-item">
+        <a class="nav-link active" href="#" data-section="temas">Temas</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#" data-section="videos">Videos</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#" data-section="topicos">Anamnesis Remota</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#" data-section="preguntas">Preguntas</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#" data-section="respuestas">Respuestas</a>
+    </li>
+</ul>
+{% endblock %}
 
-<div class="container-fluid">
-    <div class="row">
-
-        <!-- SIDEBAR -->
-        <div class="col-2 sidebar">
-            <div class="ucn_logo">
-                <img src="https://www.ucn.cl/content/uploads/2023/05/ucn-isologo-2018.png">
-            </div>
-
-            <div class="sidebar-course-box shadow-sm">
-                <strong style="color: white">{{ curso.nombre }}</strong><br>
-                <span class="sidebar-course-subtitle">
-                    {{ curso.descripcion }}
-                </span>
-            </div>
-
-            <div class="sidebar-title">Herramientas</div>
-
-            <a href="#">Resumen de actividad</a>
-            <a href="#" class="active">Contenido del Módulo</a>
-            <a href="#">Proyectos</a>
-            <a href="#">Estadísticas de clase</a>
-
-            <div class="sidebar-title">Admin</div>
-            <a href="#">Lista de Estudiantes</a>
-            <a href="#">Configuración</a>
-        </div>
-
-        <!-- CONTENIDO PRINCIPAL -->
-        <div class="col-10 p-0">
-
-            <!-- TOP BAR -->
-            <div class="top-bar d-flex justify-content-end align-items-center">
-                <div class="user-menu d-flex align-items-center" id="userMenu">
-
-                    <div class="user-photo">
-                        <img src="https://cdn-icons-png.flaticon.com/512/1946/1946429.png">
-                    </div>
-
-                    <span class="user-name">{{ request.user.first_name }} {{ request.user.last_name }}</span>
-                    <span class="notification-dot"></span>
-                    <span class="chevron"></span>
-
-                    <div class="user-dropdown" id="userDropdown">
-                        <div class="dropdown-header">
-                            Notificaciones
-                            <span class="notification-dot"></span>
-                        </div>
-                        <a href="#">Página de inicio del estudiante</a>
-                        <a href="{% url 'docente:panel'%}">Panel del maestro</a>
-                        <a href="#">Configuración</a>
-                        <a class="dropdown-danger" href="{% url 'usuario:logout' %}">Finalizar sesión</a>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="p-4">
-
-                <!-- BREADCRUMBS -->
-                <nav aria-label="breadcrumb" class="mb-2">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item">
-                            <a href="{% url 'docente:panel'%}">Panel Maestro</a>
-                        </li>
-                        <li class="breadcrumb-item active" aria-current="page">
-                            Asignar contenido
-                        </li>
-                    </ol>
-                </nav>
-
-                <!-- TITULO -->
-                <div class="header-content">
-                    <h2 class="fw-bold">Asigna contenido</h2>
-                    <p class="text-muted">
-                        Cuando asignes contenido a un estudiante, aparecerá en su página de inicio en "Tareas".
-                    </p>
-                </div>
-
-                <!-- TABS -->
-                <ul class="nav nav-tabs mb-4" id="contentTabs">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#">Contenido</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Habilidades</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Dominio</a>
-                    </li>
-                </ul>
-
-                <!-- FILTROS -->
-                <div class="d-flex gap-3 mb-4 align-items-center">
-
-                    <select class="form-select w-auto">
-                        {% for tema in temas %}
-                            <option>{{ tema.titulo }}</option>
-                        {% endfor %}
-                    </select>
-
-                    <div class="custom-dropdown">
-                        <button class="dropdown-btn">Todos los tipos de contenido ▾</button>
-
-                        <div class="dropdown-panel">
-                            <div class="dropdown-actions">
-                                <span class="select-all">Seleccionar todos</span>
-                                <span class="clear-selection">Borrar selección</span>
-                            </div>
-
-                            <label><input type="checkbox" class="filter-option"> Artículo</label>
-                            <label><input type="checkbox" class="filter-option"> Desafío</label>
-                            <label><input type="checkbox" class="filter-option"> Ejercicio</label>
-                            <label><input type="checkbox" class="filter-option"> Proyecto</label>
-                            <label><input type="checkbox" class="filter-option"> Guía paso a paso</label>
-                            <label><input type="checkbox" class="filter-option"> Video</label>
-                        </div>
-                    </div>
-
-                    <input type="text" class="form-control w-25" placeholder="Buscar contenido para asignar">
-
-                    <button class="btn btn-primary btn-sm">Asignar</button>
-                </div>
-
-                <!-- LISTA DINÁMICA DE UNIDADES Y VIDEOS -->
-                <div class="unit-list-container">
-
-                    {% for tema in temas %}
-                        <div class="unit-box shadow-sm mb-3">
-                            <div class="unit-header">
-                                <strong>{{ tema.titulo }}</strong>
-                                <span class="text-muted">{{ tema.descripcion|default:"" }}</span>
-                            </div>
-
-                            <ul class="list-group list-group-flush">
-                                {% for video in tema.video_set.all %}
-                                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <input type="checkbox" name="videos_seleccionados"
-                                                   value="{{ video.id }}" class="form-check-input me-2">
-                                            {{ video.titulo }}
-                                        </div>
-
-                                        <span class="badge bg-primary">Video</span>
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    {% endfor %}
-
-                </div>
-
-            </div>
-        </div>
-    </div>
+{% block sections_content %}
+<div id="section-temas" class="content-section-modulo">
+    {% include "docente/partials_ContenidoModulo_modals/tabla_temas.html" %}
 </div>
 
-<!-- JS SEPARADO -->
-<script src="{% static 'js/asignar_contenido.js' %}"></script>
+<div id="section-videos" class="content-section-modulo d-none">
+    {% include "docente/partials_ContenidoModulo_modals/tabla_videos.html" %}
+</div>
 
-</body>
-</html>
+<div id="section-topicos" class="content-section-modulo d-none">
+    {% include "docente/partials_ContenidoModulo_modals/tabla_topicos.html" %}
+</div>
+
+<div id="section-preguntas" class="content-section-modulo d-none">
+    {% include "docente/partials_ContenidoModulo_modals/tabla_preguntas.html" %}
+</div>
+
+<div id="section-respuestas" class="content-section-modulo d-none">
+    {% include "docente/partials_ContenidoModulo_modals/tabla_respuestas.html" %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/asignar_contenido.js' %}"></script>
+{% endblock %}
+

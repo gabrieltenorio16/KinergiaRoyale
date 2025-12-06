@@ -1,0 +1,156 @@
+{# BUSCADOR + BOTÓN AÑADIR VIDEO #}
+
+<div class="d-flex gap-3 mb-3 align-items-center">
+    <input
+        id="buscadorVideos"
+        type="text"
+        class="form-control w-25"
+        placeholder="Buscar video por título o tema"
+    >
+
+    <button
+        id="btnAddVideo"
+        type="button"
+        class="btn btn-primary btn-sm"
+        data-bs-toggle="modal"
+        data-bs-target="#modalCrearVideo"
+    >
+        Añadir video
+    </button>
+</div>
+
+{# TABLA + BORRADO MÚLTIPLE #}
+<form method="post" id="formEliminarVideos" class="unit-list-container">
+    {% csrf_token %}
+    <input type="hidden" name="tipo" value="video">
+    <input type="hidden" name="accion" value="eliminar">
+
+    <table class="table table-sm align-middle" id="tablaVideos">
+        <thead class="table-light">
+            <tr>
+                <th style="width: 40px;">
+                    <input type="checkbox" id="chkTodosVideos">
+                </th>
+                <th style="width: 60px;">ID</th>
+                <th>Título</th>
+                <th>Tema</th>
+                <th>URL</th>
+                <th style="width: 130px;">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for video in videos %}
+            <tr>
+                <td>
+                    <input
+                        type="checkbox"
+                        name="videos_seleccionados"
+                        value="{{ video.id }}"
+                        class="chk-video"
+                    >
+                </td>
+                <td>{{ video.id }}</td>
+                <td>{{ video.titulo }}</td>
+                <td>{{ video.tema.titulo }}</td>
+                <td class="text-truncate" style="max-width: 260px;">
+                    <a href="{{ video.url }}" target="_blank">{{ video.url }}</a>
+                </td>
+                <td>
+                    <button
+                        type="button"
+                        class="btn btn-outline-secondary btn-sm btn-editar-video"
+                        data-id="{{ video.id }}"
+                        data-titulo="{{ video.titulo|escapejs }}"
+                        data-url="{{ video.url|escapejs }}"
+                        data-tema-id="{{ video.tema_id }}"
+                    >
+                        Editar
+                    </button>
+                </td>
+            </tr>
+            {% empty %}
+            <tr data-empty-videos="1">
+                <td colspan="6">No hay videos asociados a este curso.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="mt-2">
+        <button
+            type="submit"
+            class="btn btn-danger btn-sm"
+            id="btnBorrarVideos"
+        >
+            Borrar videos seleccionados
+        </button>
+    </div>
+</form>
+
+{# MODAL CREAR / EDITAR VIDEO #}
+<div class="modal fade" id="modalCrearVideo" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="tipo" value="video">
+                <input type="hidden" name="accion" id="accionVideo" value="crear">
+                <input type="hidden" name="video_id" id="videoIdInput" value="">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Crear nuevo video</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="row g-3">
+
+                        <div class="col-12">
+                            <label
+                                for="{{ video_form.titulo.id_for_label }}"
+                                class="form-label"
+                            >
+                                {{ video_form.titulo.label }}
+                            </label>
+                            {{ video_form.titulo }}
+                        </div>
+
+                        <div class="col-12">
+                            <label
+                                for="{{ video_form.url.id_for_label }}"
+                                class="form-label"
+                            >
+                                {{ video_form.url.label }}
+                            </label>
+                            {{ video_form.url }}
+                        </div>
+
+                        <div class="col-12">
+                            <label
+                                for="{{ video_form.tema.id_for_label }}"
+                                class="form-label"
+                            >
+                                {{ video_form.tema.label }}
+                            </label>
+                            {{ video_form.tema }}
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button
+                        type="button"
+                        class="btn btn-outline-secondary"
+                        data-bs-dismiss="modal"
+                    >
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        Guardar video
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

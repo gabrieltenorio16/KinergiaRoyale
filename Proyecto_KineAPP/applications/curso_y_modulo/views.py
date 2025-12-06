@@ -26,14 +26,13 @@ class EtapaDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         etapa = self.object # El objeto Etapa actual
         
-        # Obtenemos el Paciente asociado a esta Etapa a través del Caso Clínico
-        paciente = None
-        # Asumimos que Etapa tiene un FK llamado 'caso'
-        if hasattr(etapa, 'caso'):
-             # Asumimos que CasoClinico tiene un FK llamado 'paciente'
-             paciente = etapa.caso.paciente 
-        
+        # Obtenemos el paciente directamente de la etapa o, si no existe, del caso cl?nico
+        paciente = getattr(etapa, 'paciente', None)
+        if paciente is None and getattr(etapa, 'caso', None):
+            paciente = getattr(etapa.caso, 'paciente', None)
+
         context["paciente_actual"] = paciente
+        context["paciente"] = paciente
         
         # La lógica del formulario de paciente (si la usas) se mantiene:
         PacienteForm = modelform_factory(
