@@ -114,11 +114,15 @@ body {
 .add-class {
     font-size: 14px;
     color: var(--ucn-blue);
-    cursor: pointer;
+    font-weight: 600;
+    text-decoration: none;
+    padding: 0;
 }
 
-.add-class:hover {
+.add-class:hover,
+.add-class:focus {
     text-decoration: underline;
+    color: var(--ucn-blue-light);
 }
 
 /* ========================================

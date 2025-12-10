@@ -29,10 +29,10 @@
                     <input type="checkbox" id="chkTodosRespuestas">
                 </th>
                 <th style="width: 60px;">ID</th>
-                <th>Respuesta</th>
-                <th>Correcta</th>
                 <th>Pregunta</th>
+                <th>Respuesta</th>
                 <th>Retroalimentacion</th>
+                <th>Correcta</th>
                 <th style="width: 130px;">Acciones</th>
             </tr>
         </thead>
@@ -48,14 +48,6 @@
                     >
                 </td>
                 <td>{{ respuesta.id }}</td>
-                <td>{{ respuesta.contenido }}</td>
-                <td>
-                    {% if respuesta.es_correcta %}
-                        <span class="badge bg-success">Sí</span>
-                    {% else %}
-                        <span class="badge bg-secondary">No</span>
-                    {% endif %}
-                </td>
                 <td>
                     {% if respuesta.pregunta %}
                         {{ respuesta.pregunta.pregunta|truncatechars:60 }}
@@ -63,11 +55,19 @@
                         —
                     {% endif %}
                 </td>
+                <td>{{ respuesta.contenido }}</td>
                 <td>
                     {% if respuesta.retroalimentacion %}
                         {{ respuesta.retroalimentacion|truncatechars:60 }}
                     {% else %}
                         —
+                    {% endif %}
+                </td>
+                <td>
+                    {% if respuesta.es_correcta %}
+                        <span class="badge bg-success">Sí</span>
+                    {% else %}
+                        <span class="badge bg-secondary">No</span>
                     {% endif %}
                 </td>
                 <td>
@@ -117,9 +117,33 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
 
+                
                 <div class="modal-body">
                     <div class="row g-3">
 
+                        <!-- Topico relacionado-->
+                         <div class="col-12">
+                            <label
+                                for="{{ pregunta_form.topico.id_for_label }}"
+                                class="form-label"
+                            >
+                                {{ pregunta_form.topico.label }}
+                            </label>
+                            {{ pregunta_form.topico }}
+                        </div>
+
+                         <!-- Relación con la pregunta-->
+                        <div class="col-md-8">
+                            <label
+                                for="{{ respuesta_form.pregunta.id_for_label }}"
+                                class="form-label"
+                            >
+                                {{ respuesta_form.pregunta.label }}
+                            </label>
+                            {{ respuesta_form.pregunta }}
+                        </div>
+
+                        <!-- Contenido de la respuesta-->
                         <div class="col-12">
                             <label
                                 for="{{ respuesta_form.contenido.id_for_label }}"
@@ -130,6 +154,7 @@
                             {{ respuesta_form.contenido }}
                         </div>
 
+                        <!-- Retroalimentación de la respuesta-->
                         <div class="col-12">
                             <label
                                 for="{{ respuesta_form.retroalimentacion.id_for_label }}"
@@ -140,6 +165,7 @@
                             {{ respuesta_form.retroalimentacion }}
                         </div>
 
+                        <!-- Es correcta y pregunta asociada -->
                         <div class="col-md-4">
                             <div class="form-check mt-2">
                                 {{ respuesta_form.es_correcta }}
@@ -152,15 +178,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-8">
-                            <label
-                                for="{{ respuesta_form.pregunta.id_for_label }}"
-                                class="form-label"
-                            >
-                                {{ respuesta_form.pregunta.label }}
-                            </label>
-                            {{ respuesta_form.pregunta }}
-                        </div>
+                       
 
                     </div>
                 </div>
@@ -181,3 +199,11 @@
         </div>
     </div>
 </div>
+
+<script id="preguntasTopicosData" type="application/json">
+{
+    {% for p in preguntas %}
+        "{{ p.id }}": "{{ p.topico_id|default_if_none:'' }}"{% if not forloop.last %},{% endif %}
+    {% endfor %}
+}
+</script>

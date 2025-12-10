@@ -14,25 +14,56 @@ En esta sección puedes revisar los pacientes y casos clínicos asociados a este
 {% block tabs_nav %}
 <ul class="nav nav-tabs mb-4" id="contentTabs">
   <li class="nav-item">
-    <a class="nav-link active" href="#" data-section="casos">Casos clínicos</a>
+    <a class="nav-link active tab-tooltip" href="#" data-section="pacientes">
+      Pacientes
+      <span class="tooltip-box">
+        Debes completar los datos básicos del paciente, ya que estos se utilizarán durante la simulación clínica.<br>
+        Se debe incluir información como:<br>
+        • Nombre y edad<br>
+        • Contexto general del paciente<br>
+        • Información relevante para la entrevista.
+      </span>
+    </a>
   </li>
+
   <li class="nav-item">
-    <a class="nav-link" href="#" data-section="diagnosticos">Diagnósticos</a>
+    <a class="nav-link tab-tooltip" href="#" data-section="casos">
+      Casos clínicos
+      <span class="tooltip-box">
+        En esta sección se crean los casos clínicos que contextualizan la simulación.<br>
+        El docente debe:<br>
+        • Registrar una descripción narrativa del caso,<br>
+        • Indicar el paciente asociado,<br>
+        • Entregar el contexto clínico que será utilizado como base en la actividad evaluativa.
+      </span>
+    </a>
   </li>
-  <!--<li class="nav-item">
-    <a class="nav-link" href="#" data-section="etapas">Etapas</a>
-  </li>-->
+
   <li class="nav-item">
-    <a class="nav-link" href="#" data-section="pacientes">Pacientes</a>
+    <a class="nav-link tab-tooltip" href="#" data-section="diagnosticos">
+      Diagnósticos
+      <span class="tooltip-box">
+        Aquí se asignan diagnósticos a cada paciente.<br>
+        Cada registro debe contener:<br>
+        • Paciente asociado<br>
+        • Caso clínico correspondiente<br>
+        • Descripción detallada del diagnóstico<br>
+        <br>
+        Estos diagnósticos estarán disponibles para que el estudiante los revise una vez finalizada la entrevista.
+      </span>
+    </a>
   </li>
-  <!--<li class="nav-item">
-    <a class="nav-link" href="#" data-section="partes">Partes del cuerpo</a>
-  </li> -->
 </ul>
 {% endblock %}
 
 {% block sections_content %}
-<div id="section-casos" class="content-section-modulo">
+
+
+<div id="section-pacientes" class="content-section-modulo">
+  {% include "docente/partials_PacientesModulo_modals/tabla_pacientes.html" %}
+</div>
+
+<div id="section-casos" class="content-section-modulo d-none">
   {% include "docente/partials_PacientesModulo_modals/tabla_casos_clinicos.html" %}
 </div>
 
@@ -40,16 +71,9 @@ En esta sección puedes revisar los pacientes y casos clínicos asociados a este
   {% include "docente/partials_PacientesModulo_modals/tabla_diagnosticos.html" %}
 </div>
 
-
 <div id="section-etapas" class="content-section-modulo d-none">
   {% include "docente/partials_PacientesModulo_modals/tabla_etapas.html" %}
 </div> 
-
-
-<div id="section-pacientes" class="content-section-modulo d-none">
-  {% include "docente/partials_PacientesModulo_modals/tabla_pacientes.html" %}
-</div>
-
 
 <div id="section-partes" class="content-section-modulo d-none">
   {% include "docente/partials_PacientesModulo_modals/tabla_partes_cuerpo.html" %}

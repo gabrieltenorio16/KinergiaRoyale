@@ -30,13 +30,15 @@
                 <img src="https://www.ucn.cl/content/uploads/2023/05/ucn-isologo-2018.png" alt="Logo UCN">
             </div>
 
-            <div class="sidebar-course-box shadow-sm">
-                <strong class="sidebar-course-title">{{ curso.nombre }}</strong><br>
-                <span class="sidebar-course-subtitle">
-                    {{ curso.descripcion }}
-                </span>
+            <hr>
+            <div class ="sidebar-title" style="padding-bottom: 0.2cm;">Curso</div>
+            <div class="sidebar-course-name">
+                <a class="btn btn-primary btn-sm" style="color: aliceblue;">
+                    {{ curso.nombre }}
+                </a>
             </div>
-
+            <hr>
+            
             <div class="sidebar-title">Configuración del curso</div>
 
             <a href="{% url 'docente:asignar_contenido' curso.id %}"
@@ -56,7 +58,16 @@
 
            <!-- Falta agregar el link a un listado de estudiantes que este filtrado para ese curso--> 
             <div class="sidebar-title">Estudiantes</div>
-            <a href="#">Lista de estudiantes</a>
+            <a href="{% url 'docente:curso_estudiantes' curso.id %}"
+               class="{% if active_section == 'estudiantes' %}active{% endif %}">
+                Lista de estudiantes
+            </a>
+
+            <div class="sidebar-title">Navegación</div>
+            <a href="{% url 'usuario:panel_estudiante' %}">Vista estudiante</a>
+            <a href="{% url 'docente:panel' %}">Panel Maestro</a>
+
+            
         </div>
 
         <!-- CONTENIDO PRINCIPAL -->
@@ -67,25 +78,18 @@
                 <div class="user-menu d-flex align-items-center" id="userMenu">
 
                     <div class="user-photo">
-                        <img src="https://cdn-icons-png.flaticon.com/512/1946/1946429.png" alt="Usuario">
+                        <img src="{% static 'img/icon_user.png' %}" alt="Usuario">
                     </div>
 
                     <span class="user-name">
                         {{ request.user.first_name }} {{ request.user.last_name }}
                     </span>
-                    <span class="notification-dot"></span>
                     <span class="chevron"></span>
 
                     <div class="user-dropdown" id="userDropdown">
-                        <div class="dropdown-header">
-                            Notificaciones
-                            <span class="notification-dot"></span>
-                        </div>
-                        <a href="{% url 'usuario:panel_estudiante' %}">Página de inicio del estudiante</a>
-                        <a href="{% url 'docente:panel' %}">Panel del maestro</a>
-                        <a href="#">Configuración</a>
+                        <a href="#">Mi perfil</a>
                         <a class="dropdown-danger" href="{% url 'usuario:logout' %}">
-                            Finalizar sesión
+                            Cerrar sesión
                         </a>
                     </div>
 
@@ -113,16 +117,18 @@
                     </ol>
                 </nav>
 
-                <!-- TÍTULO Y DESCRIPCIÓN -->
-                <div class="header-content mb-3">
-                    <h2 class="fw-bold">
-                        {% block page_heading %}Crear y asignar contenido de módulos{% endblock %}
-                    </h2>
-                    <p class="text-muted">
-                        {% block page_subtitle %}
-                            En esta sección puedes crear y asignar el contenido que tendrá cada curso.
-                        {% endblock %}
-                    </p>
+                <!-- TÍTULO, DESCRIPCIÓN Y RESUMEN DEL CURSO -->
+                    
+                    <div class="header-content flex-grow-1">
+                        <h2 class="fw-bold">
+                            {% block page_heading %}Crear y asignar contenido de módulos{% endblock %}
+                        </h2>
+                        <p class="text-muted mb-0">
+                            {% block page_subtitle %}
+                            {% endblock %}
+                        </p>
+                    </div>
+                    
                 </div>
 
                 <!-- CONTENIDO ESPECÍFICO DE LA PÁGINA -->
@@ -145,4 +151,3 @@
 
 </body>
 </html>
-

@@ -51,7 +51,6 @@
     <!-- Dropdown (sin d-none) -->
     <div class="user-dropdown" id="userDropdown">
         <a href="#">Mi perfil</a>
-        <a href="#">Configuración</a>
         <a href="{% url 'docente:panel' %}">Mis clases</a>
         <hr>
         <a href="{% url 'usuario:seleccionar_staff' %}" class="logout">Cerrar sesión</a>
@@ -130,6 +129,19 @@
                 Agregar estudiantes
             </button>
 
+            <!-- Botón editar curso -->
+            <button
+                type="button"
+                class="btn btn-outline-secondary btn-sm btn-editar-curso"
+                data-curso-id="{{ curso.id }}"
+                data-curso-nombre="{{ curso.nombre }}"
+                data-curso-nivel="{{ curso.nivel }}"
+                data-curso-descripcion="{{ curso.descripcion|default_if_none:''|escape }}"
+                data-curso-edit-url="{% url 'docente:editar_curso' curso.id %}"
+            >
+                Editar curso
+            </button>
+
 
         </div>
 
@@ -151,7 +163,7 @@
 
         <div class="tool">
             <b>🔒 Planificación de clase</b>
-            <p>Crea planes estructurados para tus módulos.</p>
+            <p>La plataforma permite asignar a cada clase, cursos/modulos, que corresponden a tematicas kinesiologicas especificas.</p>
         </div>
 
         <div class="tool">
@@ -159,16 +171,12 @@
             <p>Monitorea el progreso de tus estudiantes.</p>
         </div>
 
-        <!---Falta agregar el link al Dashboard -->
-        <button  
-           type="button"
+        <a
+           href="{% url 'docente:docente_dashboard' %}"
            class="btn btn-primary w-100 mt-3"
-           data-url="{% url admin:admin_dashboard}" 
-
-          > 
+        >
           Revisar desempeño
-
-        </button>
+        </a>
     </div>
 
 </div> <!-- /page-wrapper -->
@@ -197,7 +205,7 @@
 
             <div class="col-md-4">
               <label class="form-label">Nivel</label>
-              <select name="nivel" class="form-select">
+              <select name="nivel" class="form-select" required>
                 <option value="BASICO">Básico</option>
                 <option value="INTERMEDIO">Intermedio</option>
                 <option value="AVANZADO">Avanzado</option>
@@ -206,19 +214,19 @@
 
             <div class="col-md-4">
               <label class="form-label">Fecha inicio</label>
-              <input type="date" name="fecha_inicio" class="form-control">
+              <input type="date" name="fecha_inicio" class="form-control" required>
             </div>
 
             <div class="col-md-4">
               <label class="form-label">Fecha fin</label>
-              <input type="date" name="fecha_fin" class="form-control">
+              <input type="date" name="fecha_fin" class="form-control" required>
             </div>
 
             <div class="col-12">
-              <label class="form-label">Descripción del curso <span class="text-muted">(opcional)</span></label>
+              <label class="form-label">Descripción del curso </label>
               <textarea
                   name="descripcion"
-                  class="form-control"
+                  class="form-control" required
                   rows="3"
                   placeholder="Describe brevemente los objetivos o el enfoque del módulo"></textarea>
             </div>
@@ -227,8 +235,8 @@
               <label class="form-label">Docentes a cargo</label>
               <select
                   name="docentes_ids"
-                  class="form-select"
-                  multiple
+                  class="form-select" 
+                  multiple required
               >
                 {% for d in docentes %}
                   <option value="{{ d.id }}" {% if d.id == request.user.id %}selected{% endif %}>
@@ -244,7 +252,7 @@
               <select
                   name="estudiantes_ids"
                   class="form-select"
-                  multiple
+                  multiple required
               >
                 {% for est in estudiantes %}
                   <option value="{{ est.id }}">
@@ -261,6 +269,61 @@
         <div class="modal-footer">
           <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
           <button type="submit" class="btn btn-primary">Crear curso</button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+<!-- =====================================================
+     MODAL: EDITAR CURSO
+===================================================== -->
+<div class="modal fade" id="modalEditarCurso" tabindex="-1" aria-labelledby="modalEditarCursoLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+
+      <form id="formEditarCurso" method="post">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalEditarCursoLabel">Editar curso</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="row g-3">
+
+            <div class="col-md-12">
+              <label class="form-label" for="editarCursoNombre">Nombre del curso</label>
+              <input type="text" name="nombre" id="editarCursoNombre" class="form-control" required>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label" for="editarCursoNivel">Nivel</label>
+              <select name="nivel" id="editarCursoNivel" class="form-select" required>
+                <option value="BASICO">Básico</option>
+                <option value="INTERMEDIO">Intermedio</option>
+                <option value="AVANZADO">Avanzado</option>
+              </select>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label" for="editarCursoDescripcion">Descripción del curso</label>
+              <textarea
+                  name="descripcion"
+                  id="editarCursoDescripcion"
+                  class="form-control"
+                  rows="3"
+                  required
+              ></textarea>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar cambios</button>
         </div>
       </form>
 
@@ -300,14 +363,6 @@
                   placeholder="Buscar por nombre o RUT..."
               >
             </div>
-
-            <div class="col-md-3">
-              <!-- Botón placeholder para importación desde Excel/CSV -->
-              <button type="button" class="btn btn-outline-secondary w-100" id="btnImportarExcel">
-                Importar desde Excel/CSV
-              </button>
-            </div>
-          </div>
 
           <!-- TABLA DE ESTUDIANTES DEL SISTEMA -->
           <div class="table-responsive" style="max-height: 400px; overflow-y:auto;">

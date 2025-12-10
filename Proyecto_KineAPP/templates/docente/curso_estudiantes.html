@@ -1,0 +1,40 @@
+{% extends "docente/base_curso_config.html" %}
+{% load static %}
+
+{% block page_title %}Estudiantes del curso | Kinergia Royale{% endblock %}
+
+{% block page_heading %}
+Estudiantes de {{ curso.nombre }}
+{% endblock %}
+
+{% block page_subtitle %}
+En esta sección puedes revisar los estudiantes inscritos en este curso.
+{% endblock %}
+
+{% block sections_content %}
+<div class="table-responsive">
+    <table class="table table-sm align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>Nombre</th>
+                <th>RUT</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for est in estudiantes %}
+            <tr>
+                <td>{{ est.first_name }} {{ est.last_name }}</td>
+                <td>{{ est.rut }}</td>
+                <td>{{ est.email }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3">Este curso aún no tiene estudiantes inscritos.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+

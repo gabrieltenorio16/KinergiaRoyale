@@ -14,12 +14,6 @@ from django.contrib.auth.password_validation import validate_password
 from django.template.loader import render_to_string
 
 from applications.diagnostico_paciente.models import Etapa
-from applications.Contenido.models import (
-    Tema,
-    Video,
-    Pregunta,
-)
-from applications.curso_y_modulo.models import Curso
 
 from .models import Estudiante, Usuario
 
@@ -569,44 +563,6 @@ def password_reset_confirm(request, uidb64, token):
                 return redirect("usuario:login_estudiantes")
 
     return render(request, "login/password_reset_confirm.html", {"uidb64": uidb64, "token": token})
-
-
-# =====================================================
-# 6. DASHBOARD PARA ADMINISTRADOR
-# =====================================================
-
-@login_required
-def admin_dashboard(request):
-    # Solo deja pasar a usuarios con rol ADM o staff/superuser
-    if not (
-        getattr(request.user, "rol", None) == "ADM"
-        or request.user.is_staff
-        or request.user.is_superuser
-    ):
-        messages.error(request, "No tienes permisos para ver este panel.")
-        return redirect("usuario:panel_estudiante")
-
-    estudiantes_activos = Usuario.objects.filter(
-        rol="EST",
-        is_active=True
-    ).count()
-
-    total_cursos = Curso.objects.count()
-    total_temas = Tema.objects.count()
-    total_videos = Video.objects.count()
-    total_preguntas = Pregunta.objects.count()
-    total_fichas = 0  # Modelo FichaClinica eliminado de Contenido
-
-    contexto = {
-        "estudiantes_activos": estudiantes_activos,
-        "total_cursos": total_cursos,
-        "total_temas": total_temas,
-        "total_videos": total_videos,
-        "total_preguntas": total_preguntas,
-        "total_fichas": total_fichas,
-    }
-
-    return render(request, "admin/admin_dashboard.html", contexto)
 
 
 # PERFIL ESTUDIANTE

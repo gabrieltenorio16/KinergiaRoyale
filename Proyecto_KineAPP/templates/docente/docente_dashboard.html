@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Administrador – Estadísticas</title>
+    <title>Dashboard - Panel Adminsitrivo Kinergia</title>
 
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -81,7 +81,7 @@
         <div class="col-2 sidebar">
 
             <div class="ps-3 pe-3 mb-3">
-                <strong>Panel administrador</strong><br>
+                <strong>Panel del docente</strong><br>
                 <span class="text-muted" style="font-size:0.85rem;">
                     Kinesiología UCN – Estadísticas del sistema
                 </span>
@@ -90,32 +90,32 @@
             <div class="sidebar-title">Visión general</div>
 
             <a href="#" class="active">Dashboard</a>
-            <a href="#">Actividad reciente</a>
-
-            <div class="sidebar-title">Gestión</div>
-
-            <a href="#">Cursos</a>
-            <a href="#">Estudiantes</a>
-            <a href="#">Recursos</a>
-
-            <div class="sidebar-title">Cuenta</div>
-
             <a href="{% url 'usuario:panel_estudiante' %}">Vista estudiante</a>
-            <a href="{% url 'usuario:logout' %}">Cerrar sesión</a>
 
-            <div class="mt-3 px-3 text-muted" style="font-size:0.85rem;">
-                Ayuda con esta página
-            </div>
+            <div class="sidebar-title"> Navegación</div>
+            <a href="{% url 'docente:panel' %}">Panel Maestro</a>
+
 
         </div>
 
         <!-- ========== CONTENIDO PRINCIPAL ========== -->
         <div class="col-10 p-4">
 
+           <!-- BREADCRUMBS -->
+                <nav aria-label="breadcrumb" class="mb-2">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="{% url 'docente:panel' %}">Panel maestro</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a href= "#">Dashboard</a>
+                    </ol>
+                </nav>
+
             <!-- HEADER -->
             <div class="mb-4 d-flex justify-content-between align-items-center">
                 <div>
-                    <h6 class="text-muted mb-1">Panel del administrador</h6>
+                    <h6 class="text-muted mb-1">Panel de administración del docente</h6>
                     <h2 class="fw-bold mb-1">Estadísticas generales del sistema</h2>
                     <p class="text-muted mb-0" style="max-width: 600px;">
                         Revisa de un vistazo el estado de la plataforma: estudiantes activos, cursos disponibles
@@ -131,7 +131,7 @@
                             {{ user.username }}
                         {% endif %}
                     </div>
-                    <div class="text-muted" style="font-size:0.85rem;">Rol: Administrador</div>
+                    <div class="text-muted" style="font-size:0.85rem;">Rol: Docente </div>
                 </div>
             </div>
 
@@ -194,8 +194,11 @@
                 <div class="card-body">
                     <h5 class="card-title mb-2">Próximos indicadores</h5>
                     <p class="text-muted mb-0" style="font-size:0.9rem;">
-                        Aquí más adelante podemos agregar gráficos (por ejemplo, actividad por mes, cursos con más movimiento,
-                        uso de recursos, etc.). Por ahora, esta sección queda como espacio reservado en el diseño.
+                        Actualmente estamos trabajando en la incorporación de gráficos y métricas adicionales
+                        para ofrecerte una visión más detallada del desempeño de tus estudiantes.
+                    </p>
+                    <p class="text-muted mb-0" style="font-size:0.9rem;">
+                        Esta función estará disponible próximamente.
                     </p>
                 </div>
             </div>

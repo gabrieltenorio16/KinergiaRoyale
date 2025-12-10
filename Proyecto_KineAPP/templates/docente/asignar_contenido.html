@@ -13,23 +13,70 @@ En esta sección puedes crear y asignar el contenido que tendrá cada curso.
 
 {% block tabs_nav %}
 <ul class="nav nav-tabs mb-4" id="contentTabs">
-    <li class="nav-item">
-        <a class="nav-link active" href="#" data-section="temas">Temas</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="#" data-section="videos">Videos</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="#" data-section="topicos">Anamnesis Remota</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="#" data-section="preguntas">Preguntas</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="#" data-section="respuestas">Respuestas</a>
-    </li>
+  <li class="nav-item">
+    <a class="nav-link active tab-tooltip" href="#" data-section="temas">
+      Temas
+      <span class="tooltip-box">
+        Los temas representan los módulos o unidades que estructuran cada curso.<br>
+        Ejemplo para “Técnicas Kinésicas I”:<br>
+        • Tema 1: Drenaje Postural<br>
+        • Tema 2: Vibraciones y Percusiones<br>
+        • Tema 3: Técnicas de Espiración<br>
+        <br>
+        Cada tema debe incluir un título y una descripción breve que contextualice su contenido.
+      </span>
+    </a>
+  </li>
+
+  <li class="nav-item">
+    <a class="nav-link tab-tooltip" href="#" data-section="videos">
+      Videos
+      <span class="tooltip-box">
+        Aquí se registran los videos utilizados en las entrevistas simuladas.<br>
+        El docente debe:<br>
+        • Indicar un título descriptivo, y<br>
+        • Asociar cada video al tema correspondiente.<br>
+        <br>
+        Esto asegura que el material audiovisual quede correctamente vinculado al flujo pedagógico del curso.
+      </span>
+    </a>
+  </li>
+
+  <li class="nav-item">
+    <a class="nav-link tab-tooltip" href="#" data-section="topicos">
+      Anamnesis Remota
+      <span class="tooltip-box">
+        En esta sección se configuran los elementos que compondrán la anamnesis remota que el estudiante deberá analizar.<br>
+        <br>
+        El docente debe ingresar cada elemento indicando:<br>
+        • Título del ítem de anamnesis<br>
+        • Descripción breve del contenido<br>
+        <br>
+        Se consideran categorías típicas como: antecedentes mórbidos, médicos, gineco-obstétricos, quirúrgicos, entre otros.
+      </span>
+    </a>
+  </li>
+
+  <li class="nav-item">
+    <a class="nav-link tab-tooltip" href="#" data-section="preguntas">
+      Preguntas
+      <span class="tooltip-box">
+        Aquí se gestionan las preguntas asociadas a cada ítem de anamnesis remota.
+      </span>
+    </a>
+  </li>
+
+  <li class="nav-item">
+    <a class="nav-link tab-tooltip" href="#" data-section="respuestas">
+      Respuestas
+      <span class="tooltip-box">
+        Aquí se registran y organizan las posibles respuestas asociadas a las preguntas definidas en la anamnesis remota.
+      </span>
+    </a>
+  </li>
 </ul>
 {% endblock %}
+
 
 {% block sections_content %}
 <div id="section-temas" class="content-section-modulo">

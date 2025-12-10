@@ -647,7 +647,19 @@ document.querySelectorAll(".btn-editar-respuesta").forEach(btn => {
         formRespuesta.elements["contenido"].value = contenido;
         formRespuesta.elements["retroalimentacion"].value = retro;
         formRespuesta.elements["es_correcta"].checked = correcta;
-        formRespuesta.elements["pregunta"].value = preguntaId;
+
+        const selectTopico = formRespuesta.elements["topico"];
+        const selectPregunta = formRespuesta.elements["pregunta"];
+
+        if (selectTopico) {
+            const topicoId = preguntasTopicos[preguntaId] || "";
+            selectTopico.value = topicoId;
+            filtrarPreguntasPorTopico(topicoId);
+        }
+
+        if (selectPregunta) {
+            selectPregunta.value = preguntaId;
+        }
 
         inputAccionRespuesta.value = "editar";
         inputRespuestaId.value = id;
@@ -659,6 +671,7 @@ document.querySelectorAll(".btn-editar-respuesta").forEach(btn => {
     });
 });
 
+
 // Resetear modal cuando se crea una respuesta nueva
 const btnAddRespuesta = document.getElementById("btnAddRespuesta");
 if (btnAddRespuesta && formRespuesta && modalCrearRespuesta &&
@@ -667,6 +680,13 @@ if (btnAddRespuesta && formRespuesta && modalCrearRespuesta &&
         formRespuesta.reset();
         inputAccionRespuesta.value = "crear";
         inputRespuestaId.value = "";
+
+        const selectTopico = formRespuesta.elements["topico"];
+            if (selectTopico) {
+                selectTopico.value = "";
+                filtrarPreguntasPorTopico("");
+            }
+
         const titleEl = modalCrearRespuestaEl.querySelector(".modal-title");
         if (titleEl) titleEl.textContent = "Crear nueva respuesta";
     });
@@ -694,3 +714,46 @@ if (buscadorRespuestas) {
         });
     });
 }
+
+/* ------------------------------------------------------------
+    23) ASIGNAR TÓPICO A Respuestas: cargar preguntas según el tópicos
+------------------------------------------------------------ */
+const preguntasTopicosScript = document.getElementById("preguntasTopicosData");
+let preguntasTopicos = {};
+
+if (preguntasTopicosScript) {
+    try {
+        preguntasTopicos = JSON.parse(preguntasTopicosScript.textContent);
+    } catch (e) {
+        console.error("Error parseando preguntasTopicosData", e);
+    }
+}
+
+function filtrarPreguntasPorTopico(topicoId) {
+    if (!formRespuesta) return;
+    const selectPregunta = formRespuesta.elements["pregunta"];
+    if (!selectPregunta) return;
+
+    Array.from(selectPregunta.options).forEach(opt => {
+        if (!opt.value) {
+            opt.hidden = false; // opción vacía / placeholder
+            return;
+        }
+        const tId = preguntasTopicos[opt.value] || "";
+        opt.hidden = topicoId && tId !== topicoId;
+    });
+
+    // Si la opción seleccionada ya no corresponde, resetea
+    if (selectPregunta.selectedOptions.length && selectPregunta.selectedOptions[0].hidden) {
+        selectPregunta.value = "";
+    }
+}
+if (formRespuesta) {
+    const selectTopico = formRespuesta.elements["topico"];
+    if (selectTopico) {
+        selectTopico.addEventListener("change", () => {
+            filtrarPreguntasPorTopico(selectTopico.value);
+        });
+    }
+}
+

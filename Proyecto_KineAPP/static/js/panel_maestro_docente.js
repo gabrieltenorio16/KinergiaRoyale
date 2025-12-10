@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // 2. Buscador de cursos (panel Clases)
     // ============================
     const buscadorCursos = document.getElementById("buscadorCursos");
-    const courseCards = document.querySelectorAll(".course-card");
+    const courseCards = document.querySelectorAll(".card-curso");
 
     if (buscadorCursos && courseCards.length > 0) {
         buscadorCursos.addEventListener("input", function () {
@@ -126,7 +126,37 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // ============================
-    // 4. Buscador global en pestaña Estudiantes
+    // 4. Modal "Editar curso"
+    // ============================
+    const modalEditarCurso = document.getElementById("modalEditarCurso");
+    const formEditarCurso = document.getElementById("formEditarCurso");
+    const inputEditarNombre = document.getElementById("editarCursoNombre");
+    const selectEditarNivel = document.getElementById("editarCursoNivel");
+    const textareaEditarDescripcion = document.getElementById("editarCursoDescripcion");
+    const botonesEditarCurso = document.querySelectorAll(".btn-editar-curso");
+
+    if (modalEditarCurso && formEditarCurso && botonesEditarCurso.length > 0) {
+        botonesEditarCurso.forEach(btn => {
+            btn.addEventListener("click", function () {
+                const cursoNombre = this.dataset.cursoNombre || "";
+                const cursoNivel = this.dataset.cursoNivel || "BASICO";
+                const cursoDescripcion = this.dataset.cursoDescripcion || "";
+                const cursoEditUrl = this.dataset.cursoEditUrl || "";
+                const cursoId = this.dataset.cursoId || "";
+
+                formEditarCurso.action = cursoEditUrl || `/docente/curso/${cursoId}/editar/`;
+                if (inputEditarNombre) inputEditarNombre.value = cursoNombre;
+                if (selectEditarNivel) selectEditarNivel.value = cursoNivel;
+                if (textareaEditarDescripcion) textareaEditarDescripcion.value = cursoDescripcion;
+
+                const modal = new bootstrap.Modal(modalEditarCurso);
+                modal.show();
+            });
+        });
+    }
+
+    // ============================
+    // 5. Buscador global en pestaña Estudiantes
     // ============================
     const buscadorEstudiantesGlobal = document.getElementById("buscadorEstudiantesGlobal");
     const tablaEstudiantesGlobal = document.getElementById("tablaEstudiantesGlobal");
@@ -140,16 +170,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 const texto = tr.textContent.toLowerCase();
                 tr.style.display = texto.includes(term) ? "" : "none";
             });
-        });
-    }
-
-    // ============================
-    // 5. Placeholder Importar Excel/CSV
-    // ============================
-    const btnImportarExcel = document.getElementById("btnImportarExcel");
-    if (btnImportarExcel) {
-        btnImportarExcel.addEventListener("click", function () {
-            alert("Importación desde Excel/CSV quedará para una siguiente iteración. La UI ya está preparada.");
         });
     }
 
