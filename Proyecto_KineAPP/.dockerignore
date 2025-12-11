@@ -1,0 +1,19 @@
+# entornos virtuales
+entornokine/
+venv/
+env/
+.venv/
+
+# python
+__pycache__/
+*.py[cod]
+
+# git / IDE
+.git
+.gitignore
+.vscode/
+.idea/
+
+# bases de datos y media locales
+*.sqlite3
+media/
