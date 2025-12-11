@@ -1,1 +1,155 @@
-{# Placeholder de Etapas: aún no implementado #}
+{# LISTADO Y GESTIÓN DE ENTREVISTAS (Etapas) #}
+
+<div class="d-flex gap-3 mb-4 align-items-center">
+  <input
+      type="text"
+      class="form-control w-25"
+      placeholder="Buscar entrevista..."
+      data-table-search="tablaEntrevistas">
+  <button
+      type="button"
+      class="btn btn-primary btn-sm"
+      id="btnAddEntrevista"
+      data-bs-toggle="modal"
+      data-bs-target="#modalEntrevista">
+    Añadir entrevista
+  </button>
+</div>
+
+<p class="text-muted small mb-3">
+  Paso 3: cada entrevista vincula un caso clinico con un video concreto del módulo.
+  El paciente se toma automáticamente del caso clinico seleccionado.
+</p>
+
+<form method="post" id="formEliminarEntrevistas" class="unit-list-container">
+  {% csrf_token %}
+  <input type="hidden" name="tipo" value="etapa">
+  <input type="hidden" name="accion" value="eliminar">
+
+  <div class="table-responsive">
+    <table class="table table-sm align-middle" id="tablaEntrevistas">
+      <thead class="table-light">
+        <tr>
+          <th style="width: 40px;">
+            <input type="checkbox" id="chkTodosEntrevistas">
+          </th>
+          <th style="width: 60px;">ID</th>
+          <th>Nombre de la entrevista</th>
+          <th>Paciente</th>
+          <th>Caso clínico</th>
+          <th>Video</th>
+          <th style="width: 130px;">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for e in etapas %}
+          <tr>
+            <td>
+              <input
+                  type="checkbox"
+                  name="etapas_seleccionadas"
+                  value="{{ e.id }}"
+                  class="chk-etapa">
+            </td>
+            <td>{{ e.id }}</td>
+            <td>{{ e.nombre }}</td>
+            <td>{{ e.caso.paciente.apellidos }}, {{ e.caso.paciente.nombres }}</td>
+            <td>{{ e.caso.titulo }}</td>
+            <td>
+              {% if e.video %}
+                {{ e.video.titulo }}
+              {% else %}
+                <span class="text-muted">Sin video asociado</span>
+              {% endif %}
+            </td>
+            <td>
+              <button
+                  type="button"
+                  class="btn btn-outline-secondary btn-sm btn-editar-etapa"
+                  data-id="{{ e.id }}"
+                  data-nombre="{{ e.nombre|escapejs }}"
+                  data-caso-id="{{ e.caso_id }}"
+                  data-video-id="{{ e.video_id|default_if_none:'' }}">
+                Editar
+              </button>
+            </td>
+          </tr>
+        {% empty %}
+          <tr data-empty-etapas="1">
+            <td colspan="7">
+              Aún no hay entrevistas configuradas para este curso.
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="mt-2">
+    <button
+        type="submit"
+        class="btn btn-danger btn-sm"
+        id="btnBorrarEntrevistas">
+      Borrar entrevistas seleccionadas
+    </button>
+  </div>
+</form>
+
+{# MODAL CREAR / EDITAR ENTREVISTA #}
+<div class="modal fade" id="modalEntrevista" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="tipo" value="etapa">
+        <input type="hidden" name="accion" id="accionEntrevista" value="crear">
+        <input type="hidden" name="etapa_id" id="etapaIdInput" value="">
+
+        <div class="modal-header">
+          <h5 class="modal-title">Crear nueva entrevista</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-12">
+              <label for="{{ etapa_form.nombre.id_for_label }}" class="form-label">
+                {{ etapa_form.nombre.label }}
+              </label>
+              {{ etapa_form.nombre }}
+            </div>
+
+            <div class="col-md-6">
+              <label for="{{ etapa_form.caso.id_for_label }}" class="form-label">
+                {{ etapa_form.caso.label }}
+              </label>
+              {{ etapa_form.caso }}
+            </div>
+
+            <div class="col-md-6">
+              <label for="{{ etapa_form.video.id_for_label }}" class="form-label">
+                {{ etapa_form.video.label }}
+              </label>
+              {{ etapa_form.video }}
+            </div>
+
+            <div class="col-12">
+              <small class="text-muted">
+                El paciente de la entrevista se tomará automáticamente del caso clínico seleccionado.
+              </small>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+            Cancelar
+          </button>
+          <button type="submit" class="btn btn-primary">
+            Guardar entrevista
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

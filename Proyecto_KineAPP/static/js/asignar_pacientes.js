@@ -130,6 +130,57 @@ if (btnAddCaso && formCaso && modalCaso && inputAccionCaso && inputCasoId) {
 }
 
 /* ------------------------------------------------------------
+   MODAL ENTREVISTA (Etapa): crear / editar
+------------------------------------------------------------ */
+const modalEntrevistaEl = document.getElementById("modalEntrevista");
+let modalEntrevista = null;
+
+if (modalEntrevistaEl && window.bootstrap) {
+    modalEntrevista = new bootstrap.Modal(modalEntrevistaEl);
+}
+
+const formEntrevista = modalEntrevistaEl ? modalEntrevistaEl.querySelector("form") : null;
+const inputAccionEntrevista = document.getElementById("accionEntrevista");
+const inputEtapaId = document.getElementById("etapaIdInput");
+
+// Editar entrevista
+document.querySelectorAll(".btn-editar-etapa").forEach(btn => {
+    btn.addEventListener("click", () => {
+        if (!formEntrevista || !modalEntrevista) return;
+
+        const id = btn.dataset.id;
+        const nombre = btn.dataset.nombre || "";
+        const casoId = btn.dataset.casoId || "";
+        const videoId = btn.dataset.videoId || "";
+
+        formEntrevista.reset();
+        formEntrevista.elements["nombre"].value = nombre;
+        formEntrevista.elements["caso"].value = casoId;
+        formEntrevista.elements["video"].value = videoId;
+
+        if (inputAccionEntrevista) inputAccionEntrevista.value = "editar";
+        if (inputEtapaId) inputEtapaId.value = id;
+
+        const titleEl = modalEntrevistaEl.querySelector(".modal-title");
+        if (titleEl) titleEl.textContent = "Editar entrevista";
+
+        modalEntrevista.show();
+    });
+});
+
+// Crear entrevista (botón Añadir)
+const btnAddEntrevista = document.getElementById("btnAddEntrevista");
+if (btnAddEntrevista && formEntrevista && modalEntrevista && inputAccionEntrevista && inputEtapaId) {
+    btnAddEntrevista.addEventListener("click", () => {
+        formEntrevista.reset();
+        inputAccionEntrevista.value = "crear";
+        inputEtapaId.value = "";
+        const titleEl = modalEntrevistaEl.querySelector(".modal-title");
+        if (titleEl) titleEl.textContent = "Crear nueva entrevista";
+    });
+}
+
+/* ------------------------------------------------------------
    MODAL PACIENTE: crear / editar
 ------------------------------------------------------------ */
 const modalPacienteEl = document.getElementById("modalPaciente");
@@ -348,5 +399,10 @@ setupBulkDelete(
     "¿Estás seguro de borrar los diagnósticos seleccionados? Esta acción no se puede deshacer."
 );
 
-// (cuando agregues los formularios de borrado para Diagnósticos, Etapas y Partes del cuerpo,
-// solo tendrás que llamar a setupBulkDelete con sus IDs/clases)
+setupBulkDelete(
+    "chkTodosEntrevistas",
+    "chk-etapa",
+    "btnBorrarEntrevistas",
+    "Selecciona al menos una entrevista para borrar.",
+    "¿Estás seguro de borrar las entrevistas seleccionadas? Esta acción no se puede deshacer."
+);

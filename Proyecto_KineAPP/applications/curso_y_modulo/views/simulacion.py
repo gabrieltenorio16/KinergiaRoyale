@@ -1,12 +1,14 @@
 # applications/curso_y_modulo/views/simulacion.py
 
 from django.db.models import Q
-from django.forms import modelform_factory
-from django.urls import reverse_lazy
-from django.views.generic import DetailView, CreateView
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.views.generic import DetailView
 
 from applications.Contenido.models import Video, Topico, Pregunta, Respuesta
-from applications.diagnostico_paciente.models import Paciente, Diagnostico
+from applications.diagnostico_paciente.models import Diagnostico, FichaClinicaEstudiante
+from applications.Contenido.contenido_modulo_docente.forms import FichaClinicaEstudianteForm
 
 
 class VideoDetailView(DetailView):
@@ -32,12 +34,34 @@ class VideoDetailView(DetailView):
         context["paciente_actual"] = paciente_actual
         context["paciente"] = paciente_actual
 
-        PacienteForm = modelform_factory(
-            Paciente,
-            fields=["nombres", "apellidos", "edad", "antecedentes", "historial_medico"],
-        )
+         # ---------- FICHA CLÍNICA DEL ESTUDIANTE ----------
+        ficha_existente = None
+        if (
+            self.request.user.is_authenticated
+            and paciente_actual
+            and etapa
+            and etapa.caso
+        ):
+            ficha_existente = FichaClinicaEstudiante.objects.filter(
+                estudiante=self.request.user,
+                paciente=paciente_actual,
+                caso_clinico=etapa.caso,
+                video=self.object,
+            ).first()
 
-        context["form"] = PacienteForm()
+        if ficha_existente:
+            context["ficha_form"] = FichaClinicaEstudianteForm(instance=ficha_existente)
+            context["ficha_existente"] = ficha_existente
+        else:
+            initial = {}
+            if paciente_actual:
+                initial = {
+                    "nombre_paciente_ficha": paciente_actual.nombres,
+                    "apellido_paciente_ficha": paciente_actual.apellidos,
+                    "edad_paciente_ficha": paciente_actual.edad,
+                }
+            context["ficha_form"] = FichaClinicaEstudianteForm(initial=initial)
+        # --------------------------------------------------
 
         # Topicos y preguntas (para filtrar por tópico en la vista)
         context["topicos_data"] = list(
@@ -80,10 +104,55 @@ class VideoDetailView(DetailView):
         return context
 
 
-class FichaPacienteCreate(CreateView):
-    model = Paciente
-    fields = ["nombres", "apellidos", "edad", "antecedentes", "historial_medico"]
-    template_name = "video/video_simulacion.html"
+@login_required
+def guardar_ficha_clinica_estudiante(request, pk):
+    video = get_object_or_404(Video, pk=pk)
 
-    def get_success_url(self):
-        return reverse_lazy("simulacion", kwargs={"pk": self.kwargs["pk"]})
+    # Reutilizamos la misma lógica para etapa/paciente/caso
+    etapa = (
+        video.etapas.select_related("paciente", "caso__paciente")
+        .order_by("id")
+        .first()
+    )
+
+    paciente_actual = None
+    caso_clinico = None
+    if etapa:
+        caso_clinico = etapa.caso
+        if getattr(etapa, "paciente", None):
+            paciente_actual = etapa.paciente
+        elif getattr(etapa, "caso", None) and getattr(etapa.caso, "paciente", None):
+            paciente_actual = etapa.caso.paciente
+
+    if request.method != "POST":
+        return redirect("simulacion:simulacion", pk=video.pk)
+
+    if not paciente_actual or not caso_clinico:
+        messages.error(request, "No hay un paciente/caso asociado a este video.")
+        return redirect("simulacion:simulacion", pk=video.pk)
+
+    ficha_existente = FichaClinicaEstudiante.objects.filter(
+        estudiante=request.user,
+        paciente=paciente_actual,
+        caso_clinico=caso_clinico,
+        video=video,
+    ).first()
+
+    if ficha_existente:
+        form = FichaClinicaEstudianteForm(request.POST, instance=ficha_existente)
+    else:
+        form = FichaClinicaEstudianteForm(request.POST)
+
+    if form.is_valid():
+        ficha = form.save(commit=False)
+        ficha.estudiante = request.user
+        ficha.paciente = paciente_actual
+        ficha.caso_clinico = caso_clinico
+        ficha.video = video
+        ficha.save()
+        messages.success(request, "Ficha clínica guardada correctamente.")
+    else:
+        messages.error(request, f"Errores en la ficha: {form.errors}")
+
+
+    return redirect("simulacion:simulacion", pk=video.pk)

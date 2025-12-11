@@ -88,18 +88,31 @@ def seleccionar_paciente_curso(request, curso_id, paciente_id):
 
     messages.success(request, f"Paciente seleccionado: {paciente}")
 
-    # Buscar el primer video del curso (según tus modelos actuales)
+    # 1) Buscar una ENTREVISTA (Etapa) para este paciente en este curso
+    etapa = (
+        Etapa.objects.filter(
+            paciente=paciente,
+            caso__curso=curso,
+            video__isnull=False,
+        )
+        .select_related("video")
+        .order_by("caso__titulo", "id")
+        .first()
+    )
+
+    if etapa and etapa.video:
+        return redirect("Contenido:preguntas_del_video", video_id=etapa.video.id)
+
+    # 2) Fallback: si no hay entrevistas configuradas para este paciente,
+    # mantenemos el comportamiento anterior (primer video del curso)
     primer_video = (
         Video.objects.filter(tema__curso=curso)
-        .order_by('tema__titulo', 'id')
+        .order_by("tema__titulo", "id")
         .first()
     )
 
     if primer_video:
-        # Ahora te mando directo a la vista de preguntas del video
-        # definida en applications/Contenido/urls.py
-        # path("video/<int:video_id>/preguntas/", views.preguntas_del_video, name="preguntas_del_video")
         return redirect("Contenido:preguntas_del_video", video_id=primer_video.id)
 
-    # Si no hay videos, vuelves al detalle del curso
+    # 3) Si tampoco hay videos, volvemos al detalle del curso
     return redirect("curso:curso_detalle", curso_id=curso.id)

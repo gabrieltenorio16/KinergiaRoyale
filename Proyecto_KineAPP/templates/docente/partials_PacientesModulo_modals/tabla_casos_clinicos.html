@@ -32,6 +32,7 @@
           <th>Título</th>
           <th>Paciente</th>
           <th>Descripción</th>
+          <th>Entrevistas</th>
           <th style="width: 130px;">Acciones</th>
         </tr>
       </thead>
@@ -50,6 +51,9 @@
             <td>{{ caso.paciente }}</td>
             <td>{{ caso.descripcion|default:"-" }}</td>
             <td>
+              <span calss=""badge bg-secondary>
+                {{ caso.etapas.count }} entrevista{{ caso.etapas.count|pluralize:"s" }}
+              </span>
               <button
                   type="button"
                   class="btn btn-outline-secondary btn-sm btn-editar-caso"
@@ -63,7 +67,7 @@
           </tr>
         {% empty %}
           <tr data-empty-casos="1">
-            <td colspan="6">No hay casos clínicos asociados a este curso.</td>
+            <td colspan="7">No hay casos clínicos asociados a este curso.</td>
           </tr>
         {% endfor %}
       </tbody>

@@ -19,6 +19,7 @@ from applications.Contenido.contenido_modulo_docente.forms import (
     RespuestaForm,
     PacienteForm,
     CasoClinicoForm,
+    EtapaForm
 )
 
 
@@ -276,12 +277,6 @@ def get_video_form(curso, *args, **kwargs):
 
 @login_required
 def asignar_pacientes(request, curso_id):
-    """
-    Pantalla de gestión de pacientes y elementos clínicos
-    asociados a un curso determinado.
-    Por ahora es solo de lectura (listados), reutilizando
-    el mismo layout de asignar_contenido.
-    """
 
     if request.user.rol != "DOC":
         messages.error(request, "No tienes permisos para acceder a esta sección.")
@@ -320,12 +315,12 @@ def asignar_pacientes(request, curso_id):
     # Partes del cuerpo disponibles (no se filtran por curso)
     partes_cuerpo = ParteCuerpo.objects.all().order_by("nombre")
 
-    # Formularios para Paciente y Caso Clínico
     paciente_form = PacienteForm()
     caso_form = CasoClinicoForm()
+    etapa_form = EtapaForm()
 
     if request.method == "POST":
-        tipo = request.POST.get("tipo", "caso")       # paciente | caso
+        tipo = request.POST.get("tipo", "caso")       # paciente | caso | etapa
         accion = request.POST.get("accion", "crear")  # crear | editar | eliminar
 
         # ---------------------------------------------------------
@@ -477,6 +472,52 @@ def asignar_pacientes(request, curso_id):
                         )
                         messages.success(request, "Diagnóstico creado correctamente.")
                         return redirect("docente:asignar_pacientes", curso_id=curso.id)
+        # ---------------------------------------------------------
+        # ENTREVISTAS (Etapas)
+        # ---------------------------------------------------------
+        elif tipo == "etapa":
+            if accion == "eliminar":
+                ids = request.POST.getlist("etapas_seleccionadas")
+                if not ids:
+                    messages.warning(request, "No seleccionaste ninguna entrevista para borrar.")
+                else:
+                    Etapa.objects.filter(
+                        caso__curso=curso,
+                        id__in=ids,
+                    ).delete()
+                    messages.success(request, "Entrevistas eliminadas correctamente.")
+                return redirect("docente:asignar_pacientes", curso_id=curso.id)
+
+            elif accion == "editar":
+                etapa_id = request.POST.get("etapa_id")
+                etapa_obj = get_object_or_404(
+                    Etapa,
+                    pk=etapa_id,
+                    caso__curso=curso,
+                )
+                form = EtapaForm(request.POST, instance=etapa_obj)
+                if form.is_valid():
+                    etapa = form.save(commit=False)
+                    # aseguramos que el paciente coincida con el del caso
+                    etapa.paciente = etapa.caso.paciente
+                    etapa.save()
+                    messages.success(request, "Entrevista actualizada correctamente.")
+                    return redirect("docente:asignar_pacientes", curso_id=curso.id)
+                else:
+                    messages.error(request, "Revisa los datos de la entrevista.")
+                    etapa_form = form
+
+            else:  # crear entrevista
+                form = EtapaForm(request.POST)
+                if form.is_valid():
+                    etapa = form.save(commit=False)
+                    etapa.paciente = etapa.caso.paciente
+                    etapa.save()
+                    messages.success(request, "Entrevista creada correctamente.")
+                    return redirect("docente:asignar_pacientes", curso_id=curso.id)
+                else:
+                    messages.error(request, "Revisa los datos de la nueva entrevista.")
+                    etapa_form = form
 
 
 
@@ -489,6 +530,7 @@ def asignar_pacientes(request, curso_id):
         "partes_cuerpo": partes_cuerpo,
         "paciente_form": paciente_form,
         "caso_form": caso_form,
+        "etapa_form": etapa_form,
         "active_section": "pacientes",
         "breadcrumb_label": "Pacientes",
         "breadcrumb_url_name": "docente:asignar_pacientes",

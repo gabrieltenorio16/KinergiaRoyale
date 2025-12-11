@@ -286,6 +286,7 @@
       <!-- PRESENTACIÓN -->
       <section id="presentacion" class="curso-section is-active">
         <h2>Presentación del módulo</h2>
+        <h3>Descripción del curso</h3>
         <p>
           {% if curso.descripcion %}
             {{ curso.descripcion }}
@@ -329,11 +330,6 @@
         <h2>Sala de espera – Pacientes simulados</h2>
 
         {% if seleccion %}
-          <p>
-            <strong>Paciente seleccionado actualmente:</strong><br>
-            {{ seleccion.paciente.apellidos }}, {{ seleccion.paciente.nombres }}
-            ({{ seleccion.paciente.edad }} años)
-          </p>
         {% else %}
           <p>No has seleccionado un paciente aún.</p>
         {% endif %}

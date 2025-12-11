@@ -6,6 +6,7 @@ from .models import (
     CasoClinico,
     Etapa,
     Diagnostico,
+    FichaClinicaEstudiante,
 )
 
 
@@ -46,18 +47,17 @@ class CasoClinicoAdmin(admin.ModelAdmin):
 
 
 # ==========================
-# ETAPA
+# ENTREVISTA (Etapa)
 # ==========================
 @admin.register(Etapa)
 class EtapaAdmin(admin.ModelAdmin):
-    list_display = ('id', 'caso', 'nombre', 'parte_cuerpo')
-    list_filter = ('caso', 'parte_cuerpo')
-    search_fields = ('nombre', 'caso__titulo')
-    ordering = ('caso', 'nombre')
+    list_display = ('id', 'caso', 'paciente', 'video', 'nombre')
+    list_filter = ('caso__curso', 'caso', 'paciente')
+    search_fields = ('nombre', 'caso__titulo', 'paciente__nombres', 'paciente__apellidos')
+    ordering = ('caso', 'id')
 
-    # esto hace que aparezca el widget de dos listas con filtro,
-    # para elegir las preguntas disponibles para la etapa
     filter_horizontal = ('preguntas',)
+
 
 
 # ==========================
@@ -73,4 +73,24 @@ class DiagnosticoAdmin(admin.ModelAdmin):
         'parte_cuerpo__nombre',
     )
 
+# ==========================
+# Ficha Clinica Estudiante
+# ==========================
+@admin.register(FichaClinicaEstudiante)
+class FichaClinicaEstudianteAdmin(admin.ModelAdmin):
+    list_display = ('id', 'curso', 'estudiante', 'paciente', 'caso_clinico', 'video', 'fecha_creacion')
+    list_filter = ('caso_clinico__curso', 'fecha_creacion')
+    search_fields = (
+        'estudiante__username',
+        'estudiante__first_name',
+        'estudiante__last_name',
+        'paciente__nombres',
+        'paciente__apellidos',
+        'caso_clinico__titulo',
+    )
+    ordering = ('-fecha_creacion',)
 
+    def curso(self, obj):
+        return obj.caso_clinico.curso
+    curso.short_description = 'Curso'
+    curso.admin_order_field = 'caso_clinico__curso__nombre'

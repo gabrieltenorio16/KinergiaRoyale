@@ -129,8 +129,8 @@ class Etapa(models.Model):
     )
 
     class Meta:
-        verbose_name = 'Etapa'
-        verbose_name_plural = 'Etapas'
+        verbose_name = 'Entrevista'
+        verbose_name_plural = 'Entrevistas'
         # ya no usamos "orden"
         ordering = ('caso', 'nombre')
 
@@ -183,3 +183,60 @@ class Diagnostico(models.Model):
 
     def __str__(self):
         return f"Diagnostico #{self.id} de {self.paciente.apellidos}, {self.paciente.nombres}"
+
+class FichaClinicaEstudiante (models.Model):
+    # Campos de texto# 
+    rut_paciente_ficha = models.CharField('RUT del Paciente', max_length=12)
+    nombre_paciente_ficha = models.CharField('Nombres del Paciente', max_length=200)
+    apellido_paciente_ficha = models.CharField('Apellidos del Paciente', max_length=200)
+    edad_paciente_ficha = models.PositiveIntegerField('Edad del Paciente')
+    anamnesis_actual = models.TextField('Anamnesis Actual')
+    motivo_consulta_ficha = models.TextField('Motivo de Consulta')
+
+
+    # Llaves foraneas de este modelo
+    estudiante = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='fichas_medicas',
+        verbose_name='Estudiante'
+    )
+
+    paciente = models.ForeignKey(
+        Paciente,
+        on_delete=models.CASCADE,
+        related_name='fichas_medicas_estudiantes',
+        verbose_name='Paciente Simulado'
+    )
+
+    caso_clinico = models.ForeignKey(
+        CasoClinico,
+        on_delete=models.CASCADE,
+        related_name='fichas_medicas_estudiantes',
+        verbose_name='Caso Clnico'
+    )
+
+    video = models.ForeignKey(
+        Video,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='fichas_medicas_estudiantes',
+        verbose_name='Video Asociado'
+    )
+
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Ficha Clincia del Estudiante'
+        verbose_name_plural = 'Fichas Clinicas de Estudiantes'
+        ordering = ('-fecha_creacion',)
+        constraints = [
+            models.UniqueConstraint(
+                fields=['estudiante', 'paciente', 'caso_clinico', 'video'],
+                name='unique_ficha_estudiante_paciente_caso'
+            )
+        ]
+
+    def __str__(self):
+        return f"Ficha Mdica de {self.estudiante.username} para {self.paciente}"

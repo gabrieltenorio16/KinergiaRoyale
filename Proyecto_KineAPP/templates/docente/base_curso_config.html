@@ -51,16 +51,16 @@
                 Pacientes
             </a>
 
-            <!-- Falta agregar el link al dashboard filtrado de alumnos ese curso-->
-            <a href="#">
-                Estadísticas de clase
-            </a>
 
            <!-- Falta agregar el link a un listado de estudiantes que este filtrado para ese curso--> 
             <div class="sidebar-title">Estudiantes</div>
             <a href="{% url 'docente:curso_estudiantes' curso.id %}"
                class="{% if active_section == 'estudiantes' %}active{% endif %}">
                 Lista de estudiantes
+            </a>
+
+            <a href="#">
+                Fichas clincias estudiantes 
             </a>
 
             <div class="sidebar-title">Navegación</div>
