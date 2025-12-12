@@ -12,39 +12,80 @@ Los integrantes del equipo con sus respectivos roles son los siguientes:
 - Cristopher Meza
 
 # Instrucciones de instalacion y ejecucion.
-Para poder usar esta plataforma, usted debe de tener instalados en su computador Django, Python, PostgreSQL y unas librerias de django (Pillow, jazzmin, psycopg2)  Estos componentes son fundamentales para el correcto funcionamiento de la plataforma.
-Ya con la carpeta descargada, usted debera crear primero su entorno dentro de la CMD de Windows:
-1.	Seleccionar la ruta donde se encuentra ubicada la carpeta instalada, luego dentro del CMD colocar (ejemplo de ruta):
-cd C:\Users\danit\Documents\Kinergia Royale (Carpeta de todo el proyecto)\KinergiaRoyale
-2.	Luego de ingresar a la carpeta se debe crear el entorno, por lo que se debe colocar:
-python -m venv entorno
-3.	Al crear el entorno luego dentro de este se debe ingresar a los Scripts para luego activar el entorno:
-cd Scripts
-4.	Ya estando dentro de los Scripts se debe activar el entorno, por lo tanto solo debe escribir:
-activate
-5.	El entorno si esta correctamente activado aparecera al inicio, algo asi:
-(entorno) C:\Users\danit\Documents\Kinergia Royale (Carpeta de todo el proyecto)\KinergiaRoyale\entorno\Scripts>
-6.	Luego nos debemos devolver donde nos encontrabamos antes dentro de la carpeta que contiene nuestro README.md, esto se realiza con:
-cd.. (repetir hasta llegar a la altura de KinergiaRoyale)
-7.	Para poder verificar que es lo que se encuentra dentro de una carpeta debe colocar:
-dir
-8.	Luego de verificar que nos encontramos en la carpeta correcta, la cual contiene el archivo README.md se deben instalar los requerimientos, de esta forma:
-pip install -r requirements.txt
-9.	Al finalizar la instalacion, al colocar dir aparecera una lista con distintos nombres, para poder llegar al manage.py debemos ingresar al que dice Proyecto_KineAPP, esto se realiza de la siguiente forma:
+Cómo levantar el proyecto con Docker (paso a paso)
+Requisitos previos
+Antes de empezar, asegúrate de tener instalado:
+
+Docker Desktop (Windows/Mac) o Docker Engine + Docker Compose (Linux).
+En Windows, Docker Desktop suele pedir:
+
+Nota: Si se encuentra en windows, debe dejar minimizada la aplicación de Docker Desktop
+
+1. Clonar el repositorio y entrar a la carpeta correcta
+
+Debe descargar el archivo de codigo (.zip) y extraerlo para que se muestre la carpeta del proyecto
+
+Luego, debe ubicarse a la altura de los archivos Docker que están dentro de Proyecto_KineAPP, puede entrar desde cmd:
+
 cd Proyecto_KineAPP
-10.	Ya dentro de esta carpeta nos encontramos con el archivo manage.py, para poder utilizarlo correctamente primero se deben generar las migraciones:
-python manage.py makemigrations
-11.	Luego de que se realice esto, se deben ejecutar los archivos de migracion con:
-python manage.py migrate
-12. Luego de migrar, debe crear un superusuario que es el usuario que le permitira entrar mediante la ventana de acceso a la plataforma para gestionar a los estudiantes, cursos y demas.
-- Debe ingresar el siguiente comando: python manage.py createsuperuser
-- Luego le pedira ingresar un nombre de usuario, (sugerencia para la primera versión, colocar: admin)
-- Luego, presiona enter y le pedira un correo, esto lo omite oprimiendo enter para pasar al ultimo paso
-- Debe ingresar una contraseña (sugerida para la prueba unicamente: admin112233).
-- Una vez ingresada la confirma digitandola nuevamante y ya estaria list@ con este paso
-13.	Ya con el entorno creado correctamente y los componentes requeridos instalados, debe escribir lo siguiente:
-python manage.py runserver
-14.	Al correrlo correctamente, se le generara un texto, en este se encuentra una direccion http://127.0.0.1:8000/, en la cual debe ingresar y verificar que django este funcionando correctamente
-15.	Al verificar que Django se instalo y funciono exitosamente, debe modificar el http dentro de la misma pagina en google y agregarle /admin, por lo que quedaria asi:
-127.0.0.1:8000/admin o ingresar a http://127.0.0.1:8000/admin
-16.	Encontrandose ya dentro de la plataforma se debera poner su usuario y contrasena, los cuales provisionalmente son Usuario: admin y Contrasena: admin112233
+En esa carpeta están:
+
+docker-compose.yml → define los servicios (web y db).
+Dockerfile → define cómo construir la imagen del proyecto Django.
+2. (Opcional) Limpiar contenedores y base anterior
+Si ya habías levantado el proyecto antes y quieres empezar “desde cero”:
+
+docker compose down -v
+Qué hace esto:
+
+down: detiene y elimina los contenedores.
+-v: elimina también el volumen postgres_data (o sea, borra la base de datos guardada).
+Úsalo solo si quieres resetear la DB.
+Si no quieres borrar la DB, usa solo:
+
+docker compose down
+
+3. Construir la imagen del proyecto
+Esto instala las dependencias del requirements.txt dentro de la imagen:
+
+docker compose build
+
+Notas:
+
+La primera vez puede tardar varios minutos.
+Si cambias requirements.txt, debes volver a ejecutar este paso.
+4. Levantar el servidor y la base de datos
+Arranca todo:
+
+docker compose up -d
+
+Qué pasa aquí:
+
+Se levanta PostgreSQL en el servicio db.
+Se levanta Django en el servicio web.
+-d significa que corre en segundo plano.
+Si quieres ver los logs en vivo (útil si algo falla), ejecútalo sin -d:
+
+docker compose up
+
+5. Crear tablas en la base (migraciones) (en una terminal distinta)
+Como la DB es nueva la primera vez, hay que aplicar migraciones:
+
+docker compose run --rm web python manage.py makemigrations
+docker compose run --rm web python manage.py migrate
+
+6. Crear un superusuario (admin)
+Necesario para entrar al panel /admin:
+
+docker compose run --rm web python manage.py createsuperuser
+Sigue los pasos que te pide (usuario, correo y contraseña).
+
+7. Abrir el proyecto
+Con todo levantado:
+
+Sitio principal:
+http://localhost:8000/
+Panel admin:
+http://localhost:8000/admin
+Si el navegador no carga:
+
