@@ -22,19 +22,22 @@
         <input type="text" placeholder="Buscar estudiante..." class="search-bar" id="buscadorEstudiantesGlobal">
     </div>
 
-    <div class="right user-menu" id="userMenu">
-        <img src="{% static 'img/icon_user.png' %}" class="user-icon">
-        <span class="user-name">
-            {{ request.user.first_name }} {{ request.user.last_name }} ▾
-        </span>
-    </div>
+    <div class="right">
 
-    <div class="user-dropdown" id="userDropdown">
-        <a href="#">Mi perfil</a>
-        <a href="#">Configuración</a>
-        <a href="{% url 'docente:panel' %}">Mis clases</a>
-        <hr>
-        <a href="{% url 'usuario:logout' %}" class="logout-link">Cerrar sesión</a>
+        <div class="right user-menu" id="userMenu">
+            <img src="{% static 'img/icon_user.png' %}" class="user-icon">
+            <span class="user-name">
+                {{ request.user.first_name }} {{ request.user.last_name }} ▾
+            </span>
+        </div>
+
+        <div class="user-dropdown" id="userDropdown">
+            <a href="#">Mi perfil</a>
+            <a href="#">Configuración</a>
+            <a href="{% url 'docente:panel' %}">Mis clases</a>
+            <hr>
+            <a href="{% url 'usuario:logout' %}" class="logout-link">Cerrar sesión</a>
+        </div>
     </div>
 </div>
 

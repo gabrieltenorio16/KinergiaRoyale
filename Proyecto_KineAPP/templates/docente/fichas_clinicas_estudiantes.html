@@ -1,0 +1,116 @@
+{% extends "docente/base_curso_config.html" %}
+{% load static %}
+
+{% block page_title %}Fichas clínicas del curso | Kinergia Royale{% endblock %}
+
+{% block page_heading %}
+Fichas clínicas de {{ curso.nombre }}
+{% endblock %}
+
+{% block page_subtitle %}
+Registros creados por los estudiantes en sus simulaciones de video.
+{% endblock %}
+
+{% block sections_content %}
+<div class="table-responsive">
+    <table class="table table-sm align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>ID</th>
+                <th>Estudiante</th>
+                <th>Paciente</th>
+                <th>Caso clínico</th>
+                <th>Video</th>
+                <th>Fecha creación</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ficha in fichas %}
+            <tr>
+                <td>{{ ficha.id }}</td>
+                <td>{{ ficha.estudiante.get_full_name|default:ficha.estudiante.username }}</td>
+                <td>{{ ficha.paciente.nombres }} {{ ficha.paciente.apellidos }}</td>
+                <td>{{ ficha.caso_clinico.titulo }}</td>
+                <td>{{ ficha.video.titulo|default:"(sin video)" }}</td>
+                <td>{{ ficha.fecha_creacion }}</td>
+                <td>
+                    <button
+                        type="button"
+                        class="btn btn-outline-primary btn-sm ver-ficha-btn"
+                        data-bs-toggle="modal"
+                        data-bs-target="#modalFichaDetalle"
+                        data-nombre="{{ ficha.nombre_paciente_ficha }}"
+                        data-apellido="{{ ficha.apellido_paciente_ficha }}"
+                        data-edad="{{ ficha.edad_paciente_ficha }}"
+                        data-anamnesis="{{ ficha.anamnesis_actual }}"
+                        data-motivo="{{ ficha.motivo_consulta_ficha }}"
+                    >
+                        Abrir ficha
+                    </button>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6">Aún no hay fichas clínicas creadas por estudiantes para este curso.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal detalle ficha -->
+<div class="modal fade" id="modalFichaDetalle" tabindex="-1" aria-labelledby="modalFichaDetalleLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalFichaDetalleLabel">Ficha clínica del estudiante</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label fw-bold">Nombres del paciente</label>
+          <p class="form-control-plaintext" id="detalleNombre"></p>
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-bold">Apellidos del paciente</label>
+          <p class="form-control-plaintext" id="detalleApellido"></p>
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-bold">Edad del paciente</label>
+          <p class="form-control-plaintext" id="detalleEdad"></p>
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-bold">Anamnesis actual</label>
+          <p class="form-control-plaintext" id="detalleAnamnesis"></p>
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-bold">Motivo de consulta</label>
+          <p class="form-control-plaintext" id="detalleMotivo"></p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const modal = document.getElementById("modalFichaDetalle");
+  modal.addEventListener("show.bs.modal", function (event) {
+    const button = event.relatedTarget;
+    if (!button) return;
+    document.getElementById("detalleNombre").textContent = button.getAttribute("data-nombre") || "";
+    document.getElementById("detalleApellido").textContent = button.getAttribute("data-apellido") || "";
+    document.getElementById("detalleEdad").textContent = button.getAttribute("data-edad") || "";
+    document.getElementById("detalleAnamnesis").textContent = button.getAttribute("data-anamnesis") || "";
+    document.getElementById("detalleMotivo").textContent = button.getAttribute("data-motivo") || "";
+  });
+});
+</script>
+{% endblock %}

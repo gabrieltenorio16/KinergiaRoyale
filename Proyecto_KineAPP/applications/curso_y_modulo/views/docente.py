@@ -113,8 +113,8 @@ def crear_curso_view(request):
 
     nombre = request.POST.get("nombre")
     nivel = request.POST.get("nivel")
-    fecha_inicio = request.POST.get("fecha_inicio") or None
-    fecha_fin = request.POST.get("fecha_fin") or None
+    fecha_inicio = request.POST.get("fecha_inicio")
+    fecha_fin = request.POST.get("fecha_fin")
     descripcion = (request.POST.get("descripcion") or "").strip()
 
     docentes_ids = request.POST.getlist("docentes_ids")
@@ -123,6 +123,14 @@ def crear_curso_view(request):
     if not nombre:
         messages.error(request, "El nombre del curso es obligatorio.")
         return redirect("docente:panel")
+
+    if not fecha_inicio or not fecha_fin:
+        messages.error(request, "Las fechas de inicio y fin son obligatorias.")
+        return redirect("docente:panel")
+
+    # Aseguramos que quede al menos un docente (el usuario actual)
+    if not docentes_ids:
+        docentes_ids = [str(request.user.id)]
 
     curso = Curso.objects.create(
         nombre=nombre,

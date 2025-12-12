@@ -179,26 +179,48 @@
 
     .indice-tema a:hover { text-decoration: underline; }
 
-    /* Barra inferior links UCN */
-    .links-interes {
+    /* Barra de logo + links de interÇ¸s (footer) */
+    .ucn-links-bar {
       margin-top: 40px;
-      display: flex;
-      justify-content: center;
-    }
-
-    .link-box {
-      width: 90%;
-      background: #004b8d;
-      padding: 20px;
+      background: #00406f;
       color: #ffffff;
-      border-radius: 16px;
-      text-align: center;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+      border-radius: 10px;
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
     }
-
-    .link-box img {
-      width: 80px;
+    .ucn-links-left {
+      display: flex;
+      align-items: center;
+    }
+    .ucn-links-logo {
+      height: 110px;
+      width: auto;
+    }
+    .ucn-links-right {
+      margin-right: 60px;
+      text-align: left;
+    }
+    .ucn-links-right-title {
+      font-size: 1.25rem;
+      font-weight: 600;
       margin-bottom: 8px;
+    }
+    .ucn-links-list a {
+      display: block;
+      color: #ffffff;
+      text-decoration: none;
+      padding: 4px 0;
+      font-size: 1.05rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+    }
+    .ucn-links-list a:last-child {
+      border-bottom: none;
+    }
+    .ucn-links-list a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
@@ -217,17 +239,10 @@
         </div>
       </a>
 
-      <div class="search">
-        <div class="search__box">
-          <input class="search__input" type="search" placeholder="Buscar cursos, temas o pacientes..." />
-        </div>
+      <div class="search" aria-hidden="true">
       </div>
 
       <div class="header__actions">
-        <button id="btnNotificaciones" class="icon-btn">
-          <span id="badgeCount" class="badge">1</span>
-        </button>
-
         {% with persona=perfil|default:user %}
         <a href="{% url 'usuario:perfil' %}" style="text-decoration: none;">
           <div class="avatar">
@@ -369,13 +384,24 @@
         <!-- Aquí ya NO va el botón -->
       </section>
 
-      <!-- BARRA UCN -->
-      <div class="links-interes">
-        <div class="link-box">
-          <img src="{% static 'img/ucn_logo2.png' %}" alt="UCN">
-          Universidad Católica del Norte – Facultad de Medicina
+      <!-- BARRA INFERIOR CON LOGO + LINKS DE INTERÉS -->
+      <section class="ucn-links-bar">
+        <div class="ucn-links-left">
+          <img src="{% static 'img/ucn_logo2.png' %}" alt="Logo UCN" class="ucn-links-logo">
         </div>
-      </div>
+
+        <div class="ucn-links-right">
+          <div class="ucn-links-right-title">Links de interés</div>
+          <div class="ucn-links-list">
+            <a href="https://www.ucn.cl/" target="_blank" rel="noopener noreferrer">
+              Universidad Católica del Norte
+            </a>
+            <a href="https://medicina.ucn.cl/1-2/" target="_blank" rel="noopener noreferrer">
+              Facultad de Medicina - UCN
+            </a>
+          </div>
+        </div>
+      </section>
 
     </div>
   </div>

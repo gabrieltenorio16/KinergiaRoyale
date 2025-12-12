@@ -235,27 +235,42 @@ body {
     min-height: 100px;       /* Altura mínima inicial */
 }
 
-/* ESTILO Y POSICIONAMIENTO DEL BOTÓN VOLVER */
-.btn-volver {
-    /* Alineación dentro del layout (Flexbox) */
-    align-self: flex-start; 
-    
-    /* Mantiene el ancho total (máx. 800px) centrado */
-    max-width: 800px;
+.volver-wrapper {
     width: 100%;
-    
-    /* Estilo del texto */
-    background: none;
-    border: none;
-    color: var(--ucn-blue-700); /* Usa el azul principal de tu plataforma */
-    font-weight: 600;
+    max-width: 800px;
+    margin: 20px auto 8px;   /* baja y centra el contenedor */
+    padding-left: 12px;      /* empuja el botón hacia la derecha */
+}
+
+.btn-volver {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    padding: 8px 14px;
+    background: var(--white);
+    border: 1px solid var(--ucn-blue-700);
+    border-radius: 999px;
+
+    color: var(--ucn-blue-900);
+    font-weight: 700;
     font-size: 0.95rem;
     text-decoration: none;
-    padding: 8px 20px; /* Espacio interno, 20px para alinearse con los bordes de las tarjetas */
-    transition: color 0.2s;
+    line-height: 1;
+
+    box-shadow: var(--shadow);
+    transition: background .2s ease, color .2s ease, transform .05s ease;
 }
 
 .btn-volver:hover {
+    background: var(--ucn-blue-50);
     color: var(--ucn-blue-900);
-    text-decoration: underline;
+    text-decoration: none;
+}
+
+.btn-volver:active { transform: translateY(1px); }
+
+.btn-volver:focus-visible {
+    outline: 2px solid var(--ucn-blue-700);
+    outline-offset: 2px;
 }

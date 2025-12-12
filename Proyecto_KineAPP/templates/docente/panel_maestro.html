@@ -38,7 +38,7 @@
     </div>
 
     <!-- Right section: User menu -->
-    <div class="right">
+  <div class="right">
 
     <!-- Botón que abre el dropdown -->
     <div class="user-menu" id="userMenuToggle">
@@ -56,7 +56,7 @@
         <a href="{% url 'usuario:seleccionar_staff' %}" class="logout">Cerrar sesión</a>
     </div>
 
-</div>
+  </div>
 
 </div>
 
@@ -239,9 +239,11 @@
                   multiple required
               >
                 {% for d in docentes %}
+                  {% with full_name=d.get_full_name %}
                   <option value="{{ d.id }}" {% if d.id == request.user.id %}selected{% endif %}>
-                    {{ d.first_name }} {{ d.last_name }} ({{ d.email }})
+                    {{ full_name|default:d.username }}{% if d.email %} ({{ d.email }}){% endif %}
                   </option>
+                  {% endwith %}
                 {% endfor %}
               </select>
               <small class="text-muted">Ctrl+clic para seleccionar varios.</small>
@@ -255,9 +257,11 @@
                   multiple required
               >
                 {% for est in estudiantes %}
+                  {% with full_name=est.get_full_name %}
                   <option value="{{ est.id }}">
-                    {{ est.first_name }} {{ est.last_name }} — {{ est.rut }}
+                    {{ full_name|default:est.username }} — {{ est.rut|default:'sin RUT' }}
                   </option>
+                  {% endwith %}
                 {% endfor %}
               </select>
               <small class="text-muted">Opcional. Puedes agregarlos después.</small>

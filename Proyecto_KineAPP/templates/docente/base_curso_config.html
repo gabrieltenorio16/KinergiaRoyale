@@ -59,12 +59,12 @@
                 Lista de estudiantes
             </a>
 
-            <a href="#">
-                Fichas clincias estudiantes 
+            <a href="{% url 'docente:curso_fichas_estudiantes' curso.id %}"
+               class="{% if active_section == 'fichas_estudiantes' %}active{% endif %}">
+                Fichas clinicas estudiantes
             </a>
 
             <div class="sidebar-title">Navegación</div>
-            <a href="{% url 'usuario:panel_estudiante' %}">Vista estudiante</a>
             <a href="{% url 'docente:panel' %}">Panel Maestro</a>
 
             

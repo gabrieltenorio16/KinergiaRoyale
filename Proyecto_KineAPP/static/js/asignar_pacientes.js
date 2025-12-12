@@ -162,7 +162,7 @@ document.querySelectorAll(".btn-editar-etapa").forEach(btn => {
         if (inputEtapaId) inputEtapaId.value = id;
 
         const titleEl = modalEntrevistaEl.querySelector(".modal-title");
-        if (titleEl) titleEl.textContent = "Editar entrevista";
+        if (titleEl) titleEl.textContent = "Editar consulta medica";
 
         modalEntrevista.show();
     });
@@ -176,7 +176,7 @@ if (btnAddEntrevista && formEntrevista && modalEntrevista && inputAccionEntrevis
         inputAccionEntrevista.value = "crear";
         inputEtapaId.value = "";
         const titleEl = modalEntrevistaEl.querySelector(".modal-title");
-        if (titleEl) titleEl.textContent = "Crear nueva entrevista";
+        if (titleEl) titleEl.textContent = "Crear nueva consulta medica";
     });
 }
 

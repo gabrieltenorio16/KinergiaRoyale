@@ -31,24 +31,24 @@ class UsuarioAdmin(DjangoUserAdmin):
 
 
 # ---------- DOCENTE ----------
-@admin.register(Docente)
-class DocenteAdmin(admin.ModelAdmin):
-    list_display = ('id', 'usuario', 'titulo', 'especialidad')
-    search_fields = (
-        'usuario__username', 'usuario__first_name', 'usuario__last_name', 'usuario__rut',
-    )
-    autocomplete_fields = ('usuario',)
+#@admin.register(Docente)
+#class DocenteAdmin(admin.ModelAdmin):
+#    list_display = ('id', 'usuario', 'titulo', 'especialidad')
+#    search_fields = (
+#        'usuario__username', 'usuario__first_name', 'usuario__last_name', 'usuario__rut',
+#    )
+#    autocomplete_fields = ('usuario',)
 
 
-# ---------- ESTUDIANTE (Mejorado) ----------
-@admin.register(Estudiante)
-class EstudianteAdmin(admin.ModelAdmin):
-    list_display = ('id', 'usuario', 'carrera', 'semestre')
-    search_fields = (
-        'usuario__username', 'usuario__first_name', 'usuario__last_name', 'usuario__rut', 'carrera',
-    )
-    list_filter = ('carrera', 'semestre')
-    autocomplete_fields = ('usuario',)
+#---------- ESTUDIANTE (Mejorado) ----------
+#@admin.register(Estudiante)
+#class EstudianteAdmin(admin.ModelAdmin):
+#    list_display = ('id', 'usuario', 'carrera', 'semestre')
+#    search_fields = (
+#        'usuario__username', 'usuario__first_name', 'usuario__last_name', 'usuario__rut', 'carrera',
+#    )
+#    list_filter = ('carrera', 'semestre')
+#    autocomplete_fields = ('usuario',)
     
 # ---------- DASHBOARD GENERAL (Modelo proxy para mostrar botón en sidebar) ----------
 from django.shortcuts import redirect

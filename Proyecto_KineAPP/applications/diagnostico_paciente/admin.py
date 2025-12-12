@@ -23,10 +23,10 @@ class PacienteAdmin(admin.ModelAdmin):
 # ==========================
 # PARTE DEL CUERPO
 # ==========================
-@admin.register(ParteCuerpo)
-class ParteCuerpoAdmin(admin.ModelAdmin):
-    list_display = ('id', 'nombre')
-    search_fields = ('nombre',)
+#@admin.register(ParteCuerpo)
+#class ParteCuerpoAdmin(admin.ModelAdmin):
+#    list_display = ('id', 'nombre')
+#    search_fields = ('nombre',)
 
 
 # ==========================

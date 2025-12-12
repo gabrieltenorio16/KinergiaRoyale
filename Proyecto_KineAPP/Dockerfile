@@ -5,6 +5,11 @@ FROM python:3.12-slim
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
+# Añade junto a otras ENV
+ENV LANG=C.UTF-8
+ENV LC_ALL=C.UTF-8
+ENV PYTHONUTF8=1
+
 # 3. Directorio de trabajo dentro del contenedor
 WORKDIR /app
 

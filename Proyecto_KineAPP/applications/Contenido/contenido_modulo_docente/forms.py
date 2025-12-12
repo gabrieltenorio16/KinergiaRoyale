@@ -192,7 +192,6 @@ class FichaClinicaEstudianteForm(forms.ModelForm):
     class Meta:
         model = FichaClinicaEstudiante
         fields = [
-            'rut_paciente_ficha',
             'nombre_paciente_ficha',
             'apellido_paciente_ficha',
             'edad_paciente_ficha',
@@ -200,10 +199,6 @@ class FichaClinicaEstudianteForm(forms.ModelForm):
             'motivo_consulta_ficha',
         ]
         widgets = {
-            "rut_paciente_ficha": forms.TextInput(attrs={
-                "class": "form-control",
-                "placeholder": "Ej: 11.111.111-1",
-            }),
             "nombre_paciente_ficha": forms.TextInput(attrs={
                 "class": "form-control",
                 "placeholder": "Nombre(s) según la ficha del estudiante",
@@ -226,7 +221,6 @@ class FichaClinicaEstudianteForm(forms.ModelForm):
             }),
         }
         labels = {
-            "rut_paciente_ficha": "RUT del Paciente",
             "nombre_paciente_ficha": "Nombres del Paciente",
             "apellido_paciente_ficha": "Apellidos del Paciente",
             "edad_paciente_ficha": "Edad del Paciente",

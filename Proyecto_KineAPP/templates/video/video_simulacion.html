@@ -14,18 +14,13 @@
 
 <body>
 
-    {% if messages %}
-    <ul class="messages">
-        {% for message in messages %}
-        <li>{{ message }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
 
     {% if video.tema and video.tema.curso %}
-    <a href="{% url 'curso:curso_detalle' video.tema.curso.pk %}" class="btn-volver">
-        <- Volver al Curso
-    </a>
+    <div class="volver-wrapper">
+        <a href="{% url 'curso:curso_detalle' video.tema.curso.pk %}" class="btn-volver">
+            &larr; Volver al Curso
+        </a>
+    </div>
     {% endif %}
 
     <!-- CONTENEDOR PRINCIPAL -->

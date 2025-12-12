@@ -4,7 +4,7 @@
   <input
       type="text"
       class="form-control w-25"
-      placeholder="Buscar entrevista..."
+      placeholder="Buscar consulta médica..."
       data-table-search="tablaEntrevistas">
   <button
       type="button"
@@ -12,12 +12,12 @@
       id="btnAddEntrevista"
       data-bs-toggle="modal"
       data-bs-target="#modalEntrevista">
-    Añadir entrevista
+    Añadir consulta médica
   </button>
 </div>
 
 <p class="text-muted small mb-3">
-  Paso 3: cada entrevista vincula un caso clinico con un video concreto del módulo.
+  Paso 3: cada consulta médica vincula un caso clinico con un video concreto del módulo.
   El paciente se toma automáticamente del caso clinico seleccionado.
 </p>
 
@@ -34,7 +34,7 @@
             <input type="checkbox" id="chkTodosEntrevistas">
           </th>
           <th style="width: 60px;">ID</th>
-          <th>Nombre de la entrevista</th>
+          <th>Nombre de la consulta médica</th>
           <th>Paciente</th>
           <th>Caso clínico</th>
           <th>Video</th>
@@ -77,7 +77,7 @@
         {% empty %}
           <tr data-empty-etapas="1">
             <td colspan="7">
-              Aún no hay entrevistas configuradas para este curso.
+              Aún no hay consulta médica configuradas para este curso.
             </td>
           </tr>
         {% endfor %}
@@ -90,7 +90,7 @@
         type="submit"
         class="btn btn-danger btn-sm"
         id="btnBorrarEntrevistas">
-      Borrar entrevistas seleccionadas
+      Borrar consultas médicas seleccionadas
     </button>
   </div>
 </form>
@@ -106,7 +106,7 @@
         <input type="hidden" name="etapa_id" id="etapaIdInput" value="">
 
         <div class="modal-header">
-          <h5 class="modal-title">Crear nueva entrevista</h5>
+          <h5 class="modal-title">Crear nueva consulta médica</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
 
@@ -135,7 +135,7 @@
 
             <div class="col-12">
               <small class="text-muted">
-                El paciente de la entrevista se tomará automáticamente del caso clínico seleccionado.
+                El paciente de la consulta médica se tomará automáticamente del caso clínico seleccionado.
               </small>
             </div>
           </div>
@@ -146,7 +146,7 @@
             Cancelar
           </button>
           <button type="submit" class="btn btn-primary">
-            Guardar entrevista
+            Guardar consulta médica 
           </button>
         </div>
       </form>

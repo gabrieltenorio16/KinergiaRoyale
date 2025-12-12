@@ -13,8 +13,8 @@ class Paciente(models.Model):
         help_text='Antecedentes relevantes del paciente'
     )
     historial_medico = models.TextField(
-        'Historial mdico',
-        help_text='Resumen del historial mdico'
+        'Historial médico',
+        help_text='Resumen del historial médico'
     )
 
     class Meta:
@@ -28,7 +28,7 @@ class Paciente(models.Model):
 
 class ParteCuerpo(models.Model):
     nombre = models.CharField('Parte del cuerpo', max_length=100)
-    descripcion = models.TextField('Descripci6n', blank=True)
+    descripcion = models.TextField('Descripción', blank=True)
 
     class Meta:
         verbose_name = 'Parte del cuerpo'
@@ -40,8 +40,8 @@ class ParteCuerpo(models.Model):
 
 
 class CasoClinico(models.Model):
-    titulo = models.CharField('T2atulo del caso', max_length=150)
-    descripcion = models.TextField('Descripci6n general')
+    titulo = models.CharField('Título del caso', max_length=150)
+    descripcion = models.TextField('Descripción general')
 
     paciente = models.ForeignKey(
         Paciente,
@@ -59,13 +59,13 @@ class CasoClinico(models.Model):
 
     motivo_consulta = models.TextField('Motivo de consulta')
     antecedentes = models.TextField('Antecedentes del caso')
-    historial_clinico = models.TextField('Historial clnico detallado')
+    historial_clinico = models.TextField('Historial clínico detallado')
 
     fecha_creacion = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        verbose_name = 'Caso clnico'
-        verbose_name_plural = 'Casos clnicos'
+        verbose_name = 'Caso clínico'
+        verbose_name_plural = 'Casos clínicos'
         ordering = ('-fecha_creacion', 'titulo')
         constraints = [
             models.UniqueConstraint(
@@ -83,7 +83,7 @@ class Etapa(models.Model):
         CasoClinico,
         on_delete=models.CASCADE,
         related_name='etapas',
-        verbose_name='Caso clnico',
+        verbose_name='Caso clínico',
     )
 
     paciente = models.ForeignKey(
@@ -192,7 +192,6 @@ class Diagnostico(models.Model):
 
 class FichaClinicaEstudiante (models.Model):
     # Campos de texto# 
-    rut_paciente_ficha = models.CharField('RUT del Paciente', max_length=12)
     nombre_paciente_ficha = models.CharField('Nombres del Paciente', max_length=200)
     apellido_paciente_ficha = models.CharField('Apellidos del Paciente', max_length=200)
     edad_paciente_ficha = models.PositiveIntegerField('Edad del Paciente')

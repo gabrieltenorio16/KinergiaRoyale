@@ -12,6 +12,7 @@ from applications.curso_y_modulo.views.docente import (
     curso_estudiantes,
 )
 from applications.curso_y_modulo.views.contenido import asignar_contenido, asignar_pacientes
+from applications.curso_y_modulo.views.contenido import fichas_clinicas_estudiantes
 
 app_name = "docente"
 
@@ -25,6 +26,8 @@ urlpatterns = [
     path("curso/<int:curso_id>/agregar-estudiantes/", agregar_estudiantes_view,
          name="agregar_estudiantes"),
     path("curso/<int:curso_id>/estudiantes/", curso_estudiantes, name="curso_estudiantes"),
+    path("curso/<int:curso_id>/fichas-estudiantes/", fichas_clinicas_estudiantes,
+         name="curso_fichas_estudiantes"),
     path("curso/<int:curso_id>/asignar/", asignar_contenido, name="asignar_contenido"),
     path("curso/<int:curso_id>/pacientes/", asignar_pacientes, name="asignar_pacientes"),
 ]

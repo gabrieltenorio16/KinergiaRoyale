@@ -10,6 +10,7 @@ from applications.diagnostico_paciente.models import (
     CasoClinico,
     Etapa,
     Diagnostico,
+    FichaClinicaEstudiante,
 )
 from applications.Contenido.contenido_modulo_docente.forms import (
     TemaForm,
@@ -537,3 +538,34 @@ def asignar_pacientes(request, curso_id):
     }
 
     return render(request, "docente/asignar_pacientes.html", context)
+
+
+@login_required
+def fichas_clinicas_estudiantes(request, curso_id):
+    """
+    Lista las fichas clinicas que los estudiantes han creado para las
+    simulaciones de video en este curso.
+    """
+    if request.user.rol != "DOC":
+        messages.error(request, "No tienes permisos para acceder a esta seccion.")
+        return redirect("root_redirect")
+
+    curso = get_object_or_404(Curso, pk=curso_id)
+
+    fichas = (
+        FichaClinicaEstudiante.objects
+        .filter(caso_clinico__curso=curso)
+        .select_related("estudiante", "paciente", "caso_clinico", "video")
+        .order_by("-fecha_creacion")
+    )
+
+    context = {
+        "curso": curso,
+        "fichas": fichas,
+        "active_section": "fichas_estudiantes",
+        "breadcrumb_label": "Fichas clinicas estudiantes",
+        "breadcrumb_url_name": "docente:curso_fichas_estudiantes",
+        "page_heading": "Fichas clinicas del curso",
+        "page_subtitle": "Registros creados por los estudiantes en sus simulaciones.",
+    }
+    return render(request, "docente/fichas_clinicas_estudiantes.html", context)
