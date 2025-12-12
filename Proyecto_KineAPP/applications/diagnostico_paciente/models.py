@@ -67,6 +67,12 @@ class CasoClinico(models.Model):
         verbose_name = 'Caso clnico'
         verbose_name_plural = 'Casos clnicos'
         ordering = ('-fecha_creacion', 'titulo')
+        constraints = [
+            models.UniqueConstraint(
+                fields=['curso', 'paciente'],
+                name='unique_caso_paciente_por_curso',
+            )
+        ]
 
     def __str__(self):
         return f"{self.titulo} - {self.paciente}"
@@ -240,3 +246,55 @@ class FichaClinicaEstudiante (models.Model):
 
     def __str__(self):
         return f"Ficha Mdica de {self.estudiante.username} para {self.paciente}"
+
+
+class HistorialSimulacion(models.Model):
+    estudiante = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="historiales_simulacion",
+        verbose_name="Estudiante",
+    )
+    video = models.ForeignKey(
+        Video,
+        on_delete=models.CASCADE,
+        related_name="historiales_simulacion",
+        verbose_name="Video",
+    )
+    paciente = models.ForeignKey(
+        Paciente,
+        on_delete=models.CASCADE,
+        related_name="historiales_simulacion",
+        verbose_name="Paciente",
+    )
+    caso_clinico = models.ForeignKey(
+        CasoClinico,
+        on_delete=models.CASCADE,
+        related_name="historiales_simulacion",
+        verbose_name="Caso cl?nico",
+    )
+    ficha = models.ForeignKey(
+        FichaClinicaEstudiante,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="historiales",
+        verbose_name="Ficha cl?nica",
+    )
+    respuestas_correctas = models.PositiveIntegerField(default=0)
+    respuestas_incorrectas = models.PositiveIntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Historial de simulaci?n"
+        verbose_name_plural = "Historiales de simulaci?n"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["estudiante", "video", "paciente", "caso_clinico"],
+                name="unique_historial_simulacion_estudiante_video_paciente_caso",
+            )
+        ]
+
+    def __str__(self):
+        return f"Historial {self.id} - {self.estudiante} / {self.video} / {self.paciente}"

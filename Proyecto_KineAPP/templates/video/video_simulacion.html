@@ -59,7 +59,11 @@
     </div>
 
     <!-- CONTENIDO DINÁMICO -->
-    <div id="contentWindow" class="content-window"></div>
+    <div
+        id="contentWindow"
+        class="content-window"
+        data-register-url="{{ registrar_respuesta_url }}"
+    ></div>
 
     {% if topicos_data %}
     {{ topicos_data|json_script:"topicos-data" }}

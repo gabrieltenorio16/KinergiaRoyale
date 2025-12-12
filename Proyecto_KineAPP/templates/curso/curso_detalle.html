@@ -267,6 +267,16 @@
     <!-- CONTENIDO -->
     <div class="main-wrapper">
 
+      {% if messages %}
+        <div style="margin-bottom: 12px;">
+          {% for message in messages %}
+            <div style="background:#fff3cd;color:#664d03;padding:10px 12px;border-radius:10px;border:1px solid #ffeeba;margin-bottom:6px;">
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
       <!-- Tarjeta superior -->
       <div class="curso-card">
         <div>

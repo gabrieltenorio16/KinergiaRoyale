@@ -3,6 +3,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.db.models import Prefetch
+from django.urls import reverse
 
 from applications.Contenido.models import Video, Tema
 from applications.diagnostico_paciente.models import Paciente, Etapa
@@ -73,11 +74,14 @@ def seleccionar_paciente_curso(request, curso_id, paciente_id):
 
     curso = get_object_or_404(Curso, pk=curso_id)
 
-    paciente = get_object_or_404(
-        Paciente,
-        pk=paciente_id,
-        casos_clinicos__curso=curso
+    paciente = (
+        Paciente.objects.filter(pk=paciente_id, casos_clinicos__curso=curso)
+        .distinct()
+        .first()
     )
+    if not paciente:
+        messages.error(request, "Paciente no encontrado para este curso.")
+        return redirect("curso:curso_detalle", curso_id=curso.id)
 
     # Guardar / actualizar selección
     SeleccionPacienteCurso.objects.update_or_create(
@@ -85,8 +89,6 @@ def seleccionar_paciente_curso(request, curso_id, paciente_id):
         curso=curso,
         defaults={"paciente": paciente},
     )
-
-    messages.success(request, f"Paciente seleccionado: {paciente}")
 
     # 1) Buscar una ENTREVISTA (Etapa) para este paciente en este curso
     etapa = (
@@ -101,18 +103,9 @@ def seleccionar_paciente_curso(request, curso_id, paciente_id):
     )
 
     if etapa and etapa.video:
-        return redirect("Contenido:preguntas_del_video", video_id=etapa.video.id)
+        url = f"{reverse('simulacion:simulacion', args=[etapa.video.id])}?paciente_id={paciente.id}"
+        return redirect(url)
 
-    # 2) Fallback: si no hay entrevistas configuradas para este paciente,
-    # mantenemos el comportamiento anterior (primer video del curso)
-    primer_video = (
-        Video.objects.filter(tema__curso=curso)
-        .order_by("tema__titulo", "id")
-        .first()
-    )
-
-    if primer_video:
-        return redirect("Contenido:preguntas_del_video", video_id=primer_video.id)
-
-    # 3) Si tampoco hay videos, volvemos al detalle del curso
+    # Si el paciente no tiene una etapa con video, avisamos y regresamos al curso
+    messages.warning(request, "Paciente no disponible, esperar por favor.")
     return redirect("curso:curso_detalle", curso_id=curso.id)

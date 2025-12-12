@@ -124,7 +124,12 @@ document.addEventListener("DOMContentLoaded", () => {
                         return `
                             <li>
                                 <label>
-                                    <input type="radio" name="preg-${p.id}" data-correct="${r.es_correcta}" ${feedbackAttr} />
+                                    <input type="radio"
+                                        name="preg-${p.id}"
+                                        data-correct="${r.es_correcta}"
+                                        data-respuesta-id="${r.id}"
+                                        data-pregunta-id="${p.id}"
+                                        ${feedbackAttr} />
                                     ${r.contenido}
                                 </label>
                             </li>`;
@@ -199,6 +204,18 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    const getCsrfToken = () => {
+        const name = "csrftoken";
+        const cookies = document.cookie ? document.cookie.split(";") : [];
+        for (let c of cookies) {
+            c = c.trim();
+            if (c.startsWith(name + "=")) {
+                return decodeURIComponent(c.substring(name.length + 1));
+            }
+        }
+        return "";
+    };
+
     function attachPreguntaHandlers() {
         document.querySelectorAll(".check-answer").forEach((btn) => {
             btn.addEventListener("click", () => {
@@ -224,6 +241,22 @@ document.addEventListener("DOMContentLoaded", () => {
                         ? `<strong>${estado}</strong><div class="feedback">${feedback}</div>`
                         : `<strong>${estado}</strong>`;
                     resultEl.style.color = ok ? "green" : "red";
+                }
+
+                const registerUrl = content.dataset.registerUrl;
+                const respuestaId = selected.dataset.respuestaId;
+                const preguntaId = selected.dataset.preguntaId;
+                if (registerUrl && respuestaId && preguntaId) {
+                    const formData = new FormData();
+                    formData.append("respuesta_id", respuestaId);
+                    formData.append("pregunta_id", preguntaId);
+                    fetch(registerUrl, {
+                        method: "POST",
+                        headers: {
+                            "X-CSRFToken": getCsrfToken(),
+                        },
+                        body: formData,
+                    }).catch(() => {});
                 }
             });
         });

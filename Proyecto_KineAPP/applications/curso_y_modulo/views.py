@@ -147,11 +147,14 @@ def seleccionar_paciente_curso(request, curso_id, paciente_id):
     curso = get_object_or_404(Curso, pk=curso_id)
 
     # 2. Obtener Paciente
-    paciente = get_object_or_404(
-        Paciente,
-        pk=paciente_id,
-        casos_clinicos__curso=curso
+    paciente = (
+        Paciente.objects.filter(pk=paciente_id, casos_clinicos__curso=curso)
+        .distinct()
+        .first()
     )
+    if not paciente:
+        messages.error(request, "Paciente no encontrado para este curso.")
+        return redirect("curso:curso_detalle", curso_id=curso.id)
 
     # 3. Guardar la selección
     SeleccionPacienteCurso.objects.update_or_create(
@@ -159,8 +162,6 @@ def seleccionar_paciente_curso(request, curso_id, paciente_id):
         curso=curso,
         defaults={"paciente": paciente},
     )
-
-    messages.success(request, f"Paciente seleccionado: {paciente}")
 
     # ------------------------------------------------------------------
     # 🔥 NUEVA LÓGICA: Redirigir a la primera ETAPA del Caso Clínico
